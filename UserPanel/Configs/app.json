@@ -1,0 +1,36 @@
+{
+
+  "database": {
+    "mock": {
+      "users": [
+        {
+          "Id": 1,
+          "Name": "User1",
+          "Email": "user1@example.com",
+          "Password": "4xHGuGXDFd4p2ytK3wnK5plYYAPxCnbjJMu3bh8nTFd2pkE5juaAWnGgcNQbHE8zfbYNRSb9lAsDrdx0eVzJM3csZPbQwd1NHnC6OzxUqfIaUOZueLlWNVhjfNFlgd4R2BMf4LphzI52OpKIm5mHlTyMXGd5RdXJA8BquALwzcNKR/aAA6Z8KLUOnzxFlq/v9TY5hrmuwO08RI5q4cJydTOY5ze+WOmUjYJyDdug9s0/fOo7FmHSLkQ7j2vDtjW5p5Et/n2XmMEU/zkjUVZSr6ZCZIoMGG7dxJ/drk6GZVGQtib+ginX3f8+C5Bj6chLzTTBTUPUK7LILJeu96vW6p3sGaj3n1wm0GsciuDWn0Y=",
+          "Role": "User",
+          "Phone": "111-111-111",
+          "Company": "Example Enterprice",
+          "Address": "43-316 Bielsko-Biała Cicha 1/4"
+        },
+        {
+          "Id": 2,
+          "Name": "User1",
+          "Email": "user1@example2.com",
+          "Password": "123",
+          "Role": "User",
+          "Phone": "111-111-111",
+          "Company": "Example Enterprice",
+          "Address": "43-316 Bielsko-Biała Cicha 1/4"
+        }
+      ]
+    }
+  },
+  "messages": {
+    "loginMessages": {
+      "InvalidPassword": "Incorrect password.",
+      "NotFound": "User has not been found."
+    }
+  }
+
+}
