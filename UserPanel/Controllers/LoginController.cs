@@ -10,6 +10,7 @@ using UserPanel.Models;
 using UserPanel.Models.User;
 using UserPanel.Providers;
 using UserPanel.References;
+using UserPanel.Helpers;
 
 namespace UserPanel.Controllers
 {
@@ -19,16 +20,18 @@ namespace UserPanel.Controllers
         private DataBaseProvider DataBaseProvider { get; set; }
         private UserManager UserManager;
         private PasswordHasher Hasher;
+        private EmailService EmailService;
 
         private static string INVALID_USER = ConfigManager.GetConfig("appConfig.messages.loginMessages.InvalidPassword").ToString();
         private static string NOT_FOUND = ConfigManager.GetConfig("appConfig.messages.loginMessages.NotFound").ToString();
 
-        public LoginController(ILogger<HomeController> logger, DataBaseProvider dataBase, UserManager userManager, PasswordHasher hasher)
+        public LoginController(ILogger<HomeController> logger, DataBaseProvider dataBase, UserManager userManager, PasswordHasher hasher, EmailService emailService)
         {
             _logger = logger;
             DataBaseProvider = dataBase;
             UserManager = userManager;
             Hasher = hasher;
+            EmailService = emailService;
         }
 
         [HttpGet]
@@ -44,7 +47,7 @@ namespace UserPanel.Controllers
            
             var result = true;
 
-            //string hashed = Hasher.HashPassword(loginModel.Password);
+
 
             UserModel userModel = DataBaseProvider
                 .GetUserRepository()
@@ -62,11 +65,16 @@ namespace UserPanel.Controllers
             }
             if (result) {
 
+                string token = TokenHasher.HashToken(ConfigurationHelper.config["EmailSalt"], loginModel.Email);
+                string link = new LinkBuilder(HttpContext).GenerateConfirmEmailLink(token,loginModel.Email);
+                Email email = new Email(new List<string>() { "kacperc317@gmail.com" },"TEST",link);
+                EmailService.SendEmail(email);
 
                 await UserManager.SignIn(userModel);
                 return Redirect(loginModel.ReturnUrl);
 
             }
+       
             return View(loginModel);
             
         }
