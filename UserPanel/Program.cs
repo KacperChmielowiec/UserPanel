@@ -1,48 +1,20 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using UserPanel.Helpers;
+using UserPanel.Installers;
 using UserPanel.Interfaces;
+using UserPanel.Models.Config;
 using UserPanel.Providers;
 using UserPanel.Services;
 using UserPanel.Services.database;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-builder.Services.AddControllersWithViews();
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-builder.Services.AddHttpContextAccessor();
-builder.Services.AddScoped<DataBase,SqlDataBase>();
-builder.Services.AddScoped<DataBaseProvider>();
-builder.Services.AddScoped<UserManager, UserManager>();
-builder.Services.AddScoped<SignInService>();
-builder.Services.AddScoped<PasswordHasher>();
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-})
-        .AddCookie(options =>
-        {
-            options.Cookie.Name = "User";
-            options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
-            options.LoginPath = "/Login";
-            options.AccessDeniedPath = "/Forbidden";
-        
-        });
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("basic", options =>
-    {
-        options.AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme)
-        .RequireAuthenticatedUser();
-    });
-});
-builder.Configuration.AddJsonFile("Config.json");
-
+builder.InstallServices();
+builder.Services.AddScoped<EmailService, EmailService>();
 ConfigurationHelper.Initialize(builder.Configuration);
 ConfigManager.LoadConfig();
 
@@ -52,8 +24,9 @@ builder.Services.Configure<UserPanel.Models.PasswordHashOptions>(options =>
     options.SaltSize = 16;
     options.Iterations = 8192;
     options.HashSize = 256;
-});
 
+});
+builder.Services.Configure<EmailConfiguration>(builder.Configuration.GetSection("STMP_CONFIG"));
 
 var app = builder.Build();
 
@@ -75,12 +48,6 @@ app.MapGet("/testAuth", (HttpContext ctx) =>
 {
     return "It is work";
 }).RequireAuthorization("basic");
-
-app.MapGet("/show", (HttpContext ctx) =>
-{
-    var user = ctx.User;
-    return "";
-});
 
 app.MapControllerRoute(
     name: "dashboard",
