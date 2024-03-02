@@ -20,24 +20,23 @@ namespace UserPanel.Controllers
         private DataBaseProvider DataBaseProvider { get; set; }
         private UserManager UserManager;
         private PasswordHasher Hasher;
-        private EmailService EmailService;
 
         private static string INVALID_USER = ConfigManager.GetConfig("appConfig.messages.loginMessages.InvalidPassword").ToString();
         private static string NOT_FOUND = ConfigManager.GetConfig("appConfig.messages.loginMessages.NotFound").ToString();
 
-        public LoginController(ILogger<HomeController> logger, DataBaseProvider dataBase, UserManager userManager, PasswordHasher hasher, EmailService emailService)
+        public LoginController(ILogger<HomeController> logger, DataBaseProvider dataBase, UserManager userManager, PasswordHasher hasher)
         {
             _logger = logger;
             DataBaseProvider = dataBase;
             UserManager = userManager;
             Hasher = hasher;
-            EmailService = emailService;
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Index([FromQuery(Name = "ReturnUrl")] string? ReturnUrl)
         {
-            return View(new LoginModel() { ReturnUrl = "/"});
+
+            return View(new LoginModel() { ReturnUrl = ReturnUrl ?? "/"});
         }
 
         [HttpPost]
@@ -46,8 +45,6 @@ namespace UserPanel.Controllers
             if (!ModelState.IsValid) return View(loginModel);
            
             var result = true;
-
-
 
             UserModel userModel = DataBaseProvider
                 .GetUserRepository()
@@ -64,11 +61,6 @@ namespace UserPanel.Controllers
                 result = false;
             }
             if (result) {
-
-                string token = TokenHasher.HashToken(ConfigurationHelper.config["EmailSalt"], loginModel.Email);
-                string link = new LinkBuilder(HttpContext).GenerateConfirmEmailLink(token,loginModel.Email);
-                Email email = new Email(new List<string>() { "kacperc317@gmail.com" },"TEST",link);
-                EmailService.SendEmail(email);
 
                 await UserManager.SignIn(userModel);
                 return Redirect(loginModel.ReturnUrl);
