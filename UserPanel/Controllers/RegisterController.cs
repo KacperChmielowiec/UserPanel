@@ -1,7 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
 using System.Collections.Generic;
+using UserPanel.Helpers;
+using UserPanel.Models;
 using UserPanel.Models.User;
 using UserPanel.Providers;
 using UserPanel.Services;
@@ -12,15 +16,35 @@ namespace UserPanel.Controllers
     {
         UserManager UserManager;
         IConfiguration _configuration;
-        public RegisterController(UserManager userManager, IConfiguration configuration) { 
+        EmailService _emailService;
+        IMapper _mapper;
+        public RegisterController(UserManager userManager, IConfiguration configuration, IMapper mapper) { 
         
             this.UserManager = userManager;
             this._configuration = configuration;
+            this._mapper = mapper;  
         }
         [HttpGet]
         public IActionResult Index()
         {
             return View(new RegisterModel { ReturnUrl = "/" });
+        }
+        [HttpGet("Register/Confirmation")]
+        public IActionResult Confirm([FromQuery(Name = "code")] string? code, [FromQuery(Name = "email")] string? email)
+        {
+            if (code == null || email == null) return NotFound();
+            string password = HttpContext.Session.GetString("pass") ?? "";
+            if (UserManager.VerifyEmailToken(email,password, code)){
+                return View("Confirm", true);
+            }
+
+            return View("Confirm", false);
+        }
+
+        [HttpGet("Register/finish")]
+        public IActionResult Finish()
+        {
+            return View("Finish",HttpContext.Request.Query["email"].ToString());
         }
 
         [HttpPost]
@@ -34,12 +58,11 @@ namespace UserPanel.Controllers
 
             if (EmailExists || PhoneExists)
             {
-            
-                if(EmailExists)
+
+                if (EmailExists)
                 {
                     ModelState.AddModelError("RegisterError", "User with giving Email already exists");
                 }
-
                 if (PhoneExists)
                 {
                     ModelState.AddModelError("RegisterError", "User with giving Phone number already exists");
@@ -48,9 +71,9 @@ namespace UserPanel.Controllers
                 return View(registerModel);
             }
 
+            UserManager.SendEmailVerify(_mapper.Map<UserModel>(registerModel));
 
-
-            return Redirect(registerModel.ReturnUrl);
+            return RedirectToAction("Finish", new { email = registerModel.Email });
 
         }
 

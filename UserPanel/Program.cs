@@ -26,6 +26,12 @@ builder.Services.Configure<UserPanel.Models.PasswordHashOptions>(options =>
     options.HashSize = 256;
 
 });
+builder.Services.AddDistributedMemoryCache();
+
+builder.Services.AddSession(options =>
+{
+
+});
 builder.Services.Configure<EmailConfiguration>(builder.Configuration.GetSection("STMP_CONFIG"));
 
 var app = builder.Build();
@@ -43,7 +49,7 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseSession();
 app.MapGet("/testAuth", (HttpContext ctx) =>
 {
     return "It is work";
@@ -60,5 +66,5 @@ app.MapControllerRoute(
     defaults: new { controller = "Home", action = "Index" });
 
 
-
+app.UseStatusCodePagesWithRedirects("/Code/{0}");
 app.Run();
