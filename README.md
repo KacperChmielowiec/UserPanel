@@ -1,1 +1,1 @@
-Projekt do ustawiania kampani reklamowych dla użytkowników, krórzy odwiedzili twoją strone internetową. UserPanel definiuje dodawanie kreacji, kodów do zbierania danych ze strony oraz ustawienia stawek i list użytkowników.
+Projekt do ustawiania kampanii reklamowych dla użytkowników, krórzy odwiedzili twoją strone internetową. UserPanel definiuje dodawanie kreacji, kodów do zbierania danych ze strony oraz ustawienia stawek i list użytkowników.
