@@ -1,0 +1,86 @@
+﻿@{
+    ViewData["Title"] = "_navigation";
+}
+<header>
+    <nav class="bg-white border-bottom shadow-md fixed top-0 left-0 z-50 w-full">
+        <div class="mx-5 d-flex justify-between min-h-[40px] items-center">
+            <div class="d-flex m-0 p-0 items-center">
+                <img class="w-8 h-8 mr-2" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg" alt="logo">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">UserPanel</a>
+            </div>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <div class="d-flex m-0 p-0 items-center">
+                    <ul class="list-none m-0 p-0 d-flex nav-list">
+                        <li class="nav-list-item d-flex items-center">
+                            <div class="nav-item w-full gap-x-2 d-flex items-center">
+                                <i class="icon-share"></i>
+                                <a>Zgłoszenia techniczne</a>
+                            </div>
+                        </li>
+                        <li class="nav-list-item d-flex items-center">
+                            <div class="nav-item w-full">
+                                <a>Stan środków:<b> 1 000 PLN</b></a>
+                            </div>
+                        </li>
+                        <li class="nav-list-item d-flex items-center navbar-inverse">
+                            <div class="nav-item w-full">
+                                <a href="#" onclick="notificationModal()" data-notification-ajax="https://user.go.pl/ajax/notifies?wn=b086867e4b3d1ac9b3f2c7eca279ffd8a829fc5a" class="trigger">
+                                    <i class="icon-envelope"></i>
+                                    <span data-notification-block="count-alert" class="count">29</span>
+                                </a>
+                                <div class="pop-dialog">
+                                    <div class="pointer right">
+                                        <div class="arrow"></div>
+                                        <div class="arrow_border"></div>
+                                    </div>
+                                    <div class="body">
+                                        <a onclick="notificationModal()"  class="close-icon"><i class="icon-remove-sign"></i></a>
+                                        <div class="notifications">
+                                            <h3 data-notification-block="header">Masz 29 nowych powiadomień</h3>
+                                            <div data-notification-block="notifications">
+                                                <a data-href="https://user.go.pl/users/notifies/view/462dfa90-2d18-42c3-b8c6-bd3f3dca8a5b?ajax=modal&amp;modal%5Bparent%5D=pad-wrapper&amp;wn=b086867e4b3d1ac9b3f2c7eca279ffd8a829fc5a" class="item">
+                                                    <i class="icon-signin"></i>
+                                                    <div class="name" title="Powiadomienie o niskim stanie środków - budżet użytkownika">Powiadomienie o niskim stanie środków - budżet użytkownika</div>
+                                                    <span class="time"><i class="icon-time"></i> +74 dni</span>
+                                                </a>
+                                                <a data-href="https://user.go.pl/users/notifies/view/86f380f3-2c2d-494f-8305-8dd99390085d?ajax=modal&amp;modal%5Bparent%5D=pad-wrapper&amp;wn=b086867e4b3d1ac9b3f2c7eca279ffd8a829fc5a" class="item">
+                                                    <i class="icon-signin"></i>
+                                                    <div class="name" title="Powiadomienie o niskim stanie środków - budżet użytkownika">Powiadomienie o niskim stanie środków - budżet użytkownika</div>
+                                                    <span class="time"><i class="icon-time"></i> +107 dni</span>
+                                                </a>
+                                                <a data-href="https://user.go.pl/users/notifies/view/545cce38-f7fe-4f66-9655-01e5589186e2?ajax=modal&amp;modal%5Bparent%5D=pad-wrapper&amp;wn=b086867e4b3d1ac9b3f2c7eca279ffd8a829fc5a" class="item">
+                                                    <i class="icon-signin"></i>
+                                                    <div class="name" title="Powiadomienie o niskim stanie środków - budżet użytkownika">Powiadomienie o niskim stanie środków - budżet użytkownika</div>
+                                                    <span class="time"><i class="icon-time"></i> +108 dni</span>
+                                                </a>
+                                            </div>
+                                            <div class="footer" data-notification-block="link"><a href="https://user.go.pl/users/notifies/index?unreadonly=1&amp;wn=b086867e4b3d1ac9b3f2c7eca279ffd8a829fc5a">Zobacz nieprzeczytane powiadomienia</a></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="nav-list-item d-flex items-center">
+                            <div class="nav-item w-full px-2">
+                                <a asp-controller="Login" asp-action="Logout" >
+                                    <i class="icon-signout"></i>
+                                </a>
+                            </div>
+                        </li
+                    </ul>
+                </div>
+            }
+        </div>
+    </nav>
+</header>
+<script>
+    const notificationModal = () => {
+        const modal = document.querySelector(".pop-dialog");
+        if (event.target == document.querySelector("a.close-icon")) {
+           modal.classList.remove("is-visible")
+           return
+        }
+        modal.classList.toggle("is-visible")
+    }
+</script>
