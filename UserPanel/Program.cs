@@ -34,8 +34,6 @@ builder.Services.AddSession(options =>
 });
 builder.Services.Configure<EmailConfiguration>(builder.Configuration.GetSection("STMP_CONFIG"));
 
-
-});
 builder.Services.Configure<EmailConfiguration>(builder.Configuration.GetSection("STMP_CONFIG"));
 
 var app = builder.Build();

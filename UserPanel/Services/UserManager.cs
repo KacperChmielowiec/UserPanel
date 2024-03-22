@@ -39,7 +39,7 @@ namespace UserPanel.Services
         private async Task SignInAsUser(UserModel userModel, string scheme)
         {
             List<Claim> claims = new List<Claim>();
-            claims.Add(new Claim(ClaimTypes.Role, Enum.GetName(typeof(AppReferences.UserRole), userModel.Role)));
+            claims.Add(new Claim(ClaimTypes.Role, Enum.GetName(typeof(UserRole), userModel.Role)));
             claims.Add(new Claim("Id", userModel.Id.ToString()));
             ClaimsIdentity identity = new ClaimsIdentity(claims, scheme);
             var principal = new ClaimsPrincipal(identity);
