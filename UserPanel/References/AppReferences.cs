@@ -1,5 +1,6 @@
-﻿using UserPanel.Helpers;
-
+﻿using UserPanel.Controllers;
+using UserPanel.Helpers;
+using UserPanel.Models;
 namespace UserPanel.References
 {
     public class AppReferences
@@ -7,18 +8,26 @@ namespace UserPanel.References
         public static string BASE_APP_PATH = "";
         public static string CONFIG_APP_PATH = "";
         public static string USER_MOCK_PATH = "";
-        public  enum UserRole
-        {
-           ADMIN = 0,
-           USER = 1,
-           EMPLOYEE = 2,
-        }
+
 
         public static Dictionary<string, UserRole> RoleMap = new Dictionary<string, UserRole>()
         {
-            { "Admin", UserRole.ADMIN },
-            { "User", UserRole.USER },
-            { "Employee", UserRole.EMPLOYEE },
+            { "ADMIN", UserRole.ADMIN },
+            { "USER", UserRole.USER },
+            { "EMPLOYEE", UserRole.EMPLOYEE },
         };
+
+        public static class PathRoutes
+        {
+            public static string Login = "Login";
+            public static string Register = "Register";
+            public static string Home = "/";
+        }
+
+        public static class ViewComponentsNames
+        { 
+            public static string Sidebar = "Sidebar";
+            public static string Nav = "navigation";
+        }
     }
 }

@@ -2,11 +2,13 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using UserPanel.Models;
+using UserPanel.Models.Home;
 using UserPanel.Models.User;
 using UserPanel.Services;
 
 namespace UserPanel.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -17,11 +19,12 @@ namespace UserPanel.Controllers
             _configuration = configuration;
         }
 
-        public IActionResult Index()
+        public IActionResult Index([FromQuery] ButtonFilterRate rate = ButtonFilterRate.RATE_1)
         {
-            var User = ConfigManager.GetConfig("appConfig.database.mock.users").Parse<List<UserModel>>();
-
-            return View();
+            HomeModel model = new HomeModel();
+            FilterParametr filterParametr = new FilterParametr() { rate = rate };
+            model.FilterParametr = filterParametr;
+            return View(model);
         }
         [Authorize]
         public IActionResult Privacy()

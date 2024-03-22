@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using System.Linq.Expressions;
+using UserPanel.Models;
+using UserPanel.Services;
 
 namespace UserPanel.Helpers
 {
@@ -32,6 +34,11 @@ namespace UserPanel.Helpers
             }
 
             return new HtmlString(Error);
+        }
+
+        public static bool isVisible(this IHtmlHelper htmlHelper, string components)
+        {
+            return ComponentsAccessor.GetInstance().isVisible(htmlHelper.ViewContext.HttpContext,components);
         }
     }
 }

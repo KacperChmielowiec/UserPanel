@@ -23,6 +23,14 @@
           "Company": "Example Enterprice",
           "Address": "43-316 Bielsko-Biała Cicha 1/4"
         }
+      ],
+      "campanings": [
+        {
+          "id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+          "name": "UserCampaning1",
+          "FK_User": "2",
+          "website":  "wwww.test.pl"
+        }
       ]
     }
   },

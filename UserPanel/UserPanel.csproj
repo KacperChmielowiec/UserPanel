@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -19,6 +19,38 @@
 
   <ItemGroup>
     <None Include="Configs\app.json" />
+    <None Include="wwwroot\js\morris.js-0.5.1\.gitignore" />
+    <None Include="wwwroot\js\morris.js-0.5.1\.travis.yml" />
+    <None Include="wwwroot\js\morris.js-0.5.1\examples\lib\example.js" />
+    <None Include="wwwroot\js\morris.js-0.5.1\Gruntfile.js" />
+    <None Include="wwwroot\js\morris.js-0.5.1\less\morris.core.less" />
+    <None Include="wwwroot\js\morris.js-0.5.1\lib\morris.area.coffee" />
+    <None Include="wwwroot\js\morris.js-0.5.1\lib\morris.bar.coffee" />
+    <None Include="wwwroot\js\morris.js-0.5.1\lib\morris.coffee" />
+    <None Include="wwwroot\js\morris.js-0.5.1\lib\morris.donut.coffee" />
+    <None Include="wwwroot\js\morris.js-0.5.1\lib\morris.grid.coffee" />
+    <None Include="wwwroot\js\morris.js-0.5.1\lib\morris.hover.coffee" />
+    <None Include="wwwroot\js\morris.js-0.5.1\lib\morris.line.coffee" />
+    <None Include="wwwroot\js\morris.js-0.5.1\morris.js" />
+    <None Include="wwwroot\js\morris.js-0.5.1\morris.min.js" />
+    <None Include="wwwroot\js\morris.js-0.5.1\README.md" />
+    <None Include="wwwroot\js\morris.js-0.5.1\spec\lib\area\area_spec.coffee" />
+    <None Include="wwwroot\js\morris.js-0.5.1\spec\lib\bar\bar_spec.coffee" />
+    <None Include="wwwroot\js\morris.js-0.5.1\spec\lib\bar\colours.coffee" />
+    <None Include="wwwroot\js\morris.js-0.5.1\spec\lib\commas_spec.coffee" />
+    <None Include="wwwroot\js\morris.js-0.5.1\spec\lib\donut\donut_spec.coffee" />
+    <None Include="wwwroot\js\morris.js-0.5.1\spec\lib\grid\auto_grid_lines_spec.coffee" />
+    <None Include="wwwroot\js\morris.js-0.5.1\spec\lib\grid\set_data_spec.coffee" />
+    <None Include="wwwroot\js\morris.js-0.5.1\spec\lib\grid\y_label_format_spec.coffee" />
+    <None Include="wwwroot\js\morris.js-0.5.1\spec\lib\hover_spec.coffee" />
+    <None Include="wwwroot\js\morris.js-0.5.1\spec\lib\label_series_spec.coffee" />
+    <None Include="wwwroot\js\morris.js-0.5.1\spec\lib\line\line_spec.coffee" />
+    <None Include="wwwroot\js\morris.js-0.5.1\spec\lib\pad_spec.coffee" />
+    <None Include="wwwroot\js\morris.js-0.5.1\spec\lib\parse_time_spec.coffee" />
+    <None Include="wwwroot\js\morris.js-0.5.1\spec\support\placeholder.coffee" />
+    <None Include="wwwroot\js\morris.js-0.5.1\spec\viz\examples.js" />
+    <None Include="wwwroot\js\morris.js-0.5.1\spec\viz\run.sh" />
+    <None Include="wwwroot\js\morris.js-0.5.1\spec\viz\visual_specs.js" />
   </ItemGroup>
 
   <ItemGroup>

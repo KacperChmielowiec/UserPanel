@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using System.Data;
-using UserPanel.Interfaces;
 using UserPanel.Services;
-
+using UserPanel.Interfaces.Abstract;
 namespace UserPanel.Models.User
 {
     public class MockRepository : UserRepository<UserModel>

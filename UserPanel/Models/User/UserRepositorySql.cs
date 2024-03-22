@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using System.Data;
 using UserPanel.Interfaces;
-
+using UserPanel.Interfaces.Abstract;
 namespace UserPanel.Models.User
 {
     public class UserRepositorySql : UserRepository<UserModel>

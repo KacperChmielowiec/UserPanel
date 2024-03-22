@@ -15,5 +15,9 @@ namespace UserPanel.Services
         {
             await _httpContextAccessor.HttpContext.SignInAsync(scheme, principal);
         }
+        public async Task SignOut()
+        {
+            await _httpContextAccessor.HttpContext.SignOutAsync();
+        }
     }
 }

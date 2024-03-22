@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using UserPanel.Interfaces;
+using UserPanel.Interfaces.Abstract;
+using UserPanel.Models.Campaning;
 using UserPanel.Models.User;
 namespace UserPanel.Providers
 {
@@ -19,7 +21,18 @@ namespace UserPanel.Providers
             }
             else
             {
-                return new UserRepositorySql(DataBase,_mapper);
+                return new UserRepositorySql(DataBase, _mapper);
+            }
+        }
+        public CampaningRepository<Campaning> GetCampaningRepository()
+        {
+            if (_configuration["ENVIROMENT:UserRepositoryType"]?.ToLower() == "mock")
+            {
+                return new MockRepositoryCampaning();
+            }
+            else
+            {
+                throw new AccessViolationException("");
             }
         }
 

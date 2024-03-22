@@ -31,11 +31,20 @@ namespace UserPanel.Controllers
             Hasher = hasher;
         }
 
+        
         [HttpGet]
         public IActionResult Index()
         {
-            return View(new LoginModel() { ReturnUrl = "/"});
+            if (HttpContext.User.Identity.IsAuthenticated) return Redirect("/");
+            return View(new LoginModel() { ReturnUrl = ReturnUrl ?? "/"});
         }
+        [HttpGet]
+        public async Task<IActionResult> Logout()
+        {
+            await UserManager.SignOut();
+            return RedirectToAction("Index");
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> Index([FromForm] LoginModel loginModel)
@@ -43,8 +52,6 @@ namespace UserPanel.Controllers
             if (!ModelState.IsValid) return View(loginModel);
            
             var result = true;
-
-            //string hashed = Hasher.HashPassword(loginModel.Password);
 
             UserModel userModel = DataBaseProvider
                 .GetUserRepository()
@@ -61,7 +68,6 @@ namespace UserPanel.Controllers
                 result = false;
             }
             if (result) {
-
 
                 await UserManager.SignIn(userModel);
                 return Redirect(loginModel.ReturnUrl);

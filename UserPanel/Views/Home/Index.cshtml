@@ -1,8 +1,145 @@
-﻿@{
+﻿@model HomeModel;
+@{
     ViewData["Title"] = "Home Page";
 }
-
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="row p-10">
+    <div class="col-12">
+        <div class="w-100 d-flex justify-between">
+            <div>
+                <h1 class="text-4xl font-semibold">Pulpit</h1>
+            </div>
+            <div>
+                <button onclick="handleFilterClick()" class="btn btn-flat gray"><i class="icon-filter"></i>filtruj</button>
+                <a asp-controller="Home" asp-action="index" asp-route-rate="@(ButtonFilterRate.RATE_1)" onclick="handleFilterClickButton()" class="btn glow btn-flat @(Model.FilterParametr.rate ==  ButtonFilterRate.RATE_1 ? "success" : "white")">7 dni</a>
+                <a asp-controller="Home" asp-action="index" asp-route-rate="@(ButtonFilterRate.RATE_2)"  onclick="handleFilterClickButton()" class="btn glow btn-flat @(Model.FilterParametr.rate ==  ButtonFilterRate.RATE_2 ? "success" : "white")">14 dni</a>
+                <a asp-controller="Home" asp-action="index" asp-route-rate="@(ButtonFilterRate.RATE_3)" onclick="handleFilterClickButton()" class="btn glow btn-flat @(Model.FilterParametr.rate ==  ButtonFilterRate.RATE_3 ? "success" : "white")">30 dni</a>
+            </div
+        </div
+    </div>
 </div>
+<div class="row pt-6 inactive" data-type-search-row>
+        <div class="col-12 container">
+        <div class="relative w-100 d-flex items-center">
+            <select class="w-[80%]" data-id="001" data-role="select" multiple onchange="handleSelect(this.dataset.id)">
+                <option value="evps0">eVPS(30 дней)</option>
+                <option value="evps1">eVPS-1</option>
+                <option value="evps2">eVPS-2</option>
+            </select>
+            <span data-id="001" class="absolute top-1/2 -translate-y-1/2 pl-2 placeholder-span">choose campaning</span>
+            <span class="input-group-addon d-block">
+                <button name="filter_submit" data-href="form" data-form="form_65f9fefd17162" class="btn-flat success btn-xs">
+                    <i class="icon-filter"></i> Zobacz
+               </button>
+            </span>
+        </div>
+        </div>
+ </div>
+ <div class="row mt-10">
+    <div class="col-12">
+        <div class="w-100">
+            <div class="mb-5">
+                <h1 class="text-2xl font-semibold">Statystyki</h1>
+            </div>
+            <div class="col-12 d-flex gap-x-5 flex-wrap">
+                <div>
+                    <div class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                        <div id="visit"></div>
+                    </div>
+                     <div class="absolute">
+                        <p class="p-2 text-lg italic text-gray-500">Views statistic</p>
+                    </div>
+
+                </div>
+                <div>
+                    <div class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                        <div id="clicks"></div>
+                    </div>
+                     <div class="absolute">
+                        <p class="p-2 text-lg italic text-gray-500">Clicks statistic</p>
+                    </div>
+
+                </div>
+                   <div>
+                    <div class="block max-w-xl p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                        <div id="budged"></div>
+                    </div>
+                     <div class="absolute">
+                        <p class="p-2 text-lg italic text-gray-500">Budged statistic</p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row mt-20">
+    <div class="w-full row-stats grid grid-cols-3 justify-center justify-items-center items-center min-h-[200px]">
+		<div>
+			<h4>Najczęściej wyświetlane</h4>
+						<p>brak statystyk towarów</p>
+		</div>
+		<div>
+			<h4>Najczęściej zamawiane</h4>
+			<p>brak statystyk towarów</p>
+	    </div>
+		<div>
+			<h4>Unikatowi odwiedzający</h4>
+		</div>
+    </div>
+</div>
+<script>
+    const handleSelect = (id) => {  
+        [...document.querySelectorAll(".placeholder-span")]
+        .find(item => item.dataset.id == id)
+        .style.display =  event.target.selectedOptions.length ? 'none' : 'block';
+    }
+    const handleFilterClick = () => {
+        document.querySelector("div.row[data-type-search-row]").classList.toggle("inactive")
+    }
+    const handleFilterClickButton = () => {
+
+    }
+    Morris.Bar({
+        element: 'visit',
+        data: [
+            { x: '2011 Q1', y: 3, z: 2, a: 3 },
+            { x: '2011 Q2', y: 2, z: null, a: 1 },
+            { x: '2011 Q3', y: 0, z: 2, a: 4 },
+            { x: '2011 Q4', y: 2, z: 4, a: 3 }
+        ],
+        xkey: 'x',
+        ykeys: ['y', 'z', 'a'],
+        labels: ['Y', 'Z', 'A']
+    }).on('click', function (i, row) {
+        console.log(i, row);
+    })
+    Morris.Donut({
+      element: 'clicks',
+      data: [
+        {value: 70, label: 'foo'},
+        {value: 15, label: 'bar'},
+        {value: 10, label: 'baz'},
+        {value: 5, label: 'A really really long label'}
+      ],
+      formatter: function (x) { return x + "%"}
+    }).on('click', function(i, row){
+      console.log(i, row);
+    });
+
+    var decimal_data = [];
+    for (var x = 0; x <= 360; x += 10) {
+      decimal_data.push({
+        x: x,
+        y: Math.sin(Math.PI * x / 180).toFixed(4)
+      });
+    }
+    window.m = Morris.Line({
+      element: 'budged',
+      data: decimal_data,
+      xkey: 'x',
+      ykeys: ['y'],
+      labels: ['sin(x)'],
+      parseTime: false,
+      goals: [-1, 0, 1]
+    });
+</script>
