@@ -40,8 +40,8 @@ namespace UserPanel.Services
         {
             List<Claim> claims = new List<Claim>();
             claims.Add(new Claim(ClaimTypes.Role, Enum.GetName(typeof(AppReferences.UserRole), userModel.Role)));
-            claims.Add(new Claim("Id",userModel.Id.ToString()));
-            ClaimsIdentity identity = new ClaimsIdentity(claims,scheme);
+            claims.Add(new Claim("Id", userModel.Id.ToString()));
+            ClaimsIdentity identity = new ClaimsIdentity(claims, scheme);
             var principal = new ClaimsPrincipal(identity);
             await _signInService.SignIn(principal);
 

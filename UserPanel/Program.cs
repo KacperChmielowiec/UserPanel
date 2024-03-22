@@ -1,10 +1,13 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using UserPanel.Helpers;
+using UserPanel.Installers;
 using UserPanel.Interfaces;
+using UserPanel.Models.Config;
 using UserPanel.Providers;
 using UserPanel.Services;
 using UserPanel.Services.database;
@@ -32,6 +35,8 @@ builder.Services.AddSession(options =>
 builder.Services.Configure<EmailConfiguration>(builder.Configuration.GetSection("STMP_CONFIG"));
 
 
+});
+builder.Services.Configure<EmailConfiguration>(builder.Configuration.GetSection("STMP_CONFIG"));
 
 var app = builder.Build();
 
@@ -60,5 +65,5 @@ app.MapControllerRoute(
     defaults: new { controller = "Home", action = "Index" });
 
 
-
+app.UseStatusCodePagesWithRedirects("/Code/{0}");
 app.Run();

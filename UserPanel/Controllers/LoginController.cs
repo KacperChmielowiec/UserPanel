@@ -10,6 +10,7 @@ using UserPanel.Models;
 using UserPanel.Models.User;
 using UserPanel.Providers;
 using UserPanel.References;
+using UserPanel.Helpers;
 
 namespace UserPanel.Controllers
 {
@@ -33,7 +34,7 @@ namespace UserPanel.Controllers
 
         
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Index([FromQuery(Name = "ReturnUrl")] string? ReturnUrl)
         {
             if (HttpContext.User.Identity.IsAuthenticated) return Redirect("/");
             return View(new LoginModel() { ReturnUrl = ReturnUrl ?? "/"});
@@ -73,6 +74,7 @@ namespace UserPanel.Controllers
                 return Redirect(loginModel.ReturnUrl);
 
             }
+       
             return View(loginModel);
             
         }

@@ -16,8 +16,9 @@ namespace UserPanel.Helpers
                 .ForMember(x => x.Address, (conf) => conf.MapFrom((src, dest, destMember, context) => src.Field<string>("Address")))
                 .ForMember(x => x.Company, (conf) => conf.MapFrom((src, dest, destMember, context) => src.Field<string>("Company")))
                 .ForMember(x => x.Password, (conf) => conf.MapFrom((src, dest, destMember, context) => src.Field<string>("Password")))
-                .ForMember(x => x.Role, (conf) => conf.MapFrom((src, dest, destMember, context) => AppReferences.RoleMap[src?.Field<string>("Role") ?? "User"] ));
+                .ForMember(x => x.Role, (conf) => conf.MapFrom((src, dest, destMember, context) => AppReferences.RoleMap[src?.Field<string>("Role") ?? "User"]));
 
+            CreateMap<RegisterModel, UserModel>();
         }
     }
 }

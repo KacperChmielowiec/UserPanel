@@ -26,6 +26,7 @@
                     Sign in to your account
                 </h1>
                 <form class="space-y-4 md:space-y-6" method="post" asp-action="index", asp-controller="Login">
+                    <input type="hidden" asp-for="ReturnUrl" />
                     <div>
                         <span asp-validation-for="Email" class="text-danger"></span>
                         <label asp-for="Email" for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
