@@ -9,12 +9,14 @@ namespace UserPanel.Models
     {
         [BindNever]
         public string name { get; set;}
-        [ConfigurationKeyName("auth")]
-        public bool isAuth{ get; set; }
-        [ConfigurationKeyName("roles")]
+        [ConfigurationKeyName("TypeAccess")]
+        public string TypeAccess { get; set; }
+        [ConfigurationKeyName("Auth")]
+        public bool Auth{ get; set; }
+        [ConfigurationKeyName("Roles")]
         public UserRole[] Roles { get; set; }
 
-        [ConfigurationKeyName("routesForbidden")]
-        public string[] forbiddenPath { get; set; }
+        [ConfigurationKeyName("Pages")]
+        public string[] Pages { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.ViewComponents;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Org.BouncyCastle.Asn1.Cms.Ecc;
 using System.Reflection;
 using UserPanel.Helpers;
 using UserPanel.Models;
@@ -26,22 +27,22 @@ namespace UserPanel.Services
        public bool isVisible(HttpContext context, string components)
        {
            bool visible = true;
-           ComponentsDescriptor descriptor = ConfigurationHelper.config.GetSection("components:" + components).Get<ComponentsDescriptor>();
+           ComponentsDescriptor descriptor = ConfigurationHelper.config.GetSection($"SectionsAccess:{components}").Get<ComponentsDescriptor>();
            if(descriptor == null) { return false; }
            if (context == null) return false;
 
            descriptor.name = components;
-           if (descriptor.isAuth)
-            { 
-                visible = context.User.Identity.IsAuthenticated ? true : false;
-                visible = Enumerable.Range(0, descriptor.Roles.Length)
-                    .Select(x => context.User.IsInRole(Enum.GetName(typeof(UserRole),descriptor.Roles[x])))
+           if (descriptor.Auth)
+           { 
+                visible = context.User.Identity.IsAuthenticated && Enumerable.Range(0, descriptor.Roles.Length)
+                    .Select(x => context.User.IsInRole(Enum.GetName(typeof(UserRole), descriptor.Roles[x])))
                     .FirstOrDefault(x => x == true) ? true : false;
+
            }
-           if(descriptor.forbiddenPath.Contains("*"))
-                visible = descriptor.forbiddenPath.Contains(context.Request.Path.Value.ToLower());
+           if(descriptor.TypeAccess == AppReferences.TypeAccessForbidden)
+                visible = !descriptor.Pages.Contains(context.Request.Path.Value.ToLower()) && visible;
            else
-                visible = !descriptor.forbiddenPath.Contains(context.Request.Path.Value.ToLower());
+                visible = descriptor.Pages.Contains(context.Request.Path.Value.ToLower()) && visible;
 
             return visible;
        }

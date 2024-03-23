@@ -74,7 +74,7 @@ namespace UserPanel.Controllers
                 return Redirect(loginModel.ReturnUrl);
 
             }
-       
+                
             return View(loginModel);
             
         }

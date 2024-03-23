@@ -9,6 +9,9 @@ namespace UserPanel.References
         public static string CONFIG_APP_PATH = "";
         public static string USER_MOCK_PATH = "";
 
+        public static string CONFIG_MOCK = "mock";
+
+        public static string TypeAccessForbidden = "Forbidden";
 
         public static Dictionary<string, UserRole> RoleMap = new Dictionary<string, UserRole>()
         {

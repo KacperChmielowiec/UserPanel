@@ -3,6 +3,7 @@ using UserPanel.Interfaces;
 using UserPanel.Interfaces.Abstract;
 using UserPanel.Models.Campaning;
 using UserPanel.Models.User;
+using UserPanel.References;
 namespace UserPanel.Providers
 {
     public class DataBaseProvider
@@ -15,7 +16,7 @@ namespace UserPanel.Providers
         }
         public UserRepository<UserModel> GetUserRepository()
         {
-            if (_configuration["ENVIROMENT:UserRepositoryType"]?.ToLower() == "mock")
+            if (_configuration["ENVIROMENT:UserRepositoryType"]?.ToLower() == AppReferences.CONFIG_MOCK)
             {
                 return new MockRepository();
             }
@@ -26,7 +27,7 @@ namespace UserPanel.Providers
         }
         public CampaningRepository<Campaning> GetCampaningRepository()
         {
-            if (_configuration["ENVIROMENT:UserRepositoryType"]?.ToLower() == "mock")
+            if (_configuration["ENVIROMENT:UserRepositoryType"]?.ToLower() == AppReferences.CONFIG_MOCK)
             {
                 return new MockRepositoryCampaning();
             }

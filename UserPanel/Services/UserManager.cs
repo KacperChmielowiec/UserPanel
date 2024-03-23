@@ -82,7 +82,7 @@ namespace UserPanel.Services
 
         private async Task SignInAsAdmin(UserModel userModel, string scheme)
         {
-
+            throw new NotImplementedException();
         }
 
 
