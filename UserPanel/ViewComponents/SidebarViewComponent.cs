@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using UserPanel.Helpers;
 using UserPanel.Interfaces.Abstract;
 using UserPanel.Models.Campaning;
 using UserPanel.Models.components;
@@ -17,9 +18,7 @@ namespace UserPanel.ViewComponents
         }
         public async Task<IViewComponentResult> InvokeAsync()
         { 
-            Claim claim = HttpContext.User.Claims.ToArray().Where(claim => claim.Type == "Id").FirstOrDefault();
-            List<Campaning> campaning = Provider.GetCampaningRepository().getCampaningsByUser(int.Parse(claim.Value));
-            SidebarModel sidebarModel = new SidebarModel() { campaningList = campaning };
+            SidebarModel sidebarModel = new SidebarModel() { campaningList = HttpContext.Session.GetJson<List<Campaning>>("sessionCamp") };
             return View(sidebarModel);
         }
     }

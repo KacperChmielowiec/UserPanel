@@ -18,6 +18,7 @@ namespace UserPanel.Installers
             builder.Services.AddScoped<DataBase, SqlDataBase>();
             builder.Services.AddScoped<DataBaseProvider>();
             builder.Services.AddScoped<UserManager, UserManager>();
+            builder.Services.AddScoped<CampaningManager, CampaningManager>();
             builder.Services.AddScoped<SignInService>();
             builder.Services.AddScoped<PasswordHasher>();
             builder.Services.AddAuthentication(options =>

@@ -2292,3 +2292,11 @@ padding-left: 25px;*/
     width: 100%;
     margin: 10px !important;
 }
+table {
+    display: table;
+    border-collapse: separate;
+    box-sizing: border-box;
+    text-indent: initial;
+    border-spacing: 2px;
+    border-color: gray;
+}

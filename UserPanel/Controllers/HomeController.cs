@@ -13,10 +13,12 @@ namespace UserPanel.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IConfiguration _configuration;
-        public HomeController(ILogger<HomeController> logger,IConfiguration configuration)
+        private readonly CampaningManager _campaningManager;
+        public HomeController(ILogger<HomeController> logger,IConfiguration configuration, CampaningManager campaningManager)
         {
             _logger = logger;
             _configuration = configuration;
+            _campaningManager = campaningManager;
         }
 
         public IActionResult Index([FromQuery] ButtonFilterRate rate = ButtonFilterRate.RATE_1)
@@ -27,9 +29,17 @@ namespace UserPanel.Controllers
             return View(model);
         }
         [Authorize]
-        public IActionResult Privacy()
+        [HttpGet("campaning")]
+        public IActionResult Campaning()
+        { 
+            return View(_campaningManager.GetCampanings());
+        }
+        [Authorize]
+        [HttpGet("SetCampaning")]
+        public IActionResult SetCampaning([FromQuery] Guid cmp_id)
         {
-            return BadRequest();
+            _campaningManager.SetCampaningSession(cmp_id);
+            return View("Index");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
