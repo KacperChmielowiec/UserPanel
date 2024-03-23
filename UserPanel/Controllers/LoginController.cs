@@ -42,6 +42,7 @@ namespace UserPanel.Controllers
         [HttpGet]
         public async Task<IActionResult> Logout()
         {
+            HttpContext.Session.Clear();
             await UserManager.SignOut();
             return RedirectToAction("Index");
         }

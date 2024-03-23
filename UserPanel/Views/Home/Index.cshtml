@@ -10,9 +10,9 @@
             </div>
             <div>
                 <button onclick="handleFilterClick()" class="btn btn-flat gray"><i class="icon-filter"></i>filtruj</button>
-                <a asp-controller="Home" asp-action="index" asp-route-rate="@(ButtonFilterRate.RATE_1)" onclick="handleFilterClickButton()" class="btn glow btn-flat @(Model.FilterParametr.rate ==  ButtonFilterRate.RATE_1 ? "success" : "white")">7 dni</a>
-                <a asp-controller="Home" asp-action="index" asp-route-rate="@(ButtonFilterRate.RATE_2)"  onclick="handleFilterClickButton()" class="btn glow btn-flat @(Model.FilterParametr.rate ==  ButtonFilterRate.RATE_2 ? "success" : "white")">14 dni</a>
-                <a asp-controller="Home" asp-action="index" asp-route-rate="@(ButtonFilterRate.RATE_3)" onclick="handleFilterClickButton()" class="btn glow btn-flat @(Model.FilterParametr.rate ==  ButtonFilterRate.RATE_3 ? "success" : "white")">30 dni</a>
+                <a asp-controller="Home" asp-action="index" asp-route-rate="@(ButtonFilterRate.RATE_1)" onclick="handleFilterClickButton()" class="btn glow btn-flat @(Model?.FilterParametr.rate ==  ButtonFilterRate.RATE_1 ? "success" : "white")">7 dni</a>
+                <a asp-controller="Home" asp-action="index" asp-route-rate="@(ButtonFilterRate.RATE_2)"  onclick="handleFilterClickButton()" class="btn glow btn-flat @(Model?.FilterParametr.rate ==  ButtonFilterRate.RATE_2 ? "success" : "white")">14 dni</a>
+                <a asp-controller="Home" asp-action="index" asp-route-rate="@(ButtonFilterRate.RATE_3)" onclick="handleFilterClickButton()" class="btn glow btn-flat @(Model?.FilterParametr.rate ==  ButtonFilterRate.RATE_3 ? "success" : "white")">30 dni</a>
             </div
         </div
     </div>
