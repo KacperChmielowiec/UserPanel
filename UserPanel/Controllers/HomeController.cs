@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Diagnostics;
 using UserPanel.Models;
 using UserPanel.Models.Home;
+using UserPanel.Models.Campaning;
 using UserPanel.Models.User;
 using UserPanel.Services;
 
@@ -25,9 +26,10 @@ namespace UserPanel.Controllers
         public IActionResult Index(IFormCollection form,[FromQuery] int timerate = 7)
         {
             HomeModel model = new HomeModel();
-            FilterParametr filterParametr = new FilterParametr() { rate = (ButtonFilterRate)Enum.Parse(typeof(ButtonFilterRate), timerate.ToString())};
-            model.FilterParametr = filterParametr;
-            model.campaningsUser = _campaningManager.GetCampanings();
+            model.FilterParametr = new FilterParametr() {
+                rate = (ButtonFilterRate)Enum.Parse(typeof(ButtonFilterRate), timerate.ToString()),
+                FilterCampanings = _campaningManager.GetCampanings().Select(c => new CampaningFilterModel(c, form["campaning"].Contains(c.id.ToString()))).ToList()
+            };
             return View(model);
         }
         [Authorize]
