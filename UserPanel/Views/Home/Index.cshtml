@@ -26,10 +26,14 @@
         <div class="w-100 d-flex items-center">
             <form action="@('/'+ Context.Request.QueryString.ToString())" method="post" class="relative w-100 d-flex items-center">
                 <div class="w-100 d-flex items-center">
-                    <select name="agent" class="w-full" data-id="001" data-role="select" multiple onchange="handleSelect(this.dataset.id)">
-                    @foreach(Campaning c in Model.campaningsUser ?? new List<Campaning>())
+                    <select name="campaning" class="w-full" data-id="001" data-role="select" multiple onchange="handleSelect(this.dataset.id)">
+                    @foreach(var c in Model.FilterParametr.FilterCampanings.Where(c => c.Selected) ?? new List<CampaningFilterModel>())
                     {
-                        <option value="@c.id">@c.name</option>
+                        <option selected value="@c.Campaning.id">@c.Campaning.name</option>
+                    }
+                    @foreach (var c in Model.FilterParametr.FilterCampanings.Where(c => !c.Selected) ?? new List<CampaningFilterModel>())
+                    {
+                        <option value="@c.Campaning.id">@c.Campaning.name</option>
                     }
                     </select>
                 <span data-id="001" class="absolute top-1/2 -translate-y-1/2 pl-2 placeholder-span">choose campaning</span>
@@ -97,9 +101,14 @@
     </div>
 </div>
 <script>
-    const handleFilterPost = () => {
-        var url = '/?test=2';
-        window.location.href = url;
+    const filterInit = () => {
+        var select = document.querySelector("select");
+        var selectedOption = select.options[select.selectedIndex];
+        if (selectedOption.selected) {
+            document.querySelector(".placeholder-span")
+                .style.display = "none";
+        }
+
     }
     const handleSelect = (id) => {  
         [...document.querySelectorAll(".placeholder-span")]
@@ -108,9 +117,6 @@
     }
     const handleFilterClick = () => {
         document.querySelector("div.row[data-type-search-row]").classList.toggle("inactive")
-    }
-    const handleFilterClickButton = () => {
-
     }
     Morris.Bar({
         element: 'visit',
@@ -127,32 +133,33 @@
         console.log(i, row);
     })
     Morris.Donut({
-      element: 'clicks',
-      data: [
-        {value: 70, label: 'foo'},
-        {value: 15, label: 'bar'},
-        {value: 10, label: 'baz'},
-        {value: 5, label: 'A really really long label'}
-      ],
-      formatter: function (x) { return x + "%"}
-    }).on('click', function(i, row){
-      console.log(i, row);
+        element: 'clicks',
+        data: [
+            { value: 70, label: 'foo' },
+            { value: 15, label: 'bar' },
+            { value: 10, label: 'baz' },
+            { value: 5, label: 'A really really long label' }
+        ],
+        formatter: function (x) { return x + "%" }
+    }).on('click', function (i, row) {
+        console.log(i, row);
     });
 
     var decimal_data = [];
     for (var x = 0; x <= 360; x += 10) {
-      decimal_data.push({
-        x: x,
-        y: Math.sin(Math.PI * x / 180).toFixed(4)
-      });
+        decimal_data.push({
+            x: x,
+            y: Math.sin(Math.PI * x / 180).toFixed(4)
+        });
     }
     window.m = Morris.Line({
-      element: 'budged',
-      data: decimal_data,
-      xkey: 'x',
-      ykeys: ['y'],
-      labels: ['sin(x)'],
-      parseTime: false,
-      goals: [-1, 0, 1]
+        element: 'budged',
+        data: decimal_data,
+        xkey: 'x',
+        ykeys: ['y'],
+        labels: ['sin(x)'],
+        parseTime: false,
+        goals: [-1, 0, 1]
     });
+    filterInit()
 </script>
