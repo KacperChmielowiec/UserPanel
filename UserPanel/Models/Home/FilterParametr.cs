@@ -2,9 +2,9 @@
 {
     public enum ButtonFilterRate
     {
-        RATE_1,
-        RATE_2, 
-        RATE_3,
+        RATE_1 = 7,
+        RATE_2 = 14, 
+        RATE_3 = 30,
     }
     public class FilterParametr
     {

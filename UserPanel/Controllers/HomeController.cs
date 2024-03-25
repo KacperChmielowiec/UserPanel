@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Diagnostics;
 using UserPanel.Models;
 using UserPanel.Models.Home;
@@ -21,11 +22,12 @@ namespace UserPanel.Controllers
             _campaningManager = campaningManager;
         }
 
-        public IActionResult Index([FromQuery] ButtonFilterRate rate = ButtonFilterRate.RATE_1)
+        public IActionResult Index(IFormCollection form,[FromQuery] int timerate = 7)
         {
             HomeModel model = new HomeModel();
-            FilterParametr filterParametr = new FilterParametr() { rate = rate };
+            FilterParametr filterParametr = new FilterParametr() { rate = (ButtonFilterRate)Enum.Parse(typeof(ButtonFilterRate), timerate.ToString())};
             model.FilterParametr = filterParametr;
+            model.campaningsUser = _campaningManager.GetCampanings();
             return View(model);
         }
         [Authorize]
