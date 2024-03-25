@@ -1,6 +1,10 @@
 ﻿@model HomeModel;
 @{
     ViewData["Title"] = "Home Page";
+    int rate1 = (int)ButtonFilterRate.RATE_1;
+    int rate2 = (int)ButtonFilterRate.RATE_2;
+    int rate3 = (int)ButtonFilterRate.RATE_3;
+    
 }
 <div class="row p-10">
     <div class="col-12">
@@ -10,27 +14,32 @@
             </div>
             <div>
                 <button onclick="handleFilterClick()" class="btn btn-flat gray"><i class="icon-filter"></i>filtruj</button>
-                <a asp-controller="Home" asp-action="index" asp-route-rate="@(ButtonFilterRate.RATE_1)" onclick="handleFilterClickButton()" class="btn glow btn-flat @(Model?.FilterParametr.rate ==  ButtonFilterRate.RATE_1 ? "success" : "white")">7 dni</a>
-                <a asp-controller="Home" asp-action="index" asp-route-rate="@(ButtonFilterRate.RATE_2)"  onclick="handleFilterClickButton()" class="btn glow btn-flat @(Model?.FilterParametr.rate ==  ButtonFilterRate.RATE_2 ? "success" : "white")">14 dni</a>
-                <a asp-controller="Home" asp-action="index" asp-route-rate="@(ButtonFilterRate.RATE_3)" onclick="handleFilterClickButton()" class="btn glow btn-flat @(Model?.FilterParametr.rate ==  ButtonFilterRate.RATE_3 ? "success" : "white")">30 dni</a>
-            </div
-        </div
+                <a asp-controller="Home" asp-action="index" asp-route-timerate="@rate1" onclick="handleFilterClickButton()" class="btn glow btn-flat @(Model?.FilterParametr.rate ==  ButtonFilterRate.RATE_1 ? "success" : "white")">7 dni</a>
+                <a asp-controller="Home" asp-action="index" asp-route-timerate="@rate2"  onclick="handleFilterClickButton()" class="btn glow btn-flat @(Model?.FilterParametr.rate ==  ButtonFilterRate.RATE_2 ? "success" : "white")">14 dni</a>
+                <a asp-controller="Home" asp-action="index" asp-route-timerate="@rate3" onclick="handleFilterClickButton()" class="btn glow btn-flat @(Model?.FilterParametr.rate ==  ButtonFilterRate.RATE_3 ? "success" : "white")">30 dni</a>
+            </div>
+        </div>
     </div>
 </div>
 <div class="row pt-6 inactive" data-type-search-row>
         <div class="col-12 container">
-        <div class="relative w-100 d-flex items-center">
-            <select class="w-[80%]" data-id="001" data-role="select" multiple onchange="handleSelect(this.dataset.id)">
-                <option value="evps0">eVPS(30 дней)</option>
-                <option value="evps1">eVPS-1</option>
-                <option value="evps2">eVPS-2</option>
-            </select>
-            <span data-id="001" class="absolute top-1/2 -translate-y-1/2 pl-2 placeholder-span">choose campaning</span>
-            <span class="input-group-addon d-block">
-                <button name="filter_submit" data-href="form" data-form="form_65f9fefd17162" class="btn-flat success btn-xs">
-                    <i class="icon-filter"></i> Zobacz
-               </button>
-            </span>
+        <div class="w-100 d-flex items-center">
+            <form action="@('/'+ Context.Request.QueryString.ToString())" method="post" class="relative w-100 d-flex items-center">
+                <div class="w-100 d-flex items-center">
+                    <select name="agent" class="w-full" data-id="001" data-role="select" multiple onchange="handleSelect(this.dataset.id)">
+                    @foreach(Campaning c in Model.campaningsUser ?? new List<Campaning>())
+                    {
+                        <option value="@c.id">@c.name</option>
+                    }
+                    </select>
+                <span data-id="001" class="absolute top-1/2 -translate-y-1/2 pl-2 placeholder-span">choose campaning</span>
+                <span class="input-group-addon h-[40px] d-block">
+                    <button type="submit" class="btn-flat d-flex success">
+                        <i class="icon-filter"></i> Zobacz
+                   </button>
+                </span>
+                </div>
+            </form>
         </div>
         </div>
  </div>
@@ -88,6 +97,10 @@
     </div>
 </div>
 <script>
+    const handleFilterPost = () => {
+        var url = '/?test=2';
+        window.location.href = url;
+    }
     const handleSelect = (id) => {  
         [...document.querySelectorAll(".placeholder-span")]
         .find(item => item.dataset.id == id)
