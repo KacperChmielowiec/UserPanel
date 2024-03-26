@@ -1,4 +1,4 @@
-﻿using UserPanel.Models.Campaning;
+﻿using UserPanel.Models.Camp;
 
 namespace UserPanel.Models.Home
 {
@@ -11,6 +11,6 @@ namespace UserPanel.Models.Home
     public class FilterParametr
     {
        public ButtonFilterRate rate;
-       public List<CampaningFilterModel> FilterCampanings { get; set; }
+       public List<Campaning> FilterCampanings { get; set; }
     }
 }

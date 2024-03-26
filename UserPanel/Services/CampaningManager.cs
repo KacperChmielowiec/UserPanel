@@ -1,17 +1,18 @@
 ﻿using System.Security.Claims;
 using UserPanel.Helpers;
-using UserPanel.Models.Campaning;
+using UserPanel.Interfaces;
+using UserPanel.Models.Camp;
 using UserPanel.Providers;
 
 namespace UserPanel.Services
 {
     public class CampaningManager
     {
-        private DataBaseProvider _provider;
+        private IDataBaseProvider _provider;
         private IConfiguration _configuration;
         private IHttpContextAccessor _contextAccessor;
      
-        public CampaningManager(DataBaseProvider provider, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public CampaningManager(IDataBaseProvider provider, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             this._provider = provider;
             _configuration = configuration;

@@ -14,11 +14,11 @@ namespace UserPanel.Services
     {
      
         private SignInService _signInService;
-        private DataBaseProvider _provider;
+        private IDataBaseProvider _provider;
         private IConfiguration _configuration;
         EmailService _emailService;
         IHttpContextAccessor HttpContextAccessor;
-        public UserManager(SignInService signInService, DataBaseProvider provider, IConfiguration configuration, EmailService emailService, IHttpContextAccessor httpContextAccessor)
+        public UserManager(SignInService signInService, IDataBaseProvider provider, IConfiguration configuration, EmailService emailService, IHttpContextAccessor httpContextAccessor)
         {
             this._signInService = signInService;
             this._provider = provider;
