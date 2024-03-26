@@ -36,14 +36,14 @@ namespace UserPanel.Controllers
                     .ToArray();
 
                 acc.Clicks = acc.Clicks.Zip(curr.Clicks, (x, y) => x += y)
-                      .Concat(acc.Clicks.Skip(curr.Clicks.Length))
-                      .Concat(curr.Clicks.Skip(acc.Clicks.Length))
-                      .ToArray();
+                    .Concat(acc.Clicks.Skip(curr.Clicks.Length))
+                    .Concat(curr.Clicks.Skip(acc.Clicks.Length))
+                    .ToArray();
 
                 acc.Budged = acc.Budged.Zip(curr.Budged, (x, y) => x += y)
-                      .Concat(acc.Budged.Skip(curr.Budged.Length))
-                      .Concat(curr.Budged.Skip(acc.Budged.Length))
-                      .ToArray();
+                    .Concat(acc.Budged.Skip(curr.Budged.Length))
+                    .Concat(curr.Budged.Skip(acc.Budged.Length))
+                    .ToArray();
 
                 return acc;
             });
