@@ -1,19 +1,18 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using UserPanel.Helpers;
-using UserPanel.Interfaces.Abstract;
-using UserPanel.Models.Campaning;
 using UserPanel.Models.components;
 using UserPanel.Providers;
+using UserPanel.Interfaces;
+using UserPanel.Models.Camp;
 namespace UserPanel.ViewComponents
 {
     [Authorize]
     [ViewComponent(Name = "Sidebar")]
     public class SidebarViewComponent : ViewComponent
     {
-        private DataBaseProvider Provider;
-        public SidebarViewComponent(DataBaseProvider provider ) { 
+        private IDataBaseProvider Provider;
+        public SidebarViewComponent(IDataBaseProvider provider ) { 
             this.Provider = provider;
         }
         public async Task<IViewComponentResult> InvokeAsync()

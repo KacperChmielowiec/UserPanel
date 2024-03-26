@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
 using UserPanel.Interfaces;
 using UserPanel.Interfaces.Abstract;
-using UserPanel.Models.Campaning;
+using UserPanel.Models.Camp;
 using UserPanel.Models.User;
 using UserPanel.References;
 namespace UserPanel.Providers
 {
-    public class DataBaseProvider
+    public class DataBaseProvider : IDataBaseProvider
     {
         private IConfiguration _configuration;
         private IMapper _mapper;
@@ -37,5 +37,16 @@ namespace UserPanel.Providers
             }
         }
 
+        public GroupStatRepository<GroupStat> GetGroupStatRepository()
+        {
+            if (_configuration["ENVIROMENT:UserRepositoryType"]?.ToLower() == AppReferences.CONFIG_MOCK)
+            {
+                return new MockRepositoryGroupStat();
+            }
+            else
+            {
+                throw new AccessViolationException("");
+            }
+        }
     }
 }

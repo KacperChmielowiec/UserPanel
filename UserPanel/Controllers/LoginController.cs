@@ -11,20 +11,21 @@ using UserPanel.Models.User;
 using UserPanel.Providers;
 using UserPanel.References;
 using UserPanel.Helpers;
+using UserPanel.Interfaces;
 
 namespace UserPanel.Controllers
 {
     public class LoginController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private DataBaseProvider DataBaseProvider { get; set; }
+        private IDataBaseProvider DataBaseProvider { get; set; }
         private UserManager UserManager;
         private PasswordHasher Hasher;
 
         private static string INVALID_USER = ConfigManager.GetConfig("appConfig.messages.loginMessages.InvalidPassword").ToString();
         private static string NOT_FOUND = ConfigManager.GetConfig("appConfig.messages.loginMessages.NotFound").ToString();
 
-        public LoginController(ILogger<HomeController> logger, DataBaseProvider dataBase, UserManager userManager, PasswordHasher hasher)
+        public LoginController(ILogger<HomeController> logger, IDataBaseProvider dataBase, UserManager userManager, PasswordHasher hasher)
         {
             _logger = logger;
             DataBaseProvider = dataBase;

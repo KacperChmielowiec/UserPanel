@@ -16,7 +16,7 @@ namespace UserPanel.Installers
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddScoped<DataBase, SqlDataBase>();
-            builder.Services.AddScoped<DataBaseProvider>();
+            builder.Services.AddScoped<IDataBaseProvider, DataBaseProvider>();
             builder.Services.AddScoped<UserManager, UserManager>();
             builder.Services.AddScoped<CampaningManager, CampaningManager>();
             builder.Services.AddScoped<SignInService>();

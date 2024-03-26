@@ -4,8 +4,6 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Diagnostics;
 using UserPanel.Models;
 using UserPanel.Models.Home;
-using UserPanel.Models.Campaning;
-using UserPanel.Models.User;
 using UserPanel.Services;
 
 namespace UserPanel.Controllers
@@ -28,7 +26,7 @@ namespace UserPanel.Controllers
             HomeModel model = new HomeModel();
             model.FilterParametr = new FilterParametr() {
                 rate = (ButtonFilterRate)Enum.Parse(typeof(ButtonFilterRate), timerate.ToString()),
-                FilterCampanings = _campaningManager.GetCampanings().Select(c => new CampaningFilterModel(c, form["campaning"].Contains(c.id.ToString()))).ToList()
+                FilterCampanings = _campaningManager.GetCampanings()
             };
             return View(model);
         }

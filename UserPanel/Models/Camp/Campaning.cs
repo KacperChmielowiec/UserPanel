@@ -1,4 +1,4 @@
-﻿namespace UserPanel.Models.Campaning
+﻿namespace UserPanel.Models.Camp
 {
     public class Campaning
     {
