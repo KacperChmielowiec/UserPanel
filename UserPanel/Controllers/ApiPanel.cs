@@ -20,13 +20,41 @@ namespace UserPanel.Controllers
                 return NotFound();
             }
 
+            var campStat = GetStat(id);
+           
+            if(campStat == null) return NotFound();
+
+            return Ok(campStat);
+        }
+
+        [HttpPost("campstats")]
+        public IActionResult GetListCampaningStatistic([FromBody] Guid[] ids)
+        {
+            if(ids?.Count() == 0 || ids?.Count() == null) {
+                return NotFound();
+            }
+            List<CampaningStat> campaningStats = new List<CampaningStat>();
+            foreach (var id in ids)
+            {
+                var buffor = GetStat(id);
+                if(buffor == null) continue;
+                campaningStats.Add(buffor);
+            }
+
+            if(campaningStats.Count > 0)
+                return Ok(campaningStats);
+            return NotFound();
+        }
+
+        private CampaningStat GetStat(Guid id)
+        {
             var list = DataBaseProvider
-                .GetGroupStatRepository()
-                .getGroupStatByCampId(id);
+               .GetGroupStatRepository()
+               .getGroupStatByCampId(id);
 
-            if(list == null || list.Count == 0) return NotFound();
+            string name = DataBaseProvider.GetCampaningRepository().getCampaningById(id)?.name;
 
-            list.Sort((x, y) => x.Budged.Length < y.Budged.Length ? 1 : -1);
+            if (list == null || list.Count == 0) return null;
 
             var campStat = list.Aggregate((acc, curr) =>
             {
@@ -48,32 +76,7 @@ namespace UserPanel.Controllers
                 return acc;
             });
 
-            return Ok(new CampaningStat(campStat.Id_Camp, campStat.Visit, campStat.Clicks, campStat.Budged));
-        }
-
-        // GET api/<ApiPanel>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/<ApiPanel>
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/<ApiPanel>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<ApiPanel>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            return new CampaningStat(campStat.Id_Camp, campStat.Visit, campStat.Clicks, campStat.Budged,name);
         }
     }
 }

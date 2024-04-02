@@ -24,6 +24,6 @@ namespace UserPanel.Models.User
         {
             return ConfigManager.GetConfig(Path).Parse<List<Campaning>>();
         }
-
+      
     }
 }

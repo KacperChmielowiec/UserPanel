@@ -21,7 +21,7 @@ namespace UserPanel.Controllers
             _campaningManager = campaningManager;
         }
 
-        public IActionResult Index(IFormCollection form,[FromQuery] int timerate = 7)
+        public IActionResult Index([FromQuery] int timerate = 7)
         {
             HomeModel model = new HomeModel();
             model.FilterParametr = new FilterParametr() {

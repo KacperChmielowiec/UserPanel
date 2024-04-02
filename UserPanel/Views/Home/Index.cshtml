@@ -25,7 +25,7 @@
         <div class="col-12 container">
         <div class="w-100 d-flex items-center">
                 <div class="w-100 d-flex items-center">
-                    <select name="campaning" class="w-full" data-id="001" data-role="select" multiple onchange="handleSelect(this.dataset.id)">
+                    <select id="select-camp" name="campaning" class="w-full" data-id="001" data-role="select" multiple onchange="handleSelect(this.dataset.id)">
                     @foreach(var c in Model.FilterParametr.FilterCampanings ?? new List<Campaning>())
                     {
                         <option selected value="@c.id">@c.name</option>
@@ -96,10 +96,11 @@
 </div>
 <script>
     const filterInit = () => {
-        var select = document.querySelector("select");
+
+        var select = document.querySelector("#select-camp");
         var selectedOption = select.options[select.selectedIndex];
         if (selectedOption.selected) {
-            document.querySelector(".placeholder-span")
+            document.querySelector("span.placeholder-span")
                 .style.display = "none";
         }
 
@@ -112,54 +113,88 @@
     const handleFilterClick = () => {
         document.querySelector("div.row[data-type-search-row]").classList.toggle("inactive")
     }
-    const loadInit = async () => {
-        const firstSelected = document.querySelector("select").selectedOptions[];
-        console.log("first",firstSelected)
-        const data = await fetch(`http://localhost:5012/api/CampaningStat/${firstSelected}`)
-    }
-    Morris.Bar({
-        element: 'visit',
-        data: [
-            { x: '2011 Q1', y: 3, z: 2, a: 3 },
-            { x: '2011 Q2', y: 2, z: null, a: 1 },
-            { x: '2011 Q3', y: 0, z: 2, a: 4 },
-            { x: '2011 Q4', y: 2, z: 4, a: 3 }
-        ],
-        xkey: 'x',
-        ykeys: ['y', 'z', 'a'],
-        labels: ['Y', 'Z', 'A']
-    }).on('click', function (i, row) {
-        console.log(i, row);
-    })
-    Morris.Donut({
-        element: 'clicks',
-        data: [
-            { value: 70, label: 'foo' },
-            { value: 15, label: 'bar' },
-            { value: 10, label: 'baz' },
-            { value: 5, label: 'A really really long label' }
-        ],
-        formatter: function (x) { return x + "%" }
-    }).on('click', function (i, row) {
-        console.log(i, row);
-    });
 
-    var decimal_data = [];
-    for (var x = 0; x <= 360; x += 10) {
-        decimal_data.push({
-            x: x,
-            y: Math.sin(Math.PI * x / 180).toFixed(4)
+    const loadVisit = (data) => {
+        const payload = []
+        data.forEach((item,i) => {
+            item.visit.forEach((item,index) => {
+                if(payload.length <= index)
+                    payload.push({})
+                payload[index] = { ...payload[index], date: index }
+                payload[index][data[i].name] = item;
+            })
+        })
+        console.log("morisData", payload);
+        Morris.Bar({
+            element: 'visit',
+            data: payload,
+            xkey: 'date',
+            ykeys: data.map(d => d.name),
+            labels: data.map(d => d.name)
+        }).on('click', function (i, row) {
+            console.log(i, row);
+        })
+    }
+
+    const loadMoris = (data) => {
+       
+        loadVisit(data)
+        Morris.Donut({
+            element: 'clicks',
+            data: [
+                { value: 70, label: 'foo' },
+                { value: 15, label: 'bar' },
+                { value: 10, label: 'baz' },
+                { value: 5, label: 'A really really long label' }
+            ],
+            formatter: function (x) { return x + "%" }
+        }).on('click', function (i, row) {
+            console.log(i, row);
+        });
+
+        var decimal_data = [];
+        for (var x = 0; x <= 360; x += 10) {
+            decimal_data.push({
+                x: x,
+                y: Math.sin(Math.PI * x / 180).toFixed(4)
+            });
+        }
+        window.m = Morris.Line({
+            element: 'budged',
+            data: decimal_data,
+            xkey: 'x',
+            ykeys: ['y'],
+            labels: ['sin(x)'],
+            parseTime: false,
+            goals: [-1, 0, 1]
         });
     }
-    window.m = Morris.Line({
-        element: 'budged',
-        data: decimal_data,
-        xkey: 'x',
-        ykeys: ['y'],
-        labels: ['sin(x)'],
-        parseTime: false,
-        goals: [-1, 0, 1]
-    });
+    const loadInit = async () => {
+
+        try {
+            const selectedList = [...document.querySelector("#select-camp").selectedOptions].map(option => option.value);
+            const url = "http://localhost:5012/api/campstats";
+            const response = await fetch(url, {
+                method: "POST",
+                cache: "no-cache",
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                referrerPolicy: "no-referrer",
+                body: JSON.stringify(selectedList),
+            })
+            if (response.ok) {
+               const data = await response.json();
+               console.log("fetch", data)
+               loadMoris(data)
+            }
+            
+        } catch (e) { 
+        }
+
+      
+    }
     filterInit()
     loadInit()
 </script>
