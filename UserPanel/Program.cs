@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using UserPanel.Helpers;
@@ -13,6 +14,12 @@ using UserPanel.Services;
 using UserPanel.Services.database;
 
 var builder = WebApplication.CreateBuilder(args);
+// Mo¿esz dodaæ wiêcej ni¿ jeden Swagger dokument
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "AddingStuffAndCheckingI", Version = "v1" });
+});
+
 builder.InstallServices();
 builder.Services.AddScoped<EmailService, EmailService>();
 ConfigurationHelper.Initialize(builder.Configuration);
@@ -40,11 +47,16 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
+ 
     app.UseExceptionHandler("/Home/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "AddingStuffAndChecking v1");
+});
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();

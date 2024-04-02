@@ -34,7 +34,11 @@ namespace UserPanel.Services
            descriptor.name = components;
            if (descriptor.Auth)
            { 
-                visible = context.User.Identity.IsAuthenticated && Enumerable.Range(0, descriptor.Roles.Length)
+                visible = context
+                    .User
+                    .Identity
+                    .IsAuthenticated 
+                     && Enumerable.Range(0, descriptor.Roles.Length)
                     .Select(x => context.User.IsInRole(Enum.GetName(typeof(UserRole), descriptor.Roles[x])))
                     .FirstOrDefault(x => x == true) ? true : false;
 
@@ -44,7 +48,7 @@ namespace UserPanel.Services
            else
                 visible = descriptor.Pages.Contains(context.Request.Path.Value.ToLower()) && visible;
 
-            return visible;
+           return visible;
        }
         
     }
