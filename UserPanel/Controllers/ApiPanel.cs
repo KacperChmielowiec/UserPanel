@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
+using System.Linq;
+using System.Text.Json;
 using UserPanel.Interfaces;
 using UserPanel.Models.Camp;
 namespace UserPanel.Controllers
@@ -13,14 +17,24 @@ namespace UserPanel.Controllers
             this.DataBaseProvider = dataBaseProvider;
         }
         [HttpGet("campstat/{id}")]
-        public IActionResult GetCampaningStatistic(Guid id)
+        public IActionResult GetCampaningStatistic(Guid id, [FromBody] GetListCampaningStatisticModel data)
         {
             if(id == Guid.Empty)
             {
                 return NotFound();
             }
 
-            var campStat = GetStat(id);
+            if (!DateTime.TryParse(data?.StartDate, out DateTime startTime))
+            {
+                startTime = DateTime.Now;
+            }
+            if (!DateTime.TryParse(data?.EndDate, out DateTime endTime))
+            {
+                endTime = DateTime.Now;
+            }
+
+
+            var campStat = shrinkHelper(GetStat(id),startTime,endTime);
            
             if(campStat == null) return NotFound();
 
@@ -28,15 +42,27 @@ namespace UserPanel.Controllers
         }
 
         [HttpPost("campstats")]
-        public IActionResult GetListCampaningStatistic([FromBody] Guid[] ids)
+        public IActionResult GetListCampaningStatistic
+        (
+           [FromBody] GetListCampaningStatisticModel data
+        )
         {
-            if(ids?.Count() == 0 || ids?.Count() == null) {
+            if(!DateTime.TryParse(data?.StartDate, out DateTime startTime))
+            {
+                startTime = DateTime.Now;
+            }
+            if(!DateTime.TryParse(data?.EndDate, out DateTime endTime))
+            {
+                endTime = DateTime.Now;
+            }
+
+            if (data.List?.Count() == 0) {
                 return NotFound();
             }
             List<CampaningStat> campaningStats = new List<CampaningStat>();
-            foreach (var id in ids)
+            foreach (var id in data.List)
             {
-                var buffor = GetStat(id);
+                var buffor = shrinkHelper(GetStat(id),startTime,endTime);
                 if(buffor == null) continue;
                 campaningStats.Add(buffor);
             }
@@ -58,17 +84,17 @@ namespace UserPanel.Controllers
 
             var campStat = list.Aggregate((acc, curr) =>
             {
-                acc.Visit = acc.Visit.Zip(curr.Visit, (x, y) => x += y)
+                acc.Visit = acc.Visit.Zip(curr.Visit, (x, y) => new UnitData<int>(x.Value + y.Value, x.Date))
                     .Concat(acc.Visit.Skip(curr.Visit.Length))
                     .Concat(curr.Visit.Skip(acc.Visit.Length))
                     .ToArray();
 
-                acc.Clicks = acc.Clicks.Zip(curr.Clicks, (x, y) => x += y)
+                acc.Clicks = acc.Clicks.Zip(curr.Clicks, (x, y) => new UnitData<int>(x.Value + y.Value, x.Date))
                     .Concat(acc.Clicks.Skip(curr.Clicks.Length))
                     .Concat(curr.Clicks.Skip(acc.Clicks.Length))
                     .ToArray();
 
-                acc.Budged = acc.Budged.Zip(curr.Budged, (x, y) => x += y)
+                acc.Budged = acc.Budged.Zip(curr.Budged, (x, y) => new UnitData<decimal>(x.Value + y.Value, x.Date))
                     .Concat(acc.Budged.Skip(curr.Budged.Length))
                     .Concat(curr.Budged.Skip(acc.Budged.Length))
                     .ToArray();
@@ -77,6 +103,22 @@ namespace UserPanel.Controllers
             });
 
             return new CampaningStat(campStat.Id_Camp, campStat.Visit, campStat.Clicks, campStat.Budged,name);
+        }
+
+        private CampaningStat shrinkHelper(CampaningStat campStat,DateTime start,DateTime end)
+        {
+            campStat.Visit = campStat.Visit
+                .Where(item => DateTime.Parse(item.Date).Date <= start.Date && DateTime.Parse(item.Date).Date >= end.Date)
+                .ToArray();
+            campStat.Clicks = campStat.Clicks
+                .Where(item => DateTime.Parse(item.Date).Date <= start.Date && DateTime.Parse(item.Date).Date >= end.Date)
+                .ToArray();
+            campStat.Budget = campStat.Budget
+                .Where(item => DateTime.Parse(item.Date).Date <= start.Date && DateTime.Parse(item.Date).Date >= end.Date)
+                .ToArray();
+
+            return campStat;
+
         }
     }
 }

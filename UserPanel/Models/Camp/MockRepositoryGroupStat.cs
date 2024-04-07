@@ -11,6 +11,11 @@ namespace UserPanel.Models.Camp
             return ConfigManager.GetConfig(Path).Parse<List<GroupStat>>().Where(c => c.Id_Camp == id).ToList();
         }
 
+        public override List<GroupStat> getGroupStatByCampIdWithRange(Guid id, DateTime start, DateTime end)
+        {
+            throw new NotImplementedException();
+        }
+
         public override GroupStat getGroupStatById(Guid id)
         {
             throw new NotImplementedException();
