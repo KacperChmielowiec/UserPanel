@@ -12,11 +12,11 @@
             <div>
                 <h1 class="text-4xl font-semibold">Pulpit</h1>
             </div>
-            <div>
+            <div class="range-buttons">
                 <button onclick="handleFilterClick()" class="btn btn-flat gray"><i class="icon-filter"></i>filtruj</button>
-                <a asp-controller="Home" asp-action="index" asp-route-timerate="@rate1" onclick="handleFilterClickButton()" class="btn glow btn-flat @(Model?.FilterParametr.rate ==  ButtonFilterRate.RATE_1 ? "success" : "white")">7 dni</a>
-                <a asp-controller="Home" asp-action="index" asp-route-timerate="@rate2"  onclick="handleFilterClickButton()" class="btn glow btn-flat @(Model?.FilterParametr.rate ==  ButtonFilterRate.RATE_2 ? "success" : "white")">14 dni</a>
-                <a asp-controller="Home" asp-action="index" asp-route-timerate="@rate3" onclick="handleFilterClickButton()" class="btn glow btn-flat @(Model?.FilterParametr.rate ==  ButtonFilterRate.RATE_3 ? "success" : "white")">30 dni</a>
+                <a asp-controller="Home" asp-action="index" asp-route-timerate="@rate1" value="7" onclick="handleFilterClickButton()"  class="btn glow btn-flat @(Model?.FilterParametr.rate ==  ButtonFilterRate.RATE_1 ? "success check" : "white")">7 dni</a>
+                <a asp-controller="Home" asp-action="index" asp-route-timerate="@rate2" value="14" onclick="handleFilterClickButton()" class="btn glow btn-flat @(Model?.FilterParametr.rate ==  ButtonFilterRate.RATE_2 ? "success check" : "white")">14 dni</a>
+                <a asp-controller="Home" asp-action="index" asp-route-timerate="@rate3" value="30" onclick="handleFilterClickButton()" class="btn glow btn-flat @(Model?.FilterParametr.rate ==  ButtonFilterRate.RATE_3 ? "success check" : "white")">30 dni</a>
             </div>
         </div>
     </div>
@@ -24,26 +24,26 @@
 <div class="row pt-6 inactive" data-type-search-row>
         <div class="col-12 container">
         <div class="w-100 d-flex items-center">
-                <div class="w-100 d-flex items-center">
-                    <select id="select-camp" name="campaning" class="w-full" data-id="001" data-role="select" multiple onchange="handleSelect(this.dataset.id)">
-                    @foreach(var c in Model.FilterParametr.FilterCampanings ?? new List<Campaning>())
-                    {
-                        <option selected value="@c.id">@c.name</option>
-                    }
-                    </select>
-                <span data-id="001" class="absolute top-1/2 -translate-y-1/2 pl-2 placeholder-span">choose campaning</span>
+            <div class="w-100 d-flex items-center" id="select-camp">
+                <select name="campaning" class="w-full" data-id="select-01" data-role="select" multiple onchange="handleFilterChange(this.dataset.id)">
+                @foreach(var c in Model.FilterParametr.FilterCampanings ?? new List<Campaning>())
+                {
+                    <option selected value="@c.id">@c.name</option>
+                }
+                </select>
+                <span data-id="select-01" class="absolute top-1/2 -translate-y-1/2 pl-2 placeholder-span">choose campaning</span>
                 <span class="input-group-addon h-[40px] d-block">
-                    <button type="submit" class="btn-flat d-flex success">
+                    <button onclick="handleFilter()" class="btn-flat d-flex success">
                         <i class="icon-filter"></i> Zobacz
-                   </button>
+                    </button>
                 </span>
-                </div>
+            </div>
         </div>
         </div>
  </div>
  <div class="row mt-10">
     <div class="col-12">
-        <div class="w-100">
+        <div class="mx-4">
             <div class="mb-5">
                 <h1 class="text-2xl font-semibold">Statystyki</h1>
             </div>
@@ -68,19 +68,18 @@
                 </div>
                 <div class="grow">
                     <div class="d-flex justify-items-center justify-center p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                        <div id="budged" class="sm:max-w-max lg:max-w-[450px] h-[250px]"></div>
+                        <div id="budget" class="w-[450px] h-[250px]"></div>
                     </div>
                      <div class="absolute">
                         <p class="p-2 text-lg italic text-gray-500">Budged statistic</p>
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
 </div>
 <div class="row mt-20">
-    <div class="w-full row-stats grid grid-cols-3 justify-center justify-items-center items-center min-h-[200px]">
+    <div class="w-full row-stats grid grid-cols-3 justify-center justify-items-center items-center min-h-[200px] mx-4">
 		<div>
 			<h4>Najczęściej wyświetlane</h4>
 						<p>brak statystyk towarów</p>
@@ -95,85 +94,40 @@
     </div>
 </div>
 <script>
-    const filterInit = () => {
 
-        var select = document.querySelector("#select-camp");
-        var selectedOption = select.options[select.selectedIndex];
-        if (selectedOption.selected) {
-            document.querySelector("span.placeholder-span")
-                .style.display = "none";
+    const checkSelectState = (selectInput,spanPlaceholder) => {
+        if (selectInput.selectedIndex !== -1) {
+            spanPlaceholder.style.display = "none";
         }
-
+        else {
+            spanPlaceholder.style.display = "block";
+        }
     }
-    const handleSelect = (id) => {  
-        [...document.querySelectorAll(".placeholder-span")]
-        .find(item => item.dataset.id == id)
-        .style.display =  event.target.selectedOptions.length ? 'none' : 'block';
+    const FilterCampaningInit = () => {
+        var selectContainer = document.querySelector("#select-camp");
+        var selectInput = selectContainer.querySelector("select");
+        var selectPlaceholder = selectContainer.querySelector("span.placeholder-span");
+        if (selectInput && selectPlaceholder) checkSelectState(selectInput, selectPlaceholder)
     }
     const handleFilterClick = () => {
         document.querySelector("div.row[data-type-search-row]").classList.toggle("inactive")
     }
-
-    const loadVisit = (data) => {
-        const payload = []
-        data.forEach((item,i) => {
-            item.visit.forEach((item,index) => {
-                if(payload.length <= index)
-                    payload.push({})
-                payload[index] = { ...payload[index], date: index }
-                payload[index][data[i].name] = item;
-            })
-        })
-        console.log("morisData", payload);
-        Morris.Bar({
-            element: 'visit',
-            data: payload,
-            xkey: 'date',
-            ykeys: data.map(d => d.name),
-            labels: data.map(d => d.name)
-        }).on('click', function (i, row) {
-            console.log(i, row);
-        })
-    }
-
-    const loadMoris = (data) => {
-       
-        loadVisit(data)
-        Morris.Donut({
-            element: 'clicks',
-            data: [
-                { value: 70, label: 'foo' },
-                { value: 15, label: 'bar' },
-                { value: 10, label: 'baz' },
-                { value: 5, label: 'A really really long label' }
-            ],
-            formatter: function (x) { return x + "%" }
-        }).on('click', function (i, row) {
-            console.log(i, row);
-        });
-
-        var decimal_data = [];
-        for (var x = 0; x <= 360; x += 10) {
-            decimal_data.push({
-                x: x,
-                y: Math.sin(Math.PI * x / 180).toFixed(4)
-            });
-        }
-        window.m = Morris.Line({
-            element: 'budged',
-            data: decimal_data,
-            xkey: 'x',
-            ykeys: ['y'],
-            labels: ['sin(x)'],
-            parseTime: false,
-            goals: [-1, 0, 1]
-        });
-    }
-    const loadInit = async () => {
+    const handleFilter = async () => {
 
         try {
-            const selectedList = [...document.querySelector("#select-camp").selectedOptions].map(option => option.value);
+
+            const selectedList = [...document.querySelector("#select-camp select").selectedOptions].map(option => option.value);
+            if (!selectedList.length) {
+                loadMoris()
+                return
+            }
+            const range = document.querySelector("div.range-buttons a.check")?.getAttribute('value') || 7;
             const url = "http://localhost:5012/api/campstats";
+
+            let time = new Date(Date.now());
+            time.setDate(time.getDate() - Number(range))
+            time = time.toISOString()
+
             const response = await fetch(url, {
                 method: "POST",
                 cache: "no-cache",
@@ -182,19 +136,129 @@
                     "Content-Type": "application/json",
                 },
                 referrerPolicy: "no-referrer",
-                body: JSON.stringify(selectedList),
+                body: JSON.stringify({ list: selectedList, end: time }),
             })
             if (response.ok) {
-               const data = await response.json();
-               console.log("fetch", data)
-               loadMoris(data)
+                const data = await response.json();
+                loadMoris(data)
             }
-            
-        } catch (e) { 
-        }
 
-      
+        } catch (e) {
+            console.error(e)
+        }
     }
-    filterInit()
-    loadInit()
+    const handleFilterChange = (id) => {
+
+        checkSelectState(
+            [...document.querySelectorAll('select')]
+                .find((select) => select.dataset.id == id), 
+            [...document.querySelectorAll('span.placeholder-span')]
+                .find((select) => select.dataset.id == id)
+            )
+
+    }
+    const loadInit = async () => {
+      handleFilter()
+    }
+    const loadMoris = (data) => {
+        if (data == null) {
+            return
+        }
+        loadVisitChart(extractChartDataVisit(data,"visit"))
+        loadClicksChart(extractChartDataClicks(data, "clicks"))
+        loadBudgetChart(extractChartDataBudget(data, "budget"))
+    }
+    const loadVisitChart = (dataVisit) => {
+        document.querySelector('div#visit').innerHTML = '';
+        if(dataVisit == null) return
+        Morris.Bar({
+            element: 'visit',
+            data: dataVisit.data,
+            xkey: 'date',
+            ykeys: dataVisit.labels,
+            labels: dataVisit.labels
+        }).on('click', function (i, row) {
+            console.log(i, row);
+        });
+    }
+    const loadClicksChart = (dataClicks) => {
+        document.querySelector('div#clicks').innerHTML = '';
+        if (dataClicks == null) return
+        Morris.Donut({
+            element: 'clicks',
+            data: dataClicks,
+            formatter: function (x) { return x + " clicks" }
+        }).on('click', function (i, row) {
+            console.log(i, row);
+        });
+    }
+    const loadBudgetChart = (dataBudget) => {
+        document.querySelector('div#budget').innerHTML = '';
+        window.m = Morris.Line({
+            element: 'budget',
+            data: dataBudget.data,
+            xkey: 'date',
+            ykeys: dataBudget.labels,
+            labels: dataBudget.labels,
+            parseTime: false,
+            goals: [dataBudget.min, (dataBudget.min + dataBudget.max) / 2, dataBudget.max]
+        });
+    }
+    const extractChartDataVisit = (data, keyString) =>
+    {
+        let payload = [];
+        const labels = [];
+        data.forEach((campaning, i) => {
+            labels.push(campaning.name)
+            campaning[keyString].forEach((item, index) => {
+                if (payload.length <= index)
+                    payload.push({date: item.date})
+                payload[index] = { ...payload[index], [campaning.name]: item.value }
+            })
+        })
+        payload = {data: payload, labels: labels}
+        return payload
+    }
+    const extractChartDataClicks = (data, keyString) => {
+        let payload = [];
+        data.forEach((campaning, i) => {
+            campaning[keyString].forEach((item, index) => {
+                if (payload.length <= i)
+                    payload.push({ label: campaning.name, value: 0 })
+                payload[i] = { ...payload[i], value: Number(payload[i].value += item.value) }
+            })
+        })
+        return payload
+    }
+    const extractChartDataBudget = (data, keyString) => {
+        let payload = [];
+        const labels = [];
+        const budgetList = []
+        data.forEach((campaning, i) => {
+            labels.push(campaning.name)
+            campaning[keyString].forEach((item, index) => {
+                if (payload.length <= index)
+                    payload.push({ date: item.date })
+                budgetList.push(item.value)
+                payload[index] = { ...payload[index], [campaning.name]: item.value }
+            })
+        })
+        payload = { 
+            data: payload, 
+            labels: labels, 
+            max: Math.max(...budgetList),
+            min: Math.min(...budgetList)
+        }
+        return payload
+    }
+    (function Init() {
+        if (window.addEventListener) {
+            window.addEventListener("load", () => {
+                FilterCampaningInit()
+                loadInit();
+            })
+        }
+    })()
+
+
 </script>
