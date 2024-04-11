@@ -1,0 +1,33 @@
+﻿table.flags-inner-table td {
+    padding: 0 13px !important;
+    text-align: center;
+    align-self: center;
+}
+table.flags-inner-table td span.flag-span {
+    width: 25px !important;
+    display: inline-block;
+}
+span.label-flag {
+    padding: 5px 7px;
+    display: inline-block;
+    width: 25px !important;
+    border-radius: 5px;
+    color: #ffffff;
+    align-self: center;
+    text-align: center;
+}
+span.success {
+    background-color: #5cb85c;
+}
+.warn {
+    background-color: #E4A11B;
+}
+.danger {
+    background-color: #DC4C64;
+}
+
+/*details*/
+
+.table-condensed tr {
+    border-top: 1px solid #dddddd;
+}
