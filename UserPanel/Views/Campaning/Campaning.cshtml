@@ -1,0 +1,93 @@
+﻿@model List<Campaning>?
+@{
+     ViewData["Title"] = "CampaningListening";
+     Layout = "_Layout";
+}
+<section class="py-1 bg-blueGray-50 table-campaning">
+    <div class="w-full  mb-12 xl:mb-0 px-4 mx-auto">
+        <div class="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded ">
+            <div class="rounded-t mb-0 px-4 py-3 border-0">
+                <div class="flex flex-wrap items-center">
+                    <div class="relative w-full px-4 py-4 max-w-full flex-grow flex-1">
+                        <h1 class="font-semibold text-xl text-blueGray-700">Twoje Kampanie</h1>
+                    </div>
+                </div>
+            </div>
+
+            <div class="block w-full overflow-x-auto">
+                <table class="items-center bg-transparent w-full border-collapse ">
+                    <thead>
+                        <tr>
+                            <th class="px-4 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-center">
+                                Kampania
+                            </th>
+                            <th class="px-4 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-center">
+                                <table class="flags-inner-table">
+                                    <thead>
+                                        <tr>
+                                            <td><span class="flag-span">$</span></td>
+                                            <td><span class="flag-span">P</span></td>
+                                            <td><span class="flag-span">L</span></td>
+                                            <td><span class="flag-span">R</span></td>
+                                            <td><span class="flag-span"><i class="icon-ok"></span></i></td>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </th>
+                            <th class="px-4 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-center">
+                                Status
+                            </th>
+                            <th class="px-4 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-center">
+                                Operacje
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var camp in Model ?? new List<Campaning>())
+                        {
+                            <tr>
+                                <td class="border-t-0 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left text-blueGray-700 ">
+                                    <a href="/Campaning/details/@camp.id">@camp.name</a>
+                                </td>
+                                <td class="border-t-0 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                                    <table class="flags-inner-table">
+                                        <thead>
+                                            <tr>
+                                                <td>
+                                                    <span class="label-flag" flag-state="@CampaningFlagState.Active"></span>
+                                                 </td>
+                                                <td>
+                                                    <span class="label-flag" flag-state="@CampaningFlagState.Active"></span>
+                                                </td>
+                                                <td>
+                                                    <span class="label-flag" flag-state="@CampaningFlagState.Waiting"></span>
+                                                </td>
+                                                <td>
+                                                    <span class="label-flag" flag-state="@CampaningFlagState.Waiting"></span>
+                                                </td>
+                                                <td>
+                                                    <span class="label-flag" flag-state="@CampaningFlagState.Inactive"></span>
+                                                </td>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </td>
+                                <td class="border-t-0 px-6 align-center border-l-0 border-r-0 text-xs whitespace-nowrap p-4 d-flex justify-center">
+                                    <button class="btn-flat success">Włączona</button>
+                                </td>
+                                <td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                                    <div class="btn-group w-100 d-flex justify-center gap-x-2">
+                                        <a href="/campaning/details/@camp.id" class="btn btn-flat white d-flex items-center"><i class="icon-search mr-2"></i> Zobacz</a>
+                                        <button class="btn white btn-flat small dropdown-button" data-toggle="dropdown">
+                                            <span class="icon-sort-down"></span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>

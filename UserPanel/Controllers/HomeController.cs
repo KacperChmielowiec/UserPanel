@@ -30,20 +30,7 @@ namespace UserPanel.Controllers
             };
             return View(model);
         }
-        [Authorize]
-        [HttpGet("campaning")]
-        public IActionResult Campaning()
-        { 
-            return View(_campaningManager.GetCampanings());
-        }
-        [Authorize]
-        [HttpGet("SetCampaning")]
-        public IActionResult SetCampaning([FromQuery] Guid cmp_id)
-        {
-            _campaningManager.SetCampaningSession(cmp_id);
-            return View("Index");
-        }
-
+     
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

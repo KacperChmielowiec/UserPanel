@@ -29,7 +29,7 @@ html {
 }
 
 body {
-    margin-bottom: 60px;
+   
     min-height: 100vh;
     height: 100%;
 }
@@ -444,8 +444,8 @@ input.search {
                 height: initial;
             }
 
-        #sidebar-nav #dashboard-menu > li.active .dropdown-toggle,
-        #sidebar-nav #dashboard-menu > li.open .dropdown-toggle {
+        #sidebar-nav #dashboard-menu > li.active .dropdown-button,
+        #sidebar-nav #dashboard-menu > li.open .dropdown-button {
             border-bottom: 0px;
             box-shadow: none;
         }
@@ -1083,7 +1083,7 @@ i.table-delete {
         filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fefefe', endColorstr='#f7f7f7',GradientType=0 );
     }
 
-    .btn-group > .btn.glow.dropdown-toggle {
+    .btn-group > .btn.glow.dropdown-button {
         padding: 6px 14px 6px 4px;
     }
 
@@ -1108,11 +1108,6 @@ i.table-delete {
     -moz-transition: all 0.1s linear;
     transition: all 0.1s linear;
 }
-
-    .btn-flat [class^="icon-"],
-    .btn-flat [class*=" icon-"] {
-        margin-right: 3px;
-    }
 
     .btn-flat:active {
         -webkit-box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.3) inset;
