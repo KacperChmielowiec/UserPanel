@@ -10,7 +10,7 @@
             <div class="w-full border sm:max-w-md bg-white rounded-lg px-2 py-2 mb-4 text-lg font-semibold">
                 @foreach(var error in ModelState["LoginError"].Errors)
                 {
-                    <div class="text-danger">
+                    <div class="danger-font">
                         @error.ErrorMessage
                     </div>
                 }

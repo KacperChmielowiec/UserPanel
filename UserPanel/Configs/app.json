@@ -28,20 +28,89 @@
         {
           "id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
           "name": "UserCampaning1",
-          "FK_User": "2",
-          "website": "wwww.test.pl"
+          "FK_User": "1",
+          "website": "wwww.test.pl",
+          "details": {
+            "country": "Poland",
+            "currency": "PLN",
+            "emailNotify": true,
+            "utm_sourcel": "panel",
+            "utm_medium": "cpc",
+            "logo": "",
+            "flags": {
+              "budget": "Active",
+              "products": "Active",
+              "lists": "Active",
+              "advert": "Active",
+              "display": "Active"
+            }
+          },
+          "budget":{
+            "id": "7c9e6679-2225-40de-944b-e07fc1f90111",
+            "totalBudget": "20000",
+            "budgetDay": "100",
+            "totalBudgetLeft": "20000",
+            "budgetDayLeft": "100"
+          },
+          "status": true
         },
         {
           "id": "7c9e6679-2225-40de-944b-e07fc1f90ae7",
           "name": "UserCampaning2",
           "FK_User": "2",
-          "website": "wwww.tes2.pl"
+          "website": "wwww.tes2.pl",
+          "details": {
+            "country": "Poland",
+            "currency": "PLN",
+            "emailNotify": true,
+            "utm_sourcel": "panel",
+            "utm_medium": "cpc",
+            "logo": "",
+            "flags": {
+              "budget": "Active",
+              "products": "Active",
+              "lists": "Active",
+              "advert": "Active",
+              "display": "Active"
+            }
+          },
+          "budget": {
+            "id": "7c9e6679-2225-40de-944b-e07fc1f90112",
+            "totalBudget": "20000",
+            "budgetDay": "100",
+            "totalBudgetLeft": "20000",
+            "budgetDayLeft": "100"
+          },
+          "status": true
         },
         {
           "id": "7c9e6679-2225-40de-944b-e07fc1f90ae1",
           "name": "UserCampaning3",
           "FK_User": "3",
-          "website": "wwww.tes3.pl"
+          "website": "wwww.tes3.pl",
+          "details": {
+            "country": "Poland",
+            "currency": "PLN",
+            "emailNotify": true,
+            "utm_sourcel": "panel",
+            "utm_medium": "cpc",
+            "logo": "",
+            "flags": {
+              "budget": "Active",
+              "products": "Active",
+              "lists": "Active",
+              "advert": "Active",
+              "display": "Active"
+            }
+          },
+          "budget": {
+            "id": "7c9e6679-2225-40de-944b-e07fc1f90113",
+            "totalBudget": "20000",
+            "budgetDay": "100",
+            "totalBudgetLeft": "20000",
+            "budgetDayLeft": "100"
+          },
+          "status": true
         }
       ],
       "groupStats": [

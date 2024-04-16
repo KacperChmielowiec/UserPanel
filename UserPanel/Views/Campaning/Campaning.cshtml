@@ -11,11 +11,14 @@
                     <div class="relative w-full px-4 py-4 max-w-full flex-grow flex-1">
                         <h1 class="font-semibold text-xl text-blueGray-700">Twoje Kampanie</h1>
                     </div>
+                    <div class="pull-right">
+                        <a href="/campaning/create" class="btn btn-flat success"><i class="icon-plus"></i> Utwórz</a>
+                    </div>
                 </div>
             </div>
 
             <div class="block w-full overflow-x-auto">
-                <table class="items-center bg-transparent w-full border-collapse ">
+                <table class="items-center bg-transparent w-full border-collapse">
                     <thead>
                         <tr>
                             <th class="px-4 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-center">
@@ -54,26 +57,26 @@
                                         <thead>
                                             <tr>
                                                 <td>
-                                                    <span class="label-flag" flag-state="@CampaningFlagState.Active"></span>
+                                                    <span class="label-flag w-[25px]" flag-state="@camp.details.CampaningFlags.Budget"></span>
                                                  </td>
                                                 <td>
-                                                    <span class="label-flag" flag-state="@CampaningFlagState.Active"></span>
+                                                    <span class="label-flag w-[25px]" flag-state="@camp.details.CampaningFlags.Products"></span>
                                                 </td>
                                                 <td>
-                                                    <span class="label-flag" flag-state="@CampaningFlagState.Waiting"></span>
+                                                    <span class="label-flag w-[25px]" flag-state="@camp.details.CampaningFlags.Lists"></span>
                                                 </td>
                                                 <td>
-                                                    <span class="label-flag" flag-state="@CampaningFlagState.Waiting"></span>
+                                                    <span class="label-flag w-[25px]" flag-state="@camp.details.CampaningFlags.Advert"></span>
                                                 </td>
                                                 <td>
-                                                    <span class="label-flag" flag-state="@CampaningFlagState.Inactive"></span>
+                                                    <span class="label-flag w-[25px]" flag-state="@camp.details.CampaningFlags.Display"></span>
                                                 </td>
                                             </tr>
                                         </thead>
                                     </table>
                                 </td>
                                 <td class="border-t-0 px-6 align-center border-l-0 border-r-0 text-xs whitespace-nowrap p-4 d-flex justify-center">
-                                    <button class="btn-flat success">Włączona</button>
+                                    <button class="btn-flat @(camp.status ? "success" : "danger")">@(camp.status ? "Włączona" : "Wyłączona")</button>
                                 </td>
                                 <td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                                     <div class="btn-group w-100 d-flex justify-center gap-x-2">

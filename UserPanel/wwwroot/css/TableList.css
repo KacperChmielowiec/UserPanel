@@ -10,7 +10,6 @@ table.flags-inner-table td span.flag-span {
 span.label-flag {
     padding: 5px 7px;
     display: inline-block;
-    width: 25px !important;
     border-radius: 5px;
     color: #ffffff;
     align-self: center;

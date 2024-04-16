@@ -1,0 +1,68 @@
+﻿@model UserPanel.Models.Camp.Campaning
+
+@{
+    ViewData["Title"] = "Create";
+    var ModelState = ViewData.ModelState;
+}
+
+
+<section class="py-1 bg-blueGray-50 table-campaning">
+    <div class="w-full  mb-12 xl:mb-0 px-4 mx-auto">
+    <section class="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded ">
+        <div class="rounded-t mb-0 px-4 py-3 border-b-1">
+            <div class="flex flex-wrap items-center">
+                <div class="relative w-full px-4 py-4 max-w-full flex-grow flex-1">
+                    <h1 class="font-semibold text-xl text-blueGray-700">Utwórz kampanie</h1>
+                </div>
+            </div>
+        </div>
+    
+        <div class="body mx-40">
+                <form class="ml-[50px] pb-10" asp-action="create" method="post" enctype="multipart/form-data">
+                <div class="py-6">
+                    <header class="text-xl">Podstawowe parametry:</header>
+                </div>
+                    <div class="form-group pb-4 d-flex flex-col gap-y-1">
+                        @if (ModelState.ContainsKey("name") && ModelState["name"]?.Errors?.Count > 0)
+                        {
+                            <span class="danger-font">@ModelState["name"].Errors.FirstOrDefault().ErrorMessage</span>
+                        }
+                        <input type="text" data-role="input" data-prepend="Wybierz nazwe:" name="name">
+                    </div>
+                    <div class="form-group pb-4 d-flex flex-col gap-y-1">
+                        @if(ModelState.ContainsKey("url") && ModelState["url"]?.Errors?.Count > 0)
+                        {
+                            <span class="danger-font">@ModelState["url"].Errors.FirstOrDefault().ErrorMessage</span>
+                        }
+                        <input type="text" data-role="input" data-prepend="Wybierz URL:" name="url">
+                    </div>
+                    <div class="form-group d-flex pb-4 flex-col gap-y-1">
+                        @if (ModelState.ContainsKey("logo") && ModelState["logo"]?.Errors?.Count > 0)
+                        {
+                            <span class="danger-font">@ModelState["logo"].Errors.FirstOrDefault().ErrorMessage</span>
+                        }
+                        <input name="logo" type="file" data-role="file" data-prepend="Wybierz logo:" accept="image/png, image/jpeg">
+                </div>
+                 <div class="form-group d-flex pb-4">
+                    <select name="country" data-prepend="Wybierz kraj:"  data-role="select">
+                        <option selected value="Polska">Polska</option>
+                    </select>
+                </div>
+                <div class="form-group d-flex pb-4">
+                    <select name="currency" data-prepend="Wybierz walute:" data-role="select">
+                        <option selected value="PLN">PLN</option>
+                    </select>
+                </div>
+                <div class="rounded-t mb-0 py-6 border-b-1">
+                    <div class="pull-right">
+                        <a href="/campaning" class="btn btn-flat white"><i class="icon-reply"></i> Wróć</a>
+                        <button type="submit" class="btn btn-flat success"><i class="icon-plus"></i> Utwórz</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        </section>
+
+        </div>
+</section>
+
