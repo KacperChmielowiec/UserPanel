@@ -10,9 +10,12 @@ namespace UserPanel.Providers
     {
         private IConfiguration _configuration;
         private IMapper _mapper;
+        private IHttpContextAccessor _contextAccessor;
         private DataBase DataBase { get; set; }
-        public DataBaseProvider(IConfiguration configuration, DataBase dataBase, IMapper mapper) {
+        public DataBaseProvider(IConfiguration configuration, DataBase dataBase, IMapper mapper, IHttpContextAccessor accessor) {
             _configuration = configuration;
+            _mapper = mapper;
+            _contextAccessor = accessor;
         }
         public UserRepository<UserModel> GetUserRepository()
         {
@@ -29,7 +32,7 @@ namespace UserPanel.Providers
         {
             if (_configuration["ENVIROMENT:UserRepositoryType"]?.ToLower() == AppReferences.CONFIG_MOCK)
             {
-                return new MockRepositoryCampaning();
+                return new MockRepositoryCampaning(_contextAccessor.HttpContext.Session);
             }
             else
             {

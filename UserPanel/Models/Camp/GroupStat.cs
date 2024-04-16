@@ -8,7 +8,6 @@
             this.Visit = visit;
             this.Clicks = clicks;
             this.Budged = budged;
-
         }
 
         public Guid Id_Camp { get; set; }
