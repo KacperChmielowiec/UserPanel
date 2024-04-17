@@ -22,6 +22,7 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.InstallServices();
 builder.Services.AddScoped<EmailService, EmailService>();
+builder.Services.AddScoped<GroupManager, GroupManager>();
 ConfigurationHelper.Initialize(builder.Configuration);
 ConfigManager.LoadConfig();
 

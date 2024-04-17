@@ -2,6 +2,23 @@
 
   "database": {
     "mock": {
+      "groups": [
+        {
+          "id": "540344ba-aba7-47a5-a13f-ab3c260c092a",
+          "id_camp": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+          "name": "UserGroup1",
+          "status": true,
+          "detauls": {
+
+          },
+          "advertisements": {
+
+          },
+          "lists": [
+
+          ]
+        }
+      ],
       "users": [
         {
           "Id": 1,
@@ -45,7 +62,7 @@
               "display": "Active"
             }
           },
-          "budget":{
+          "budget": {
             "id": "7c9e6679-2225-40de-944b-e07fc1f90111",
             "totalBudget": "20000",
             "budgetDay": "100",

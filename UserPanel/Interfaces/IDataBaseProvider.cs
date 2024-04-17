@@ -1,5 +1,6 @@
 ﻿using UserPanel.Interfaces.Abstract;
 using UserPanel.Models.Camp;
+using UserPanel.Models.Group;
 using UserPanel.Models.User;
 
 namespace UserPanel.Interfaces
@@ -9,5 +10,6 @@ namespace UserPanel.Interfaces
         public UserRepository<UserModel> GetUserRepository();
         public CampaningRepository<Campaning> GetCampaningRepository();
         public GroupStatRepository<GroupStat> GetGroupStatRepository();
+        public GroupRepository<GroupModel> GetGroupRepository();
     }
 }

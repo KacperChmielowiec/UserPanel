@@ -1,7 +1,7 @@
 ﻿using UserPanel.Interfaces.Abstract;
 using UserPanel.Services;
 
-namespace UserPanel.Models.Camp
+namespace UserPanel.Models.Group
 {
     public class MockRepositoryGroupStat : GroupStatRepository<GroupStat>
     {

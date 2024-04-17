@@ -2,6 +2,7 @@
 using UserPanel.Interfaces;
 using UserPanel.Interfaces.Abstract;
 using UserPanel.Models.Camp;
+using UserPanel.Models.Group;
 using UserPanel.Models.User;
 using UserPanel.References;
 namespace UserPanel.Providers
@@ -45,6 +46,17 @@ namespace UserPanel.Providers
             if (_configuration["ENVIROMENT:UserRepositoryType"]?.ToLower() == AppReferences.CONFIG_MOCK)
             {
                 return new MockRepositoryGroupStat();
+            }
+            else
+            {
+                throw new AccessViolationException("");
+            }
+        }
+        public GroupRepository<GroupModel> GetGroupRepository()
+        {
+            if (_configuration["ENVIROMENT:UserRepositoryType"]?.ToLower() == AppReferences.CONFIG_MOCK)
+            {
+                return new MockGroupRepository(_contextAccessor.HttpContext.Session);
             }
             else
             {
