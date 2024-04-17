@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.Json;
 using UserPanel.Interfaces;
 using UserPanel.Models.Camp;
+using UserPanel.Models;
 namespace UserPanel.Controllers
 {
     [Route("api")]
