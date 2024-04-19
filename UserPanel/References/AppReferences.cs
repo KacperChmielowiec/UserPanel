@@ -1,4 +1,5 @@
-﻿using UserPanel.Controllers;
+﻿using System.Security.Policy;
+using UserPanel.Controllers;
 using UserPanel.Helpers;
 using UserPanel.Models;
 namespace UserPanel.References
@@ -24,7 +25,8 @@ namespace UserPanel.References
         {
             public static string Login = "Login";
             public static string Register = "Register";
-            public static string Home = "/";
+            public static string[] Home = new string[] {"/", "home" };
+            public static string Camp = "campaning";
         }
 
         public static class ViewComponentsNames
@@ -32,5 +34,7 @@ namespace UserPanel.References
             public static string Sidebar = "Sidebar";
             public static string Nav = "navigation";
         }
+        public static string CurrPageType = "PageType";
+        public static string QueryCamp = "camp_id";
     }
 }

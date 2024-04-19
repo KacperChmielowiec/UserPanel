@@ -43,5 +43,33 @@ namespace UserPanel.Models.Group
         {
             throw new NotImplementedException();
         }
+
+        public override GroupModel GetGroupById(Guid id)
+        {
+            var curr = _Session.GetJson<List<GroupModel>>("groups")?.Where(group => group.id == id).FirstOrDefault() ?? new GroupModel();
+            if (curr?.id != null)
+            {
+                return curr;
+            }
+            else
+            {
+                var group = ConfigManager
+                   .GetConfig(Path)
+                   .Parse<List<GroupModel>>()
+                   .Where(c => c.id == id)
+                   .FirstOrDefault();
+
+
+                if (group != null)
+                {
+                    var list = _Session.GetJson<List<GroupModel>>("groups") ?? new List<GroupModel>();
+                    list.Add(group);
+                    _Session.SetJson("groups", curr);
+                }
+                return group;
+            }
+        }
+
+      
     }
 }
