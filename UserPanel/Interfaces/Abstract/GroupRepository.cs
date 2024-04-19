@@ -4,5 +4,7 @@
     {
         public abstract List<T> GetGroupsByCampId(Guid id);
         public abstract List<T> GetGroupsByUserId(int id);
+
+        public abstract T GetGroupById(Guid id);
     }
 }

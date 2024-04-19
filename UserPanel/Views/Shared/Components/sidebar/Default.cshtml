@@ -2,17 +2,16 @@
 @{
     ViewData["Title"] = "_sidebar";
 }
-
 <div id="sidebar-nav">
     <ul id="dashboard-menu" class="pt-16">
-        <li class="active">
+        <li class=@(Model.Page == PageTypes.HOME ? "active" : "")>
             <div class="pointer">
                 <div class="arrow"></div>
                 <div class="arrow_border"></div>
             </div><a href="/"><i class="icon-th-large"></i><span>Pulpit</span></a>
         </li>
-        <li><a class="dropdown-toggle"><i class="icon-globe"></i><span>Kampanie</span></a><ul class="submenu">
-        <li><a asp-action="campaning" asp-controller="Campaning" >Lista</a></li>
+        <li class="@(Guid.Empty == Model.activeCamp && Model.Page == PageTypes.CAMP ? "active" : "")"><a class="dropdown-toggle"><i class="icon-globe"></i><span>Kampanie</span></a><ul class="submenu">
+        <li><a class="@(Guid.Empty == Model.activeCamp && Context.Request.Path.StartsWithSegments("/campaning") ? "active" : "")"asp-action="campaning" asp-controller="Campaning" >Lista</a></li>
         <li><a data-href="https://user.go.pl/clients/all/statistics/ads?wn=df13f4f3cabce7637defa6ebf9def707ae603754">Statystyki (RTB)</a></li>
         <li><a data-href="https://user.go.pl/clients/all/statistics/mail?wn=df13f4f3cabce7637defa6ebf9def707ae603754">Statystyki (MAIL)</a></li>
         <li><a data-href="https://user.go.pl/clients/all/statistics/widget?wn=df13f4f3cabce7637defa6ebf9def707ae603754">Statystyki (WIDGET)</a></li>
@@ -20,11 +19,11 @@
         <li><a class="dropdown-toggle"><i class="icon-question-sign"></i><span>Pomoc</span></a><ul class="submenu"><li><a data-href="https://user.go.pl/faq/894ed489-51e3-4251-86a7-bd20b986a740?wn=df13f4f3cabce7637defa6ebf9def707ae603754">FAQ</a></li><li><a data-href="https://go.pl/integrations?wn=df13f4f3cabce7637defa6ebf9def707ae603754">Integracje</a></li><li><a data-href="https://go.pl/static/Konfiguracja%20kampanii.pdf?wn=df13f4f3cabce7637defa6ebf9def707ae603754">Instrukcja</a></li><li><a data-href="https://go.pl/knowledge?wn=df13f4f3cabce7637defa6ebf9def707ae603754">Baza wiedzy</a></li></ul></li>
         @foreach(var c in Model?.campaningList ?? new List<Campaning>())
         {
-            <li>
+            <li class="@(c.id == Model.activeCamp ? "active" : "")">
                 <a class="dropdown-toggle"><i class="icon-globe"></i><span>@(c.name)</span></a>
                 <ul class="submenu">
                     <li>
-                        <a data-href="#">Podgląd</a>
+                        <a class="@(c.id == Model.activeCamp && Context.Request.Path.StartsWithSegments("/campaning/details") ? "active" : "")" href="campaning/details/@c.id">Podgląd</a>
                     </li>
                     <li>
                         <a data-href="#">Feedy</a>
@@ -42,7 +41,7 @@
                         <a data-href="#">Reklamy</a>
                     </li>
                     <li>
-                        <a asp-action="groups" asp-controller="group" asp-route-id="@c.id">Grupy reklam</a>
+                        <a class="@(c.id == Model.activeCamp && Context.Request.Path.StartsWithSegments("/groups") ? "active" : "")" asp-action="groups" asp-controller="group" asp-route-camp_id="@c.id">Grupy reklam</a>
                     </li>
                     <li>
                         <a data-href="#">Statystyki (RTB)</a>

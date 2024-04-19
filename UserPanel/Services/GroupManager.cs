@@ -27,5 +27,21 @@ namespace UserPanel.Services
             }
             return new List<GroupModel>();
         }
+
+        public GroupModel? GetGroupsByID(Guid idGroup)
+        {
+            if (!_contextAccessor.HttpContext.User.Identity.IsAuthenticated || _contextAccessor.HttpContext.User.FindFirst("Id").Value == null) return null;
+            int id = int.Parse(_contextAccessor.HttpContext.User.FindFirst("Id").Value);
+
+            var group = _provider.GetGroupRepository().GetGroupById(idGroup);
+
+            if(_provider.GetCampaningRepository().getCampaningsByUser(id)
+                .Select(camp => camp.id).Contains(group.FK_Camp))
+            {
+                return group;
+            }
+            
+            return null;
+        }
     }
 }

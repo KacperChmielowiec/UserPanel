@@ -1,0 +1,185 @@
+﻿@model GroupModel
+@*
+
+*@
+@{
+    var host = "http://localhost:57348/";
+}
+<section id="details d-block">
+@functions {
+    public static string toFixed(decimal number, uint decimals)
+    {
+        return number.ToString("N" + decimals);
+    }
+}
+    <div class="header mx-4 my-7 d-block">
+        <div class="col-md-12">
+            <div class="pull-left">
+                <h2>Podgląd kampanii</h2>
+            </div>
+            <div class="pull-right d-flex items-center gap-x-2">
+                <button class="btn btn-flat success"><i class="icon-edit"></i> Edytuj</button>
+                <form method="post" class="btn btn-flat danger" asp-action="delete" asp-controller="group">
+                    <input hidden type="text" name="id" value="@Model.id" />
+                    <button type="submit"><i class="icon-trash"></i> Usuń</button>
+                </form>
+                <button class="btn btn-flat white"><i class="icon-wrench"></i> Konfiguracja</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="mx-4 py-10">
+        <table class="table table-condensed">
+            <tbody>
+                <tr>
+                    <td class="first-col">
+                        ID
+                    </td>
+                    <td>
+                        @Model.id
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="first-col">
+                        Nazwa
+                    </td>
+                    <td>
+                        @Model.name
+                    </td>
+                    <td>
+                    </td>
+                </tr
+                <tr>
+                    <td class="first-col">
+                        Model rozliczenia
+                    </td>
+                    <td>
+                        <div>@Model?.details?.Billing.GetStringValue()</div>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+                  <tr>
+                    <td class="first-col">
+                        Urządzenia
+                    </td>
+                    <td>
+                        <div>@String.Join(",",Model?.details.Devices.Select(i => i.GetStringValue()).ToArray())</div>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="first-col">
+                        Status
+                    </td>
+                    <td>
+                        <span class="label label-success">@(Model.status ? "Włączona" : "Wyłączona")</span>
+                    </td>
+                    <td>
+                        <div class="btn-group pull-right">
+                            <form asp-action="switch" asp-controller="group" method="post">
+                                <input hidden value="@Model.id" name="id" />
+                                <input hidden value="@Model.status" name="status" />
+                                <button type="submit" class="btn-flat @( Model.status ? "success" : "danger" )"><i class="icon-off mr-1"></i>@(Model.status ? "Włącz" : "Wyłącz")</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="first-col">
+                        Wydzielony budżet
+                    </td>
+                    <td>
+                        <i>brak</i>
+                    </td>
+                    <td>
+                        <div class="btn-group pull-right">
+                            <button class="btn btn-flat white"><span class="hidden-sm"><i class="icon-edit mr-1"></i>Ustaw</span></button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="first-col">
+                        Całkowity budżet
+                    </td>
+                    @if (Model.budget?.totalBudget > 0)
+                    {
+                        <td>
+                            @($"całkowity: {toFixed(Model.budget.totalBudget, 2)} PLN")
+                            <br>
+                            @($"zużyto: {toFixed((Model.budget.totalBudgetLeft - Model.budget.totalBudgetLeft), 2)} PLN")
+                            <br>
+                            @($"pozostało: {toFixed(Model.budget.totalBudgetLeft, 2)} PLN")
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            <span>brak</span>
+                        </td>
+                    }
+                    <td>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="first-col">
+                        Dzienny budżet
+                    </td>
+                    @if (Model.budget?.dayBudget > 0)
+                    {
+                        <td>
+                            @($"całkowity: {toFixed(Model.budget.dayBudget, 2)} PLN")
+                            <br>
+                            @($"zużyto: {toFixed((Model.budget.dayBudget - Model.budget.dayBudgetLeft), 2)} PLN")
+                            <br>
+                            @($"pozostało: {toFixed(Model.budget.dayBudgetLeft, 2)} PLN")
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            <span>brak</span>
+                        </td>
+                    }
+                    <td>
+                    </td>
+                </tr>
+                <tr>
+                    <td class=" first-col">
+                        Google Analitics
+                    </td>
+                    <td>
+                        @($"utm_source = {Model.details.Utm_Source}")
+                        <br>
+                        @($"utm_medium = {Model.details.Utm_Medium}")
+                        <br>
+                        @($"utm_medium = {Model.details.Utm_Camp}")
+                        <br>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="first-col">
+                        Flagi
+                    </td>
+                    <td>
+                        <span class="mr-2 w-[100px] inline-block py-2">środki:</span> <span class="label-flag" flag-state="@Model.details.CampaningFlags.Budget"></span>
+                        <br>
+                        <span class="mr-2  w-[100px] inline-block py-2">produkty:</span> <span class="label-flag" flag-state="@Model.details.CampaningFlags.Products"></span>
+                        <br>
+                        <span class="mr-2 w-[100px] inline-block py-2">listy:</span> <span class="label-flag" flag-state="@Model.details.CampaningFlags.Lists"></span>
+                        <br>
+                        <span class="mr-2 w-[100px] inline-block py-2">reklama:</span> <span class="label-flag" flag-state="@Model.details.CampaningFlags.Advert"></span>
+                        <br>
+                        <span class="mr-2 w-[100px] inline-block py-2">wyświetlenia:</span> <span class="label-flag" flag-state="@Model.details.CampaningFlags.Display"></span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</section>
