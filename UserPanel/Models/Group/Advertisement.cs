@@ -4,8 +4,8 @@
     {
         public Guid id { get; set; }
         public string name { get; set; }
-        public string template { get; set; }
+        public TemplateAds template { get; set; }
         public string[] formats { get; set; }
-        public bool state { get; set; }
+        public bool status { get; set; }
     }
 }

@@ -15,7 +15,7 @@
     <div class="header mx-4 my-7 d-block">
         <div class="col-md-12">
             <div class="pull-left">
-                <h2>Podgląd kampanii</h2>
+                <h2>Podgląd Grupy</h2>
             </div>
             <div class="pull-right d-flex items-center gap-x-2">
                 <button class="btn btn-flat success"><i class="icon-edit"></i> Edytuj</button>
@@ -50,7 +50,7 @@
                     </td>
                     <td>
                     </td>
-                </tr
+                </tr>
                 <tr>
                     <td class="first-col">
                         Model rozliczenia
@@ -183,3 +183,124 @@
     </div>
 
 </section>
+
+<section class="py-1 bg-blueGray-50 table-campaning">
+    <div class="w-full  mb-12 xl:mb-0 px-4 mx-auto">
+        <div class="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded ">
+            <div class="rounded-t mb-0 px-4 py-3 border-0">
+                <div class="flex flex-wrap items-center">
+                    <div class="relative w-full px-4 py-4 max-w-full flex-grow flex-1">
+                        <h1 class="font-semibold text-xl text-blueGray-700">Twoje reklamy:</h1>
+                    </div>
+                    <div class="pull-right">
+                        <a href="/group/create" class="btn btn-flat success"><i class="icon-edit"></i> Edytuj</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="block w-full overflow-x-auto">
+                <table class="items-center bg-transparent w-full border-collapse">
+                    <thead>
+                        <tr>
+                            <th class="px-4 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-center">
+                                Reklama
+                            </th>
+                            <th class="px-4 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-center">
+                                Formaty
+                            </th>
+                            <th class="px-4 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-center">
+                                Status
+                            </th>
+                            <th class="px-4 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-center">
+                                Operacje
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-center align-middle">
+                        @foreach(var ad in Model.advertisements.advertisementsList)
+                        {
+                            <tr class="align-middle">
+                                <td class="align-middle">@ad.name</td>
+                                <td class="align-middle py-2">
+                                    @foreach(var format in ad.formats)
+                                    {
+                                       @format
+                                       <br>
+                                    }
+                                </td>
+                                <td class="align-middle">
+                                    <button class="btn-flat @(ad.status ? "success" : "danger")">@(ad.status ? "Włączona" : "Wyłączona")</button>
+                                </td>
+                                <td class="align-middle">
+                                    <div class="d-flex items-center justify-center">
+                                        <a href="#" class="btn btn-flat white d-flex items-center"><i class="icon-search mr-2"></i> Usuń powiązanie</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="py-1 bg-blueGray-50 table-campaning">
+    <div class="w-full  mb-12 xl:mb-0 px-4 mx-auto">
+        <div class="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded ">
+            <div class="rounded-t mb-0 px-4 py-3 border-0">
+                <div class="flex flex-wrap items-center">
+                    <div class="relative w-full px-4 py-4 max-w-full flex-grow flex-1">
+                        <h1 class="font-semibold text-xl text-blueGray-700">Twoje Listy:</h1>
+                    </div>
+                    <div class="pull-right">
+                        <a href="/group/create" class="btn btn-flat success"><i class="icon-edit"></i> Edytuj</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="block w-full overflow-x-auto">
+                <table class="items-center bg-transparent w-full border-collapse">
+                    <thead>
+                        <tr>
+                            <th class="px-4 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-center">
+                                Status
+                            </th>
+                            <th class="px-4 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-center">
+                                Nazwa
+                            </th>
+                            <th class="px-4 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-center">
+                                @Model.details.Billing.GetStringValue()
+                            </th>
+                            <th class="px-4 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-center">
+                                CAP.
+                            </th>
+                            <th class="px-4 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-center">
+                                OD (przedział)
+                            </th>
+                            <th class="px-4 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-center">
+                                DO (przedział)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-center align-middle">
+                        @foreach (var li in Model.Lists)
+                        {
+                            <tr class="align-middle">
+                                <td class="align-middle py-2">
+                                    <span class="btn-flat @(li.Status == ListStatus.IN ? "success" : "danger")">@li.Status.GetStringValue()</span>
+                                </td>
+                                <td class="align-middle py-2">@li.Name</td>
+                                <td class="align-middle">@li.BidRate</td>
+                                <td class="align-middle">@li.Cappping</td>
+                                <td class="align-middle">@li.start</td>
+                                <td class="align-middle">@li.end</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+

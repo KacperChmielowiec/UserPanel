@@ -8,20 +8,20 @@ namespace UserPanel.Services
     {
         private IDataBaseProvider _provider;
         private IConfiguration _configuration;
-        private IHttpContextAccessor _contextAccessor;
+        private UserManager _userManager;
 
-        public GroupManager(IDataBaseProvider provider, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public GroupManager(IDataBaseProvider provider, IConfiguration configuration, UserManager userManager)
         {
             this._provider = provider;
             _configuration = configuration;
-            _contextAccessor = httpContextAccessor;
+            _userManager = userManager;
         }
         public List<GroupModel> GetGroupsByCampID(Guid idCamp)
         {
-            if (!_contextAccessor.HttpContext.User.Identity.IsAuthenticated || _contextAccessor.HttpContext.User.FindFirst("Id").Value == null) return new List<GroupModel>();
-            int id = int.Parse(_contextAccessor.HttpContext.User.FindFirst("Id").Value);
+            if (!_userManager.isLogin() || _userManager.getUserId() == -1) return new List<GroupModel>();
+            int id = _userManager.getUserId();
 
-            if(_provider.GetCampaningRepository().getCampaningsByUser(id).Where(camp => camp.id == idCamp).FirstOrDefault() != null)
+            if (_provider.GetCampaningRepository().getCampaningsByUser(id).Where(camp => camp.id == idCamp).FirstOrDefault() != null)
             {
               return  _provider.GetGroupRepository().GetGroupsByCampId(idCamp);
             }
@@ -30,8 +30,8 @@ namespace UserPanel.Services
 
         public GroupModel? GetGroupsByID(Guid idGroup)
         {
-            if (!_contextAccessor.HttpContext.User.Identity.IsAuthenticated || _contextAccessor.HttpContext.User.FindFirst("Id").Value == null) return null;
-            int id = int.Parse(_contextAccessor.HttpContext.User.FindFirst("Id").Value);
+            if (!_userManager.isLogin() || _userManager.getUserId() == -1) return new GroupModel();
+            int id = _userManager.getUserId();
 
             var group = _provider.GetGroupRepository().GetGroupById(idGroup);
 

@@ -1,6 +1,6 @@
 ﻿@model List<GroupModel>?
 @{
-    ViewData["Title"] = "CampaningListening";
+    ViewData["Title"] = "Groups";
     Layout = "_Layout";
 }
 <section class="py-1 bg-blueGray-50 table-campaning">
@@ -9,7 +9,7 @@
             <div class="rounded-t mb-0 px-4 py-3 border-0">
                 <div class="flex flex-wrap items-center">
                     <div class="relative w-full px-4 py-4 max-w-full flex-grow flex-1">
-                        <h1 class="font-semibold text-xl text-blueGray-700">Twoje Grupy reklam:</h1>
+                        <h1 class="font-semibold text-xl text-blueGray-700">Twoje grupy reklam</h1>
                     </div>
                     <div class="pull-right">
                         <a href="/group/create" class="btn btn-flat success"><i class="icon-plus"></i> Utwórz</a>
@@ -52,7 +52,7 @@
                                 <td class="border-t-0 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left text-blueGray-700 ">
                                     <a href="/group/details/@camp.id">@camp.name</a>
                                 </td>
-                                <td class="border-t-0 align-middle border-l-0 border-r-0 text-ss whitespace-nowrap p-4">
+                                <td class="border-t-0 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                                     <table class="flags-inner-table">
                                         <thead>
                                             <tr>

@@ -1,7 +1,12 @@
-﻿namespace UserPanel.Models.Group
+﻿using UserPanel.Attributes;
+
+namespace UserPanel.Models.Group
 {
     public enum ListStatus
     {
-        IN, OUT
+        [StringValue("jest w")]
+        IN,
+        [StringValue("nie jest w")]
+        OUT
     }
 }

@@ -8,6 +8,7 @@ using UserPanel.Providers;
 using UserPanel.Helpers;
 using UserPanel.Models;
 using NETCore.MailKit.Core;
+using UserPanel.Models.Group;
 namespace UserPanel.Services
 {
     public class UserManager
@@ -84,7 +85,16 @@ namespace UserPanel.Services
         {
             throw new NotImplementedException();
         }
-
+        public bool isLogin()
+        {
+            return HttpContextAccessor.HttpContext.User.Identity.IsAuthenticated;
+        }
+        public int getUserId()
+        {
+            int id = -1;
+            int.TryParse(HttpContextAccessor.HttpContext.User.FindFirst("Id")?.Value, out id);
+            return id;
+        }
 
 
     }

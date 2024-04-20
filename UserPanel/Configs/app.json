@@ -30,10 +30,28 @@
             "budgetDayLeft": "100"
           },
           "advertisements": {
-
+            "advertisementsList": [
+              {
+                "id": "3964cff5-320b-44ee-b50e-b9651ee28bb6",
+                "name": "reklama1",
+                "template": "Static",
+                "formats": [ "160x600", "300x600", "300x300" ],
+                "status":  true
+              }
+            ]
           },
           "lists": [
-
+            {
+              "id": "83fda443-03bf-48ff-8d2f-9bbe0c6bd1e7",
+              "name": "Visitor",
+              "statis": "IN",
+              "type": "Pred",
+              "size": 200,
+              "bid_rate": 2.30,
+              "cap": 2,
+              "start": 10,
+              "end": 10
+            }
           ]
         }
       ],

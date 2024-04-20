@@ -1,7 +1,9 @@
-﻿using System.Security.Claims;
+﻿using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 using UserPanel.Helpers;
 using UserPanel.Interfaces;
 using UserPanel.Models.Camp;
+using UserPanel.Models.Group;
 using UserPanel.Providers;
 
 namespace UserPanel.Services
@@ -11,32 +13,41 @@ namespace UserPanel.Services
         private IDataBaseProvider _provider;
         private IConfiguration _configuration;
         private IHttpContextAccessor _contextAccessor;
-     
-        public CampaningManager(IDataBaseProvider provider, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        private UserManager _userManager;
+        private ISession session;
+        public CampaningManager(IDataBaseProvider provider, IConfiguration configuration, IHttpContextAccessor httpContextAccessor,UserManager userManager)
         {
-            this._provider = provider;
+            _provider = provider;
             _configuration = configuration;
             _contextAccessor = httpContextAccessor;
+            _userManager = userManager;
+            session = httpContextAccessor.HttpContext.Session;
         }
 
         public List<Campaning> GetCampanings()
         {
-            if (!_contextAccessor.HttpContext.User.Identity.IsAuthenticated || _contextAccessor.HttpContext.User.FindFirst("Id").Value == null) return new List<Campaning>();
-            int id =  int.Parse(_contextAccessor.HttpContext.User.FindFirst("Id").Value);
+            if (!_userManager.isLogin() || _userManager.getUserId() == -1) return new List<Campaning>();
+            int id = _userManager.getUserId();
             return _provider.GetCampaningRepository().getCampaningsByUser(id);
         }
         public void SetCampaningSession(Guid id)
         {
-            Campaning campaning = _provider.GetCampaningRepository().getCampaningById(id);
-            List<Campaning> campaningsSession = _contextAccessor.HttpContext.Session.GetJson<List<Campaning>>("sessionCamp") ?? new List<Campaning>();
-            if(campaningsSession.FirstOrDefault(item => item.id == id ) == null)
+            Campaning campaning = _provider
+                .GetCampaningRepository()
+                .getCampaningById(id);
+
+            List<Campaning> campaningsSession = session.GetJson<List<Campaning>>("sessionCamp") ?? new List<Campaning>();
+
+            if (campaningsSession.FirstOrDefault(item => item.id == id) == null)
                 campaningsSession.Add(campaning);
-            _contextAccessor.HttpContext.Session.SetJson("sessionCamp", campaningsSession);
+
+            session.SetJson("sessionCamp", campaningsSession);
         }
         public void UpdateCampaning(Campaning model)
         {
-            if (!_contextAccessor.HttpContext.User.Identity.IsAuthenticated || _contextAccessor.HttpContext.User.FindFirst("Id").Value == null) return;
-            int id = int.Parse(_contextAccessor.HttpContext.User.FindFirst("Id").Value);
+            if (!_userManager.isLogin() || _userManager.getUserId() == -1) return; 
+
+            int id = _userManager.getUserId();
             if (model.FK_User != id) return;
 
             _provider.GetCampaningRepository().UpdateCampaningById(model.id,model);
@@ -44,8 +55,9 @@ namespace UserPanel.Services
         }
         public void CreateCampaning(CreateCampaning model)
         {
-            if (!_contextAccessor.HttpContext.User.Identity.IsAuthenticated || _contextAccessor.HttpContext.User.FindFirst("Id").Value == null) return;
-            int id = int.Parse(_contextAccessor.HttpContext.User.FindFirst("Id").Value);
+            if (!_userManager.isLogin() || _userManager.getUserId() == -1) return;
+
+            int id = _userManager.getUserId();
             Campaning campaning = new Campaning();
             campaning.id = Guid.NewGuid();
             campaning.status = false;

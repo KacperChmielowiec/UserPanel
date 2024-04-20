@@ -75,6 +75,7 @@ namespace UserPanel.Services
 
         public bool VerifyHashedPassword(string hashedPassword, string providedPassword)
         {
+            if (!IsBase64String(hashedPassword)) return false;
             byte[] hashedPasswordBytes = Convert.FromBase64String(hashedPassword);
             if (hashedPasswordBytes.Length != options.HashSize + options.SaltSize)
             {
@@ -93,6 +94,11 @@ namespace UserPanel.Services
             }
 
             return new HashComparer().Equals(hashBytes, providedHashBytes);
+        }
+        public static bool IsBase64String(string base64)
+        {
+            Span<byte> buffer = new Span<byte>(new byte[base64.Length]);
+            return Convert.TryFromBase64String(base64, buffer, out int bytesParsed);
         }
     }
 }

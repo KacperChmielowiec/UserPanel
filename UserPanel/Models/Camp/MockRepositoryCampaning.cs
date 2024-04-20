@@ -7,6 +7,7 @@ using UserPanel.Interfaces.Abstract;
 using UserPanel.Helpers;
 using Microsoft.AspNetCore.Http;
 using System.Reflection;
+using System.Security.Cryptography.Xml;
 
 namespace UserPanel.Models.User
 {
@@ -65,7 +66,7 @@ namespace UserPanel.Models.User
             var campSess = _Session
                 .GetJson<List<Campaning>>("campanings")?
                 .Where(c => c.FK_User == userId)?
-                .ToList();
+                .ToList() ?? new List<Campaning>();
 
             if(campSess != null && campSess.Count > 0)
             {

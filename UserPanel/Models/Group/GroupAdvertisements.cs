@@ -2,6 +2,6 @@
 {
     public class GroupAdvertisements
     {
-        public Advertisement[] advertisements { get; set; }
+        public Advertisement[] advertisementsList { get; set; }
     }
 }

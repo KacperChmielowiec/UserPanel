@@ -46,8 +46,8 @@ namespace UserPanel.Models.Group
 
         public override GroupModel GetGroupById(Guid id)
         {
-            var curr = _Session.GetJson<List<GroupModel>>("groups")?.Where(group => group.id == id).FirstOrDefault() ?? new GroupModel();
-            if (curr?.id != null)
+            var curr = _Session.GetJson<List<GroupModel>>("groups")?.Where(group => group.id == id).FirstOrDefault();
+            if (curr != null)
             {
                 return curr;
             }
