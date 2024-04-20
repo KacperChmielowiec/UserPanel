@@ -19,15 +19,15 @@ namespace UserPanel.Services
         public static void LoadConfig()
         {
             Core.Configuration = new Dictionary<string, object>();
-            var files = Directory.GetFiles(BASE_PATH + "configs");
+            var files = Directory.GetFiles(BASE_PATH + "Configs");
             StringFileService stringFileService = new StringFileService();
             foreach (var file in files)
             {
                 if (File.Exists(file))
                 {
                     string name = Path.GetFileName(file);
-                    string test = stringFileService.ReadFile("configs\\" + name);
-                    JsonDocument jsonDocument = JsonDocument.Parse(stringFileService.ReadFile("configs\\" + name));
+                    string test = stringFileService.ReadFile("Configs\\" + name);
+                    JsonDocument jsonDocument = JsonDocument.Parse(stringFileService.ReadFile("Configs\\" + name));
                     Core.Configuration[name.Split(".")[0]+"Config"] = ToDynamic(jsonDocument.RootElement);
                     
                 }

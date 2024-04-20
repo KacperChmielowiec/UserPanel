@@ -1,5 +1,5 @@
 {
-  "BASE_PATH": "C:\\Users\\kacpe\\Desktop\\UserPanel\\UserPanel\\",
+  "BASE_PATH": "C:\\Users\\kacpe\\source\\repos\\UserPanel\\UserPanel\\",
   "CONFIG_PATH": "Configs",
   "STMP_CONFIG": {
     "from": "kacperc318@gmail.com",
@@ -14,7 +14,7 @@
       "typeAccess": "Forbidden",
       "Pages": [ "register", "login" ],
       "Auth": true,
-      "Roles": ["ADMIN", "USER"]
+      "Roles": [ "ADMIN", "USER" ]
     }
   }
 }

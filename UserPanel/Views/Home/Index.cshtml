@@ -122,7 +122,8 @@
                 return
             }
             const range = document.querySelector("div.range-buttons a.check")?.getAttribute('value') || 7;
-            const url = "http://localhost:5012/api/campstats";
+            const host = `${window.location.protocol}//${window.location.host}`
+            const url = `${host}/api/campstats`;
 
             let time = new Date(Date.now());
             time.setDate(time.getDate() - Number(range))
