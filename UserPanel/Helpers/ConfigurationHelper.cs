@@ -11,7 +11,9 @@ namespace UserPanel.Helpers
             AppReferences.BASE_APP_PATH = config.GetValue<string>("BASE_PATH")?.Replace("//","/") ?? "";
             AppReferences.CONFIG_APP_PATH = config.GetValue<string>("CONFIG_PATH")?.Replace("//", "/") ?? "";
             AppReferences.USER_MOCK_PATH = "appConfig.database.mock.users";
-
+            AppReferences.CAMP_LOGO_PATH = config.GetValue<string>("LOGO_PATH")?.Replace("//", "/") ?? "";
+            AppReferences.CAMP_LOGO_PATH_FETCH = config.GetValue<string>("LOGO_PATH_FETCH")?.Replace("//", "/") ?? "";
+            AppReferences.BASE_APP_HOST = config.GetValue<string>("APP_HOST")?.Replace("//", "/") ?? "";
         }
     }
 }

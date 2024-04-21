@@ -9,11 +9,11 @@ namespace UserPanel.Helpers
 {
     public static class HtmlHelperExtensions
     {
-        public static IHtmlContent AddClassIfPropertyInError<TModel,TValue>(
+        public static IHtmlContent AddClassIfPropertyInError<TModel, TValue>(
             this IHtmlHelper<TModel> htmlHelper,
             string Error,
             string Success,
-            Expression<Func<TModel,TValue>> expression
+            Expression<Func<TModel, TValue>> expression
          )
         {
             var expressionProvider = htmlHelper.ViewContext.HttpContext.RequestServices
@@ -38,7 +38,9 @@ namespace UserPanel.Helpers
 
         public static bool isVisible(this IHtmlHelper htmlHelper, string components)
         {
-            return ComponentsAccessor.GetInstance().isVisible(htmlHelper.ViewContext.HttpContext,components);
+            return ComponentsAccessor.GetInstance().isVisible(htmlHelper.ViewContext.HttpContext, components);
         }
+
     }
+
 }

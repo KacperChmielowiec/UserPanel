@@ -51,6 +51,9 @@
     <None Include="wwwroot\js\morris.js-0.5.1\spec\viz\examples.js" />
     <None Include="wwwroot\js\morris.js-0.5.1\spec\viz\run.sh" />
     <None Include="wwwroot\js\morris.js-0.5.1\spec\viz\visual_specs.js" />
+    <None Include="wwwroot\static\campaning\logo\02c0c77f-3127-4bba-9413-a474eb199e7b\vuec.png" />
+    <None Include="wwwroot\static\campaning\logo\4e5c0c62-5fd5-451a-a5d5-a1d7da25f8c6\vuec.png" />
+    <None Include="wwwroot\static\campaning\logo\b39d8566-51c7-47e2-af86-ad38e7c651be\vuec.png" />
   </ItemGroup>
 
   <ItemGroup>

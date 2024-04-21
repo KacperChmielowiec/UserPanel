@@ -5,6 +5,7 @@ using UserPanel.Interfaces;
 using UserPanel.Models.Camp;
 using UserPanel.Models.Group;
 using UserPanel.Providers;
+using UserPanel.References;
 
 namespace UserPanel.Services
 {
@@ -15,6 +16,7 @@ namespace UserPanel.Services
         private IHttpContextAccessor _contextAccessor;
         private UserManager _userManager;
         private ISession session;
+        private static string CAMP_PATH = AppReferences.CAMP_LOGO_PATH;
         public CampaningManager(IDataBaseProvider provider, IConfiguration configuration, IHttpContextAccessor httpContextAccessor,UserManager userManager)
         {
             _provider = provider;
@@ -87,12 +89,22 @@ namespace UserPanel.Services
                 totalBudget = 0,
                 totalBudgetLeft = 0,
             };
+            WriteLogoCampaning(model.logo, campaning.id.ToString());
             _provider.GetCampaningRepository().CreateCampaning(campaning);
 
         }
         public void DeleteCampaning(Guid id)
         {
             _provider.GetCampaningRepository().DeleteCampaning(id);
+        }
+        private void WriteLogoCampaning(IFormFile formFile,string campDest)
+        {
+            FormFileService formFileService = new FormFileService(formFile,AppReferences.BASE_APP_HOST);
+            formFileService.WriteFile($"{CAMP_PATH}{FileServices.GetSafeFilename(campDest)}/");
+        }
+        public static string LoadLogoPath(Campaning campaning, HttpContext httpContext)
+        {
+            return $"/{AppReferences.CAMP_LOGO_PATH_FETCH}{FileServices.GetSafeFilename(campaning.id.ToString())}/{campaning.details.logo}";
         }
     }
 }

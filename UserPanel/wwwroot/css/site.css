@@ -416,6 +416,10 @@ input.search {
             -moz-transition: color 0.1s linear;
             -webkit-transition: color 0.1s linear;
             -o-transition: color 0.1s linear;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 140px;
+            display: inline-block;
         }
 
         #sidebar-nav #dashboard-menu a.ui-elements span {
@@ -2300,4 +2304,16 @@ table {
 }
 .success-font {
     color: #14A44D;
+}
+
+div .prepend {
+    width: 200px !important;
+}
+.select .prepend {
+    width: 240px !important;
+    text-align: center;
+}
+.file .prepend {
+    width: 255px !important;
+    text-align: center;
 }

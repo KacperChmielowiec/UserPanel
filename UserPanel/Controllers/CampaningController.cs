@@ -31,7 +31,8 @@ namespace UserPanel.Controllers
         [HttpGet("/campaning")]
         public IActionResult Campaning()
         {
-            return View(_campaningManager.GetCampanings());
+            var camp = _campaningManager.GetCampanings();
+            return View(camp);
         }
         [Authorize]
         [HttpPost("switch")]
@@ -62,13 +63,23 @@ namespace UserPanel.Controllers
 
             _campaningManager.CreateCampaning(form);
 
-            return RedirectToAction("Campaning");
+            return RedirectToAction("Campaning"); 
         }
         [HttpPost("delete")]
         public IActionResult Delete([FromForm] Guid id)
         {
             _campaningManager.DeleteCampaning(id);
             return RedirectToAction("Campaning");
+        }
+        [HttpGet("edit/{id}")]
+        public IActionResult Edit(Guid id)
+        {
+            return View(_campaningManager.GetCampanings().Where(c => c.id == id).FirstOrDefault());
+        }
+        [HttpPost("edit/{id}")]
+        public IActionResult Edit([FromForm] Campaning campaning, [FromForm(Name = "logo")] IFormFile formFile, Guid id)
+        {
+            return View();
         }
     }
 }

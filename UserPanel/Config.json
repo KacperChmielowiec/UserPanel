@@ -1,5 +1,8 @@
 {
   "BASE_PATH": "C:\\Users\\kacpe\\source\\repos\\UserPanel\\UserPanel\\",
+  "APP_HOST": "https://localhost:7119",
+  "LOGO_PATH": "wwwroot/static/campaning/logo/",
+  "LOGO_PATH_FETCH": "static/campaning/logo/",
   "CONFIG_PATH": "Configs",
   "STMP_CONFIG": {
     "from": "kacperc318@gmail.com",

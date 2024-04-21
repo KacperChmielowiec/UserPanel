@@ -33,5 +33,20 @@ namespace UserPanel.Services
             fileStream.Write(buffor, 0, buffor.Length);
             return true;
         }
+        public static bool WriteFile(string path, MemoryStream memoryStream, string BasePath = "")
+        {
+            if (BasePath == "") BasePath = BASE_PATH;
+            string fullPath = Path.GetFullPath(Path.Combine(BasePath, path));
+            using FileStream fileStream = new FileStream(fullPath, FileMode.Create, FileAccess.Write);
+            memoryStream.Seek(0, SeekOrigin.Begin);
+            memoryStream.CopyTo(fileStream,(int)memoryStream.Length);
+            return true;
+        }
+        public static string GetSafeFilename(string filename)
+        {
+
+            return string.Join("_", filename.Split(Path.GetInvalidFileNameChars()));
+
+        }
     }
 }

@@ -1,3 +1,4 @@
+using Microsoft.Extensions.FileProviders;
 using UserPanel.Helpers;
 using UserPanel.Installers;
 using UserPanel.Middleware;
@@ -7,7 +8,6 @@ using UserPanel.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.InstallServices();
-
 ConfigurationHelper.Initialize(builder.Configuration);
 ConfigManager.LoadConfig();
 
@@ -26,6 +26,7 @@ app.UseSwaggerUI(c =>
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
 app.UseRouting();
 
 app.UseMiddleware<PageTypeMiddleware>();

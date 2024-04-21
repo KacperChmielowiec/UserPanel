@@ -32,7 +32,12 @@ namespace UserPanel.ViewComponents
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            SidebarModel sidebarModel = new SidebarModel() { campaningList = HttpContext.Session.GetJson<List<Campaning>>("sessionCamp") };
+            var list = HttpContext.Session.GetJson<List<Campaning>>("sessionCamp");
+            if(list == null || list?.Count == 0)
+            {
+                list = new List<Campaning>();
+            }
+            SidebarModel sidebarModel = new SidebarModel() { campaningList = list };
             if (HttpContext.Items.ContainsKey(AppReferences.CurrPageType))
             {
                 if (HttpContext.Items[AppReferences.CurrPageType] is PageTypes type)
@@ -42,6 +47,7 @@ namespace UserPanel.ViewComponents
                     {
                         case PageTypes.HOME:
                             sidebarModel.Page = PageTypes.HOME;
+                            sidebarModel.activeCamp = Guid.Empty;
                             break;
                         case PageTypes.CAMP:
                             sidebarModel.activeCamp = getCampId();
@@ -51,8 +57,20 @@ namespace UserPanel.ViewComponents
                             sidebarModel.activeCamp = getCampId();
                             sidebarModel.Page = PageTypes.GROUP;
                             break;
+                        default:
+                            sidebarModel.activeCamp = Guid.Empty;
+                            sidebarModel.Page = PageTypes.HOME;
+                            break;
                     }
                 }
+            }
+            Console.WriteLine("sidebar");
+            Console.WriteLine(HttpContext.Items.ContainsKey(AppReferences.CurrPageType));
+            Console.WriteLine(sidebarModel.activeCamp);
+            foreach(var item in sidebarModel.campaningList)
+            {
+                Console.WriteLine(item.name);
+                Console.WriteLine();
             }
             return View(sidebarModel);
         }
