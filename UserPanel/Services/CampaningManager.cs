@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using UserPanel.Helpers;
 using UserPanel.Interfaces;
@@ -17,7 +18,12 @@ namespace UserPanel.Services
         private UserManager _userManager;
         private ISession session;
         private static string CAMP_PATH = AppReferences.CAMP_LOGO_PATH;
-        public CampaningManager(IDataBaseProvider provider, IConfiguration configuration, IHttpContextAccessor httpContextAccessor,UserManager userManager)
+        public CampaningManager(
+            IDataBaseProvider provider,
+            IConfiguration configuration, 
+            IHttpContextAccessor httpContextAccessor,
+            UserManager userManager
+        )
         {
             _provider = provider;
             _configuration = configuration;
@@ -48,9 +54,22 @@ namespace UserPanel.Services
         public void UpdateCampaning(Campaning model)
         {
             if (!_userManager.isLogin() || _userManager.getUserId() == -1) return; 
+            if(model.id == Guid.Empty) return;
 
             int id = _userManager.getUserId();
-            if (model.FK_User != id) return;
+            var camps = GetCampanings().Where(c => c.id == model.id).ToArray();
+            if (camps.Count() == 0) return;
+
+
+            if(model.details.logo == null)
+            {
+                model.details.logo = camps[0].details.logo;
+            }
+            if(model.details.CampaningFlags == null)
+            {
+                model.details.CampaningFlags = camps[0].details.CampaningFlags;
+            }
+            model.FK_User = id;
 
             _provider.GetCampaningRepository().UpdateCampaningById(model.id,model);
 
@@ -97,7 +116,7 @@ namespace UserPanel.Services
         {
             _provider.GetCampaningRepository().DeleteCampaning(id);
         }
-        private void WriteLogoCampaning(IFormFile formFile,string campDest)
+        public void WriteLogoCampaning(IFormFile formFile,string campDest)
         {
             FormFileService formFileService = new FormFileService(formFile,AppReferences.BASE_APP_HOST);
             formFileService.WriteFile($"{CAMP_PATH}{FileServices.GetSafeFilename(campDest)}/");

@@ -2299,10 +2299,10 @@ table {
     border-spacing: 2px;
     border-color: gray;
 }
-.danger-font {
+.text-danger {
     color: #DC4C64;
 }
-.success-font {
+.text-success {
     color: #14A44D;
 }
 

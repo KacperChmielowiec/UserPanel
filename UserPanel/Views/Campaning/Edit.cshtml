@@ -1,5 +1,4 @@
-﻿@model UserPanel.Models.Camp.Campaning
-
+﻿@model UserPanel.Models.Camp.EditCampaning
 @{
     ViewData["Title"] = "Create";
     var ModelState = ViewData.ModelState;
@@ -23,31 +22,33 @@
                         <header class="text-xl">Podstawowe parametry:</header>
                     </div>
                     <div class="form-group pb-4 d-flex flex-col gap-y-1">
+                        <span asp-validation-for="name" class="text-danger"></span>
                         <input type="text" data-role="input" data-prepend="Wybierz nazwe:" name="name" asp-for="name">
                     </div>
                     <div class="form-group pb-4 d-flex flex-col gap-y-1">
+                        <span asp-validation-for="website" class="text-danger"></span>
                         <input type="text" data-role="input" data-prepend="Wybierz URL:" name="website" asp-for="website">
                     </div>
                     <div class="form-group pb-4 d-flex flex-col gap-y-1">
-                        <select type="select" data-role="select" data-prepend="Wybierz URL:" name="status" asp-for="status">
-                            <option value="1">Właczona</option>
-                            <option value="0">Wyłączona</option>
+                        <span asp-validation-for="status" class="text-danger"></span>
+                        <select type="select" data-role="select" data-prepend="Wybierz Status:" name="status" asp-for="status">
+                            <option value="true">Właczona</option>
+                            <option value="false">Wyłączona</option>
                         </select>
                     </div>
                     <div class="form-group d-flex pb-4 flex-col gap-y-1">
-                        @if (ModelState.ContainsKey("logo") && ModelState["logo"]?.Errors?.Count > 0)
-                        {
-                            <span class="danger-font">@ModelState["logo"].Errors.FirstOrDefault().ErrorMessage</span>
-                        }
+                        <span asp-validation-for="logo" class="text-danger"></span>
                         <input name="logo" type="file" data-role="file" data-prepend="Wybierz logo:" accept="image/png, image/jpeg">
                     </div>
                     <div class="form-group d-flex pb-4">
-                        <select name="Country" data-prepend="Wybierz kraj:" data-role="select" asp-for="details.Country">
+                        <span asp-validation-for="country" class="text-danger"></span>
+                        <select name="country" data-prepend="Wybierz kraj:" data-role="select" asp-for="country">
                             <option selected value="Polska">Polska</option>
                         </select>
                     </div>
                     <div class="form-group d-flex pb-4">
-                        <select name="Currency" data-prepend="Wybierz walute:" data-role="select" asp-for="details.Currency">
+                        <span asp-validation-for="currency" class="text-danger"></span>
+                        <select name="currency" data-prepend="Wybierz walute:" data-role="select" asp-for="currency">
                             <option selected value="PLN">PLN</option>
                         </select>
                     </div>
@@ -55,10 +56,27 @@
                         <header class="text-xl">Budżet kampanii:</header>
                     </div>
                     <div class="form-group d-flex pb-4 flex-col gap-y-1">
-                        <input type="text" data-role="input" data-prepend="Wybierz b. dzienny:" name="dayBudget" asp-for="budget.dayBudget">
+                        <span asp-validation-for="dayBudget" class="text-danger"></span>
+                        <input type="text" data-role="input" data-prepend="Wybierz b. dzienny:" name="dayBudget" asp-for="dayBudget">
                     </div>
                     <div class="form-group d-flex pb-4 flex-col gap-y-1">
-                        <input type="text" data-role="input" data-prepend="Wybierz b. całk.:" name="totalBudget" asp-for="budget.totalBudget">
+                        <span asp-validation-for="totalBudget" class="text-danger"></span>
+                        <input type="text" data-role="input" data-prepend="Wybierz b. całk.:" name="totalBudget" asp-for="totalBudget">
+                    </div>
+                    <div class="py-6">
+                        <header class="text-xl">UTM:</header>
+                    </div>
+                       <div class="form-group d-flex pb-4 flex-col gap-y-1">
+                        <span asp-validation-for="Utm_Medium" class="text-danger"></span>
+                        <input type="text" data-role="input" data-prepend="UTM_MEDIUM:" name="Utm_Medium" asp-for="Utm_Medium">
+                    </div>
+                    <div class="form-group d-flex pb-4 flex-col gap-y-1">
+                        <span asp-validation-for="Utm_Source" class="text-danger"></span>
+                        <input type="text" data-role="input" data-prepend="UTM_SOURCE:" name="Utm_Source" asp-for="Utm_Source">
+                    </div>
+                    <div class="form-group d-flex pb-4 flex-col gap-y-1">
+                        <span asp-validation-for="notify" class="text-danger"></span>
+                        <input type="checkbox" data-caption="Powiadomienia email:" data-role="checkbox" name="notify" asp-for="notify" data-style="2">
                     </div>
                     <div class="rounded-t mb-0 py-6 border-b-1">
                         <div class="pull-right">
