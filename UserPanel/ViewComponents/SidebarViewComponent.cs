@@ -64,14 +64,6 @@ namespace UserPanel.ViewComponents
                     }
                 }
             }
-            Console.WriteLine("sidebar");
-            Console.WriteLine(HttpContext.Items.ContainsKey(AppReferences.CurrPageType));
-            Console.WriteLine(sidebarModel.activeCamp);
-            foreach(var item in sidebarModel.campaningList)
-            {
-                Console.WriteLine(item.name);
-                Console.WriteLine();
-            }
             return View(sidebarModel);
         }
     }
