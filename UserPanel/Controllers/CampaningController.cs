@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using UserPanel.Helpers;
 using UserPanel.Interfaces.Abstract;
 using UserPanel.Models;
@@ -14,9 +16,11 @@ namespace UserPanel.Controllers
     public class CampaningController : Controller
     {
         private readonly CampaningManager _campaningManager;
-        public CampaningController(CampaningManager campaningManager)
+        private IMapper _mapper;
+        public CampaningController(CampaningManager campaningManager, IMapper mapper)
         {
             _campaningManager = campaningManager;
+            _mapper = mapper;
         }
 
         [Authorize]
@@ -74,12 +78,25 @@ namespace UserPanel.Controllers
         [HttpGet("edit/{id}")]
         public IActionResult Edit(Guid id)
         {
-            return View(_campaningManager.GetCampanings().Where(c => c.id == id).FirstOrDefault());
+            return View(_mapper.Map<EditCampaning>(_campaningManager.GetCampanings()
+                .Where(c => c.id == id).FirstOrDefault()));
         }
         [HttpPost("edit/{id}")]
-        public IActionResult Edit([FromForm] Campaning campaning, [FromForm(Name = "logo")] IFormFile formFile, Guid id)
+        public IActionResult Edit([FromForm] EditCampaning editCampaning, Guid id)
         {
-            return View();
+            if (!ModelState.IsValid)
+            {
+                return View(editCampaning);
+            }
+            Campaning campaning = _mapper.Map<Campaning>(editCampaning);
+            campaning.id = id;
+            if(editCampaning.logo != null)
+            {
+                campaning.details.logo = editCampaning.logo.FileName;
+                _campaningManager.WriteLogoCampaning(editCampaning.logo, id.ToString());
+            }
+            _campaningManager.UpdateCampaning(campaning);
+            return RedirectToAction("Index", new { id = id });
         }
     }
 }

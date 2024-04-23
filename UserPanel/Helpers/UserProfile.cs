@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using System.Data;
+using UserPanel.Models.Camp;
 using UserPanel.Models.User;
 using UserPanel.References;
 
@@ -19,6 +20,7 @@ namespace UserPanel.Helpers
                 .ForMember(x => x.Role, (conf) => conf.MapFrom((src, dest, destMember, context) => AppReferences.RoleMap[src?.Field<string>("Role") ?? "User"]));
 
             CreateMap<RegisterModel, UserModel>();
+            CreateMap<Campaning,Campaning>();
         }
     }
 }

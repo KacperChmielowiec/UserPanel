@@ -65,6 +65,7 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.5.0" />
     <PackageReference Include="Tailwind.Extensions.AspNetCore" Version="1.0.0" />
+    <PackageReference Include="TypeMerger" Version="2.1.4" />
   </ItemGroup>
 
 </Project>
