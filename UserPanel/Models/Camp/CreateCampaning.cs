@@ -8,7 +8,7 @@ namespace UserPanel.Models.Camp
         [Required]
         [RegularExpression(@"^[A-Za-z0-9]{4,25}$", ErrorMessage = "Niepoprawny format")]
         public string name { get; set; }
-        [Required]
+
         [DataType(DataType.Upload)]
         [FileTypeValidation(".jpg", ".png", ErrorMessage = "Dozwolone są tylko pliki typu: JPG lub PNG.")]
         public IFormFile logo {  get; set; }
