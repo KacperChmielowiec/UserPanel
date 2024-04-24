@@ -105,6 +105,59 @@
             "totalBudgetLeft": "20000",
             "budgetDayLeft": "100"
           },
+          "groups": [
+            {
+              "id": "540344ba-aba7-47a5-a13f-ab3c260c092a",
+              "id_camp": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+              "name": "UserGroup1",
+              "status": true,
+              "details": {
+                "utm_sourcel": "panel",
+                "utm_medium": "cpc",
+                "utm_camp": "cpc",
+                "flags": {
+                  "budget": "Active",
+                  "products": "Active",
+                  "lists": "Active",
+                  "advert": "Active",
+                  "display": "Active"
+                },
+                "billing": "CPM",
+                "devices": [ "mobile", "desktop" ]
+              },
+              "budget": {
+                "id": "7c9e6679-2225-40de-944b-e07fc1f90111",
+                "totalBudget": "20000",
+                "budgetDay": "100",
+                "totalBudgetLeft": "20000",
+                "budgetDayLeft": "100"
+              },
+              "advertisements": {
+                "advertisementsList": [
+                  {
+                    "id": "3964cff5-320b-44ee-b50e-b9651ee28bb6",
+                    "name": "reklama1",
+                    "template": "Static",
+                    "formats": [ "160x600", "300x600", "300x300" ],
+                    "status": true
+                  }
+                ]
+              },
+              "lists": [
+                {
+                  "id": "83fda443-03bf-48ff-8d2f-9bbe0c6bd1e7",
+                  "name": "Visitor",
+                  "statis": "IN",
+                  "type": "Pred",
+                  "size": 200,
+                  "bid_rate": 2.30,
+                  "cap": 2,
+                  "start": 10,
+                  "end": 10
+                }
+              ]
+            }
+          ],
           "status": true
         },
         {

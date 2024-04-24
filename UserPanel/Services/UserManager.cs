@@ -89,10 +89,20 @@ namespace UserPanel.Services
         {
             return HttpContextAccessor.HttpContext.User.Identity.IsAuthenticated;
         }
+        public static bool isLogin(IHttpContextAccessor accessor)
+        {
+            return accessor.HttpContext?.User?.Identity?.IsAuthenticated ?? false;
+        }
         public int getUserId()
         {
             int id = -1;
             int.TryParse(HttpContextAccessor.HttpContext.User.FindFirst("Id")?.Value, out id);
+            return id;
+        }
+        public static int getUserId(IHttpContextAccessor accessor)
+        {
+            int id = -1;
+            int.TryParse(accessor.HttpContext?.User?.FindFirst("Id")?.Value, out id);
             return id;
         }
 

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using UserPanel.Models.Camp;
+using UserPanel.Models.Group;
 
 namespace UserPanel.Helpers
 {
@@ -24,6 +25,29 @@ namespace UserPanel.Helpers
                 .ForPath(e => e.budget.dayBudget, (conf) => conf.MapFrom((src) => src.dayBudget))
                 .ForPath(e => e.details.Utm_Source, (conf) => conf.MapFrom((src) => src.Utm_Source))
                 .ForPath(e => e.details.Utm_Medium, (conf) => conf.MapFrom((src) => src.Utm_Medium));
+
+            CreateMap<GroupModel, EditGroup>()
+                .ForMember(e => e.Billing, (conf) => conf.MapFrom((src) => src.details.Billing))
+                .ForMember(e => e.Devices, (conf) => conf.MapFrom((src) => src.details.Devices))
+                .ForMember(e => e.startTime, (conf) => conf.MapFrom((src) => src.details.startTime))
+                .ForMember(e => e.endTime, (conf) => conf.MapFrom((src) => src.details.endTime))
+                .ForMember(e => e.Utm_Camp, (conf) => conf.MapFrom((src) => src.details.Utm_Camp))
+                .ForMember(e => e.Utm_Source, (conf) => conf.MapFrom((src) => src.details.Utm_Source))
+                .ForMember(e => e.Utm_Medium, (conf) => conf.MapFrom((src) => src.details.Utm_Medium))
+                .ForMember(e => e.totalBudget, (conf) => conf.MapFrom((src) => src.budget.totalBudget))
+                .ForMember(e => e.dayBudget, (conf) => conf.MapFrom((src) => src.budget.dayBudget));
+
+            CreateMap<EditGroup, GroupModel>()
+                .ForPath(e => e.details.Billing, (conf) => conf.MapFrom((src) => src.Billing))
+                .ForPath(e => e.details.Devices, (conf) => conf.MapFrom((src) => src.Devices))
+                .ForPath(e => e.details.startTime, (conf) => conf.MapFrom((src) => src.startTime))
+                .ForPath(e => e.details.endTime, (conf) => conf.MapFrom((src) => src.endTime))
+                .ForPath(e => e.budget.totalBudget, (conf) => conf.MapFrom((src) => src.totalBudget))
+                .ForPath(e => e.budget.dayBudget, (conf) => conf.MapFrom((src) => src.dayBudget))
+                .ForPath(e => e.details.Utm_Source, (conf) => conf.MapFrom((src) => src.Utm_Source))
+                .ForPath(e => e.details.Utm_Medium, (conf) => conf.MapFrom((src) => src.Utm_Medium))
+                .ForPath(e => e.details.Utm_Camp, (conf) => conf.MapFrom((src) => src.Utm_Camp));
+
         }
     }
 }
