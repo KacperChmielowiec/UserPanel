@@ -1,0 +1,105 @@
+﻿@model UserPanel.Models.Group.EditGroup
+@{
+    ViewData["Title"] = "Edit";
+    var ModelState = ViewData.ModelState;
+}
+
+
+<section class="py-1 bg-blueGray-50 table-campaning">
+    <div class="w-full  mb-12 xl:mb-0 px-4 mx-auto">
+        <section class="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded ">
+            <div class="rounded-t mb-0 px-4 py-3 border-b-1">
+                <div class="flex flex-wrap items-center">
+                    <div class="relative w-full px-4 py-4 max-w-full flex-grow flex-1">
+                        <h1 class="font-semibold text-xl text-blueGray-700">Edytuj Grupe</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="body mx-40">
+                <form class="ml-[50px] pb-10" asp-action="edit" asp-controller="groups" method="post" enctype="multipart/form-data">
+                    <div class="py-6">
+                        <header class="text-xl">Podstawowe parametry:</header>
+                    </div>
+                    <input hidden asp-for="id" name="id"/>
+                    <div class="form-group pb-4 d-flex flex-col gap-y-1">
+                        <span asp-validation-for="name" class="text-danger"></span>
+                        <input type="text" data-role="input" data-prepend="Wybierz nazwe:" name="name" asp-for="name">
+                    </div>
+                    <div class="form-group pb-4 d-flex flex-col gap-y-1">
+                        <span asp-validation-for="description" class="text-danger"></span>
+                        <input type="text" data-role="input" data-prepend="Wybierz opis:" name="description" asp-for="description">
+                    </div>
+                    <div class="form-group pb-4 d-flex flex-col gap-y-1">
+                        <span asp-validation-for="status" class="text-danger"></span>
+                        <select type="select" data-role="select" data-prepend="Wybierz Status:" name="status" asp-for="status">
+                            <option value="true">Właczona</option>
+                            <option value="false">Wyłączona</option>
+                        </select>
+                    </div>
+                    <div class="form-group pb-4 d-flex flex-col gap-y-1">
+                        <span asp-validation-for="Devices" class="text-danger"></span>
+                        <select type="select" data-role="select" data-prepend="Wybierz Status:" multiple name="Devices" asp-for="Devices">
+                            <option value="@DevicesModel.Mobile">Mobile</option>
+                            <option value="@DevicesModel.Desktop">Desktop</option>
+                        </select>
+                    </div>
+                    <div class="py-6">
+                        <header class="text-xl">Czas:</header>
+                    </div>
+                    <div class="form-group d-flex pb-4">
+                        <span asp-validation-for="startTime" class="text-danger"></span>
+                        <input type="text" data-role="calendarpicker" data-input-format="%d/%m/%y" value="21/12/1972" asp-for="startTime" name="startTime">
+                    </div>
+                    <div class="form-group d-flex pb-4">
+                        <span asp-validation-for="endTime" class="text-danger"></span>
+                        <input type="text" data-role="calendarpicker" data-input-format="%d/%m/%y" value="21/12/1972" asp-for="endTime" name="endTime">
+                    </div>
+                    <div class="py-6">
+                        <header class="text-xl">Budżet:</header>
+                    </div>
+                    <div class="form-group d-flex pb-4 flex-col gap-y-1">
+                        <span asp-validation-for="dayBudget" class="text-danger"></span>
+                        <input type="text" data-role="input" data-prepend="Wybierz b. dzienny:" name="dayBudget" asp-for="dayBudget">
+                    </div>
+                    <div class="form-group d-flex pb-4 flex-col gap-y-1">
+                        <span asp-validation-for="totalBudget" class="text-danger"></span>
+                        <input type="text" data-role="input" data-prepend="Wybierz b. całk.:" name="totalBudget" asp-for="totalBudget">
+                    </div>
+                    <div class="py-6">
+                        <header class="text-xl">Rozliczenie:</header>
+                    </div>
+                    <div class="form-group pb-4 d-flex flex-col gap-y-1">
+                        <span asp-validation-for="Billing" class="text-danger"></span>
+                        <select type="select" data-role="select" data-prepend="Wybierz rozliczenie:" name="Billing" asp-for="Billing">
+                            <option value="CPC">CPC</option>
+                            <option value="CPM">CPM</option>
+                        </select>
+                    </div>
+                    <div class="py-6">
+                        <header class="text-xl">UTM:</header>
+                    </div>
+                    <div class="form-group d-flex pb-4 flex-col gap-y-1">
+                        <span asp-validation-for="Utm_Medium" class="text-danger"></span>
+                        <input type="text" data-role="input" data-prepend="UTM_MEDIUM:" name="Utm_Medium" asp-for="Utm_Medium">
+                    </div>
+                    <div class="form-group d-flex pb-4 flex-col gap-y-1">
+                        <span asp-validation-for="Utm_Source" class="text-danger"></span>
+                        <input type="text" data-role="input" data-prepend="UTM_SOURCE:" name="Utm_Source" asp-for="Utm_Source">
+                    </div>
+                    <div class="form-group d-flex pb-4 flex-col gap-y-1">
+                        <span asp-validation-for="Utm_Camp" class="text-danger"></span>
+                        <input type="text" data-role="input" data-prepend="UTM_SOURCE:" name="Utm_Camp" asp-for="Utm_Camp">
+                    </div>
+                    <div class="rounded-t mb-0 py-6 border-b-1">
+                        <div class="pull-right">
+                            <a href="/group/details/@Model.id" class="btn btn-flat white"><i class="icon-reply"></i> Wróć</a>
+                            <button type="submit" class="btn btn-flat success"><i class="icon-edit"></i> Zapisz</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+    </div>
+</section>
+

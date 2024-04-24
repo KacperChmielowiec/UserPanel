@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using UserPanel.Helpers;
+using UserPanel.Interfaces;
 using UserPanel.Interfaces.Abstract;
 using UserPanel.Models.Camp;
 using UserPanel.Services;
@@ -41,7 +42,7 @@ namespace UserPanel.Models.Group
 
         public override List<GroupModel> GetGroupsByUserId(int id)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException();    
         }
 
         public override GroupModel GetGroupById(Guid id)
@@ -70,6 +71,12 @@ namespace UserPanel.Models.Group
             }
         }
 
-      
+        public override void UpdateGroup(Guid id, GroupModel model)
+        {
+            var curr = _Session.GetJson<List<GroupModel>>("groups") ?? new List<GroupModel>();
+            curr.RemoveAll(model => model.id == id);
+            curr.Add(model);
+            _Session.SetJson("groups", curr);
+        }
     }
 }
