@@ -18,7 +18,7 @@
                 <h2>Podgląd Grupy</h2>
             </div>
             <div class="pull-right d-flex items-center gap-x-2">
-                <button class="btn btn-flat success"><i class="icon-edit"></i> Edytuj</button>
+                <a href="/groups/edit/@Model.id" class="btn btn-flat success"><i class="icon-edit"></i> Edytuj</a>
                 <form method="post" class="btn btn-flat danger" asp-action="delete" asp-controller="group">
                     <input hidden type="text" name="id" value="@Model.id" />
                     <button type="submit"><i class="icon-trash"></i> Usuń</button>

@@ -63,12 +63,22 @@ namespace UserPanel.Models.User
 
         public override List<Campaning>? getCampaningsByUser(int userId)
         {
+            var UserCamp = getCampaningsByUserWithGroups(userId);
+            UserCamp?.ForEach(camp =>
+            {
+                camp.groups = null;
+            });
+            return UserCamp;
+        }
+        
+        public override List<Campaning> getCampaningsByUserWithGroups(int userId)
+        {
             var campSess = _Session
                 .GetJson<List<Campaning>>("campanings")?
                 .Where(c => c.FK_User == userId)?
                 .ToList() ?? new List<Campaning>();
 
-            if(campSess != null && campSess.Count > 0)
+            if (campSess != null && campSess.Count > 0)
             {
                 return campSess;
             }
@@ -77,7 +87,7 @@ namespace UserPanel.Models.User
                 .Parse<List<Campaning>>()
                 .Where(c => c.FK_User == userId).ToList();
 
-            if(camp != null && camp.Count > 0)
+            if (camp != null && camp.Count > 0)
             {
                 var curr = _Session.GetJson<List<Campaning>>("campanings") ?? new List<Campaning>();
                 curr.AddRange(camp);
@@ -94,5 +104,6 @@ namespace UserPanel.Models.User
             curr.Add(model);
             _Session.SetJson("campanings", curr);
         }
+
     }
 }
