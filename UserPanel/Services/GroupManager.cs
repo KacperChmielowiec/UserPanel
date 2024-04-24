@@ -1,4 +1,5 @@
-﻿using UserPanel.Interfaces;
+﻿using System.Reflection;
+using UserPanel.Interfaces;
 using UserPanel.Models.Camp;
 using UserPanel.Models.Group;
 
@@ -42,6 +43,22 @@ namespace UserPanel.Services
             }
             
             return null;
+        }
+        public void UpdateGroup(GroupModel model)
+        {
+
+            if (!_userManager.isLogin() || _userManager.getUserId() == -1) return;
+            if (model.id == Guid.Empty) return;
+
+            int id = _userManager.getUserId();
+
+            if (!_provider.GetCampaningRepository().getCampaningsByUser(id)
+                .Select(camp => camp.id).Contains(model.FK_Camp))
+            {
+                return;
+            }
+
+            _provider.GetGroupRepository().UpdateGroup(model.id, model);
         }
     }
 }

@@ -9,6 +9,9 @@ namespace UserPanel.Models.Group
         [JsonProperty("devices")]
         public DevicesModel[] Devices { get; set; }
 
+        public string startTime { get; set; }
+        public string endTime { get; set; }
+
         [JsonProperty("utm_source")]
         public string Utm_Source { get; set; }
         [JsonProperty("utm_medium")]

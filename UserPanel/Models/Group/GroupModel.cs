@@ -9,6 +9,7 @@ namespace UserPanel.Models.Group
         [JsonProperty("id_camp")]
         public Guid FK_Camp { get; set; }
         public string name { get; set; }
+        public string description { get; set; }
         public BudgetCampaning budget { get; set; }
         public GroupDetails details { get; set; }
         public bool status { get; set; }

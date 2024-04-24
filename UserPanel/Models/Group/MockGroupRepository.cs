@@ -70,6 +70,12 @@ namespace UserPanel.Models.Group
             }
         }
 
-      
+        public override void UpdateGroup(Guid id, GroupModel model)
+        {
+            var curr = _Session.GetJson<List<GroupModel>>("groups") ?? new List<GroupModel>();
+            curr.RemoveAll(model => model.id == id);
+            curr.Add(model);
+            _Session.SetJson("campanings", curr);
+        }
     }
 }
