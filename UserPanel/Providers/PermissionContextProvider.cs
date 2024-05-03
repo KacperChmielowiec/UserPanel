@@ -1,4 +1,6 @@
-﻿using UserPanel.Interfaces;
+﻿using System.Runtime.CompilerServices;
+using UserPanel.Helpers;
+using UserPanel.Interfaces;
 using UserPanel.Models;
 using UserPanel.Services;
 using UserPanel.Services.observable;
@@ -8,36 +10,27 @@ namespace UserPanel.Providers
     {
         private IDataBaseProvider _provider;
         private IHttpContextAccessor _contextAccessor;
-        private static PermissionContext _permissionContext;
         public PermissionContextProvider(IDataBaseProvider provider, IHttpContextAccessor accesor) { 
             _provider = provider;
             _contextAccessor = accesor;
         }
         public PermissionContext GetPermissionContext() {
-
-            Console.WriteLine("TEST2");
-            PermissionContext PermContext = new PermissionContext();
-            _permissionContext = PermContext;
-            PermContext.contextUserID = UserManager.getUserId(_contextAccessor);
-            PermContext.IsLogin = UserManager.isLogin(_contextAccessor);
-            if(PermContext.IsLogin)
-            {
-
-            }
-            
-            return PermContext;
+            return new PermissionContext() { 
+                IsLoad = false, 
+                IsLogin = false, 
+                contextUserID = 0, 
+                CampsContext = new List<CampContext>(), 
+                GroupsContext = new List<GroupContext>() 
+            };
         }
-        public PermissionContextActions GetPermissionContextActions()
+        public PermissionContextActions GetPermissionContextActions(PermissionContext _permissionContext)
         {
-            Console.WriteLine("TEST1");
-            if (_permissionContext == null) throw new InvalidOperationException("");
             return new PermissionContextActions(_permissionContext,_provider);
         }
-        public UserActionSubject GetUserActionSubject()
+        public UserActionSubject GetUserActionSubject(PermissionContextActions permissionContextActions)
         {
-            Console.WriteLine("TEST");
             var subject = new UserActionSubject();
-            subject.attach(new UserActionObserver(subject, this));
+            subject.attach(new UserActionObserver(subject, permissionContextActions));
             return subject;
         }
     

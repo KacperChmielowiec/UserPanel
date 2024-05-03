@@ -8,6 +8,8 @@ using System.Security.Cryptography;
 using Microsoft.OpenApi.Models;
 using UserPanel.Models;
 using UserPanel.Services.observable;
+using UserPanel.References;
+using UserPanel.Helpers;
 namespace UserPanel.Installers
 {
     public class AppInstaller : Installer
@@ -24,51 +26,51 @@ namespace UserPanel.Installers
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddSingleton<DataBase, SqlDataBase>();
             builder.Services.AddSingleton<IDataBaseProvider, DataBaseProvider>();
-            builder.Services.AddScoped<PermissionContextProvider>();
-            builder.Services.AddScoped(ctx => ctx
+            builder.Services.AddSingleton<PermissionContextProvider>();
+            builder.Services.AddSingleton(ctx => ctx
                 .GetRequiredService<PermissionContextProvider>()
                 .GetPermissionContext()
             );
-            builder.Services.BuildServiceProvider().GetRequiredService<PermissionContext>();
-            builder.Services.AddScoped(ctx => ctx
-                .GetRequiredService<PermissionContextProvider>()
-                .GetPermissionContextActions()
-            );
-            builder.Services.AddScoped(ctx => ctx
-                .GetRequiredService<PermissionContextProvider>()
-                .GetUserActionSubject()
-            );
             builder.Services.AddScoped<PermissionContextActions>();
+            builder.Services.AddScoped(ctx => ctx
+                .GetRequiredService<PermissionContextProvider>()
+                .GetPermissionContextActions(ctx.GetRequiredService<PermissionContext>())
+            );
+            builder.Services.AddScoped(ctx => ctx
+                .GetRequiredService<PermissionContextProvider>()
+                .GetUserActionSubject(ctx.GetRequiredService<PermissionContextActions>())
+            );
             builder.Services.AddScoped<GroupManager, GroupManager>();
             builder.Services.AddScoped<UserManager, UserManager>();
             builder.Services.AddScoped<CampaningManager, CampaningManager>();
             builder.Services.AddScoped<SignInService>();
             builder.Services.AddScoped<PasswordHasher>();
-            builder.Services.AddAuthentication(options =>
+            builder.Services.AddAuthentication(AppReferences.PERMISSION_SCHEME)
+            .AddCookie(options =>
             {
-                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.Cookie.Name = "User";
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+                options.LoginPath = "/Login";
+                options.AccessDeniedPath = "/Forbidden";
             })
-                    .AddCookie(options =>
-                    {
-                        options.Cookie.Name = "User";
-                        options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
-                        options.LoginPath = "/Login";
-                        options.AccessDeniedPath = "/Forbidden";
-
-                    });
+            .AddScheme<CookieAuthenticationOptions, PermissionAuthHandler>(AppReferences.PERMISSION_SCHEME, (options) => {
+                options.Cookie.Name = "User";
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+                options.LoginPath = "/Login";
+                options.AccessDeniedPath = "/Forbidden";
+            });
+           
             builder.Services.AddAuthorization(options =>
             {
                 options.AddPolicy("basic", options =>
                 {
-                    options.AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme)
+                    options.AddAuthenticationSchemes(AppReferences.PERMISSION_SCHEME)
                     .RequireAuthenticatedUser();
                 });
             });
             builder.Configuration.AddJsonFile("Config.json");
 
-
-            builder.Services.Configure<UserPanel.Models.PasswordHashOptions>(options =>
+            builder.Services.Configure<PasswordHashOptions>(options =>
             {
                 options.passwordHasherAlgorithms = HashAlgorithmName.SHA1;
                 options.SaltSize = 16;
@@ -76,6 +78,8 @@ namespace UserPanel.Installers
                 options.HashSize = 256;
 
             });
+            builder.Services.Configure<List<EndpointMetaData>>(opt => builder.Configuration.GetSection("Endpoints").Bind(opt));
+
             builder.Services.AddDistributedMemoryCache();
 
             builder.Services.AddSession(options =>

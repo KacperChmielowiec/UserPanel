@@ -4,6 +4,7 @@ using System.Security.Claims;
 using UserPanel.Models;
 using UserPanel.Types;
 using UserPanel.Services.observable;
+using UserPanel.References;
 
 namespace UserPanel.Services
 {
@@ -16,7 +17,7 @@ namespace UserPanel.Services
             _userActionObserver = UserSubject;
         }
 
-        public async Task SignIn(ClaimsPrincipal principal, string scheme = CookieAuthenticationDefaults.AuthenticationScheme)
+        public async Task SignIn(ClaimsPrincipal principal, string scheme = AppReferences.PERMISSION_SCHEME)
         {
             await _httpContextAccessor.HttpContext.SignInAsync(scheme, principal);
             _userActionObserver.notify(new UserActionMessage() 

@@ -11,6 +11,7 @@ namespace UserPanel.Models.Group
     {
         private ISession _Session;
         private readonly string Path = "appConfig.database.mock.groups";
+        private readonly string PathCamp = "appConfig.database.mock.campanings";
         public MockGroupRepository(ISession session) { 
             _Session = session;
         }
@@ -42,7 +43,27 @@ namespace UserPanel.Models.Group
 
         public override List<GroupModel> GetGroupsByUserId(int id)
         {
-            throw new NotImplementedException();    
+            List<Campaning> campanings = new List<Campaning>();
+            campanings = _Session.GetJson<List<Campaning>>("campanings")?.Where( c => c.FK_User == id).ToList() ?? new List<Campaning>();
+            if(campanings.Count == 0 )
+            { 
+                campanings = ConfigManager
+                  .GetConfig(PathCamp)
+                  ?.Parse<List<Campaning>>()
+                  ?.Where(c => c.FK_User == id)
+                  ?.ToList() ?? new List<Campaning>();     
+            }
+
+            List<GroupModel> groups = new List<GroupModel>();
+            groups = _Session.GetJson<List<GroupModel>>("groups")?.Where( g => campanings.Select(c => c.id).Contains(g.FK_Camp) )?.ToList() ?? new List<GroupModel>();
+            if (groups.Count == 0)
+            {
+                groups = ConfigManager.GetConfig(Path)
+                    ?.Parse<List<GroupModel>>()
+                    ?.Where(g => campanings.Select(c => c.id).Contains(g.FK_Camp))
+                    ?.ToList() ?? new List<GroupModel>();
+            }
+            return groups;
         }
 
         public override GroupModel GetGroupById(Guid id)

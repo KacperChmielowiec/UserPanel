@@ -14,6 +14,8 @@ namespace UserPanel.References
         public static string BASE_APP_HOST = "";
         public static string CONFIG_MOCK = "mock";
 
+        public const string PERMISSION_SCHEME = "permission";
+
         public static string TypeAccessForbidden = "Forbidden";
 
         public static Dictionary<string, UserRole> RoleMap = new Dictionary<string, UserRole>()

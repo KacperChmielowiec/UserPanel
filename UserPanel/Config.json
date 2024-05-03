@@ -19,5 +19,25 @@
       "Auth": true,
       "Roles": [ "ADMIN", "USER" ]
     }
-  }
+  },
+  "Endpoints": [
+    {
+      "name": "dashboard.home",
+      "method":  "get",
+      "permission": false,
+      "delegate": ""
+    },
+    {
+      "name": "campaning.campanings",
+      "method": "get",
+      "permission": true,
+      "delegate": "campaningListControl"
+    },
+    {
+      "name": "campaning.details",
+      "method": "get",
+      "permission": true,
+      "delegate": "campaning.details"
+    }
+  ]
 }
