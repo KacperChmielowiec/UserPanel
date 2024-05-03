@@ -1,7 +1,9 @@
 using Microsoft.Extensions.FileProviders;
+using System.Configuration;
 using UserPanel.Helpers;
 using UserPanel.Installers;
 using UserPanel.Middleware;
+using UserPanel.Models;
 using UserPanel.Services;
 
 
@@ -26,25 +28,24 @@ app.UseSwaggerUI(c =>
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
+app.UseSession();
 app.UseRouting();
 
 app.UseMiddleware<PageTypeMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseSession();
-
 app.MapControllerRoute(
-    name: "dashboard",
+    name: "home",
     pattern: "{Dashboard:regex(^(?i)dashboard$)}",
     defaults: new { controller = "Home", action = "Index" });
 
 app.MapControllerRoute(
-    name: "home",
+    name: "default",
     pattern: "{controller=Home}/{action=Index}",
     defaults: new { controller = "Home", action = "Index" });
 
 
 app.UseStatusCodePagesWithRedirects("/Code/{0}");
+
 app.Run();

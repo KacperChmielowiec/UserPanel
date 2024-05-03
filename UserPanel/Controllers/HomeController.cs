@@ -4,11 +4,13 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Diagnostics;
 using UserPanel.Models;
 using UserPanel.Models.Home;
+using UserPanel.References;
 using UserPanel.Services;
 
 namespace UserPanel.Controllers
 {
     [Authorize]
+    [Route("/")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -20,7 +22,7 @@ namespace UserPanel.Controllers
             _configuration = configuration;
             _campaningManager = campaningManager;
         }
-
+        [EndpointName(EndpointNames.DashboardHomeGet)]
         public IActionResult Index([FromQuery] int timerate = 7)
         {
             HomeModel model = new HomeModel();
@@ -32,6 +34,7 @@ namespace UserPanel.Controllers
         }
      
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        [HttpGet("error")]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
