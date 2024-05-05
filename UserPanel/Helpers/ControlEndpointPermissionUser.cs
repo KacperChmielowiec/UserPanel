@@ -8,9 +8,9 @@ namespace UserPanel.Helpers
 {
     public static class ControlEndpointPermissionUser
     {
-       [DisplayName(EndpointNames.CampaningDetails)]
-       public static bool CampaingDetailsControl(HttpContext httpContext, PermissionContext permission)
-       {
+        [DisplayName(EndpointNames.CampaningDetails)]
+        public static bool CampaingDetailsControl(HttpContext httpContext, PermissionContext permission)
+        {
             if(httpContext.Request.RouteValues.TryGetValue("id", out var id))
             {
                 if(Guid.TryParse(id.ToString(),out Guid result))
@@ -19,8 +19,20 @@ namespace UserPanel.Helpers
                 }
             }
             return false;
-       }
-       public static bool ControlAccess(this HttpContext httpContext, EndpointMetaData endpointMeta, PermissionContext context)
+        }
+        [DisplayName(EndpointNames.GroupDetails)]
+        public static bool GroupDetailsControl(HttpContext httpContext, PermissionContext permission)
+        {
+            if (httpContext.Request.RouteValues.TryGetValue("id", out var id))
+            {
+                if (Guid.TryParse(id.ToString(), out Guid result))
+                {
+                    return permission.GroupIsAllowed(result);
+                }
+            }
+            return false;
+        }
+        public static bool ControlAccess(this HttpContext httpContext, EndpointMetaData endpointMeta, PermissionContext context)
        {
            
            var method = typeof(ControlEndpointPermissionUser)

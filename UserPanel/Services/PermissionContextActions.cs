@@ -22,11 +22,11 @@ namespace UserPanel.Services
             {
                 _permissionContext.CampsContext = _provider.GetCampaningRepository()
                         .getCampaningsByUser(context.contextUserID)
-                        .Select(camp => new CampContext() { id = camp.id, UserId = camp.FK_User })
+                        .Select(camp => new CampContext() { id = camp.id })
                         .ToList();
                 _permissionContext.GroupsContext = _provider.GetGroupRepository()
                         .GetGroupsByUserId(context.contextUserID)
-                        .Select(g => new GroupContext() { CampId = g.FK_Camp, Id = g.id, UserId = context.contextUserID })
+                        .Select(g => new GroupContext() {id = g.id})
                         .ToList();
             }
             else
@@ -49,7 +49,7 @@ namespace UserPanel.Services
             if (_permissionContext.IsLogin)
             {
 
-                _permissionContext.GroupsContext.RemoveAll(g => g.Id == context.Id);
+                _permissionContext.GroupsContext.RemoveAll(g => g.id == context.id);
                 _permissionContext.GroupsContext.Add(context);
 
             }

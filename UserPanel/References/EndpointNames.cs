@@ -4,5 +4,6 @@
     {
         public const string DashboardHomeGet = "dashboard.home:get";
         public const string CampaningDetails = "campaning.details:get";
+        public const string GroupDetails = "group.details:get";
     }
 }

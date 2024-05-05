@@ -5,6 +5,7 @@
         public abstract List<T> GetGroupsByCampId(Guid id);
         public abstract List<T> GetGroupsByUserId(int id);
         public abstract void UpdateGroup(Guid id, T model);
-        public abstract T GetGroupById(Guid id);
+        public abstract T GetGroupById(Guid id, bool deep);
+        public abstract void CreateGroup(Guid id, T model);
     }
 }

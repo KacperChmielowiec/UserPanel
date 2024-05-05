@@ -1,0 +1,91 @@
+﻿@model CreateGroup
+
+@{
+    ViewData["Title"] = "Create";
+
+}
+
+
+<section class="py-1 bg-blueGray-50 table-campaning">
+    <div class="w-full  mb-12 xl:mb-0 px-4 mx-auto">
+        <section class="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded ">
+            <div class="rounded-t mb-0 px-4 py-3 border-b-1">
+                <div class="flex flex-wrap items-center">
+                    <div class="relative w-full px-4 py-4 max-w-full flex-grow flex-1">
+                        <h1 class="font-semibold text-xl text-blueGray-700">Utwórz Grupe</h1>
+                    </div>
+                </div>
+            </div>
+
+            <div class="body mx-40">
+                <form class="ml-[50px] pb-10" href="/groups/create/@Model.id_camp" method="post" enctype="multipart/form-data">
+                    <input hidden asp-for="id_camp" value="@Model?.id_camp" name="id_camp"/>
+                    <div class="py-6">
+                        <header class="text-xl">Podstawowe parametry:</header>
+                    </div>
+                    <div class="form-group pb-4 d-flex flex-col gap-y-1">
+                        <span asp-validation-for="name" class="text-danger"></span>
+                        <input type="text" data-role="input" data-prepend="Wybierz nazwe:" name="name" asp-for="name">
+                    </div>
+                    <div class="form-group pb-4 d-flex flex-col gap-y-1">
+                        <span asp-validation-for="description" class="text-danger"></span>
+                        <input type="text" data-role="input" data-prepend="Wybierz opis:" name="description" asp-for="description">
+                    </div>
+                    <div class="form-group d-flex pb-4">
+                        <span asp-validation-for="Devices" class="text-danger"></span>
+                        <select name="Devices" data-prepend="Wybierz urządzenie:" data-role="select" multiple asp-for="Devices">
+                            <option selected value="Mobile">Mobile</option>
+                            <option selected value="Desktop">Mobile</option>
+                        </select>
+                    </div>
+                    <div class="py-6">
+                        <header class="text-xl">Czas:</header>
+                    </div>
+                    <div class="form-group pb-4 d-flex flex-col gap-y-1">
+                        <span asp-validation-for="startTime" class="text-danger"></span>
+                        <input type="text" data-prepend="od:" data-role="calendarpicker" data-dialog-mode="true" name="startTime" asp-for="startTime">
+                    </div>
+                    <div class="form-group pb-4 d-flex flex-col gap-y-1">
+                        <span asp-validation-for="endTime" class="text-danger"></span>
+                        <input type="text" data-prepend="do:" data-role="calendarpicker" data-dialog-mode="true" name="endTime" asp-for="endTime">
+                    </div>
+                    <div class="py-6">
+                        <header class="text-xl">Rozliczenie:</header>
+                    </div>
+                    <div class="form-group pb-4 d-flex flex-col gap-y-1">
+                        <span asp-validation-for="Billing" class="text-danger"></span>
+                        <select name="Billing" data-prepend="Wybierz model:" data-role="select" asp-for="Billing">
+                            <option selected value="CPM">CPM</option>
+                            <option selected value="CPC">CPC</option>
+                            <option selected value="CPS">CPS</option>
+                        </select>
+                    </div>
+                    <div class="py-6">
+                        <header class="text-xl">UTM:</header>
+                    </div>
+                    <div class="form-group pb-4 d-flex flex-col gap-y-1">
+                        <span asp-validation-for="Utm_Source" class="text-danger"></span>
+                        <input type="text" hidden value="@Model?.Utm_Source" name="Utm_Source" asp-for="Utm_Source">
+                        <input type="text" disabled data-role="input" data-prepend="Wybierz utm_source:" value="@Model?.Utm_Source" name="Utm_Source" asp-for="Utm_Source">
+                    </div>
+                    <div class="form-group pb-4 d-flex flex-col gap-y-1">
+                        <span asp-validation-for="Utm_Camp" class="text-danger"></span>
+                        <input type="text" data-role="input" data-prepend="Wybierz utm_campaign:" name="Utm_Camp" asp-for="Utm_Camp">
+                    </div>
+                    <div class="form-group pb-4 d-flex flex-col gap-y-1">
+                        <span asp-validation-for="Utm_Medium" class="text-danger"></span>
+                        <input type="text" data-role="input" data-prepend="Wybierz utm_medium:" name="Utm_Medium" asp-for="Utm_Medium">
+                    </div>
+                    <div class="rounded-t mb-0 py-6 border-b-1">
+                        <div class="pull-right">
+                            <a href="/campaning" class="btn btn-flat white"><i class="icon-reply"></i> Wróć</a>
+                            <button type="submit" class="btn btn-flat success"><i class="icon-plus"></i> Utwórz</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+    </div>
+</section>
+

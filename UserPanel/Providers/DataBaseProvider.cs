@@ -5,6 +5,7 @@ using UserPanel.Models.Camp;
 using UserPanel.Models.Group;
 using UserPanel.Models.User;
 using UserPanel.References;
+using UserPanel.Services.observable;
 namespace UserPanel.Providers
 {
     public class DataBaseProvider : IDataBaseProvider
@@ -12,11 +13,22 @@ namespace UserPanel.Providers
         private IConfiguration _configuration;
         private IMapper _mapper;
         private IHttpContextAccessor _contextAccessor;
+        IServiceProvider _serviceProvider;
+        ISession _session;
         private DataBase DataBase { get; set; }
-        public DataBaseProvider(IConfiguration configuration, DataBase dataBase, IMapper mapper, IHttpContextAccessor accessor) {
+        public DataBaseProvider(
+            IConfiguration configuration, 
+            DataBase dataBase, 
+            IMapper mapper, 
+            IHttpContextAccessor accessor, 
+            IServiceProvider serviceProvider
+        )
+        {
             _configuration = configuration;
             _mapper = mapper;
             _contextAccessor = accessor;
+            _serviceProvider = serviceProvider;
+            _session = _contextAccessor.HttpContext.Session;
         }
         public UserRepository<UserModel> GetUserRepository()
         {
@@ -56,7 +68,7 @@ namespace UserPanel.Providers
         {
             if (_configuration["ENVIROMENT:UserRepositoryType"]?.ToLower() == AppReferences.CONFIG_MOCK)
             {
-                return new MockGroupRepository(_contextAccessor.HttpContext.Session);
+                return new MockGroupRepository(_session, _mapper, _contextAccessor, _serviceProvider);
             }
             else
             {

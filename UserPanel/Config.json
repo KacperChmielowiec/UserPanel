@@ -38,6 +38,12 @@
       "method": "get",
       "permission": true,
       "delegate": "campaning.details"
+    },
+    {
+      "name": "group.details",
+      "method": "get",
+      "permission": true,
+      "delegate": "group.details"
     }
   ]
 }

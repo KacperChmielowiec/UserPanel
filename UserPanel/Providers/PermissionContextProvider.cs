@@ -33,7 +33,14 @@ namespace UserPanel.Providers
             subject.attach(new UserActionObserver(subject, permissionContextActions));
             return subject;
         }
-    
+        public GroupActionSubject GetGroupActionSubject(PermissionContextActions permissionContextActions)
+        {
+            var subject = new GroupActionSubject();
+            subject.attach(new GroupActionObserver(subject,permissionContextActions));
+            return subject;
+        }
+
+
 
     }
 }
