@@ -1,6 +1,6 @@
 ﻿namespace UserPanel.Services.observable
 {
-    public class GroupActionSubject
+    public class GroupActionSubject : Subject<GroupActionMessage>
     {
     }
 }

@@ -8,12 +8,13 @@ using UserPanel.Helpers;
 using Microsoft.AspNetCore.Http;
 using System.Reflection;
 using System.Security.Cryptography.Xml;
+using UserPanel.References;
 
 namespace UserPanel.Models.User
 {
     public class MockRepositoryCampaning : CampaningRepository<Campaning>
     {
-        private readonly string PathCamp = "appConfig.database.mock.campanings";
+        private readonly string PathCamp = MockPathsReferences.campaningsPath;
         private ISession _Session;
         public MockRepositoryCampaning(ISession session)
         {

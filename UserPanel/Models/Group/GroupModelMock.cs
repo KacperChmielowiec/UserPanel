@@ -3,8 +3,10 @@ using UserPanel.Models.Camp;
 
 namespace UserPanel.Models.Group
 {
-    public class GroupModel
+    public class GroupModelMock
     {
+        public int id_user {  get; set; }
+        public Guid id_camp { get; set; }
         public Guid id { get; set; }
         public string name { get; set; }
         public string description { get; set; }

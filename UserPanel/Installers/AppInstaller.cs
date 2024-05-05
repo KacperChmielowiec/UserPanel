@@ -26,6 +26,7 @@ namespace UserPanel.Installers
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddSingleton<DataBase, SqlDataBase>();
             builder.Services.AddSingleton<IDataBaseProvider, DataBaseProvider>();
+
             builder.Services.AddSingleton<PermissionContextProvider>();
             builder.Services.AddSingleton(ctx => ctx
                 .GetRequiredService<PermissionContextProvider>()
@@ -40,6 +41,10 @@ namespace UserPanel.Installers
                 .GetRequiredService<PermissionContextProvider>()
                 .GetUserActionSubject(ctx.GetRequiredService<PermissionContextActions>())
             );
+            builder.Services.AddScoped(ctx => ctx
+             .GetRequiredService<PermissionContextProvider>()
+             .GetGroupActionSubject(ctx.GetRequiredService<PermissionContextActions>())
+         );
             builder.Services.AddScoped<GroupManager, GroupManager>();
             builder.Services.AddScoped<UserManager, UserManager>();
             builder.Services.AddScoped<CampaningManager, CampaningManager>();

@@ -13,6 +13,7 @@ namespace UserPanel.References
         public static string CAMP_LOGO_PATH_FETCH = "";
         public static string BASE_APP_HOST = "";
         public static string CONFIG_MOCK = "mock";
+        public static string RepoType = "";
 
         public const string PERMISSION_SCHEME = "permission";
 
