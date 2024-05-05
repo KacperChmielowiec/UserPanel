@@ -20,11 +20,11 @@ namespace UserPanel.Helpers
             }
             context.CampsContext = _provider.GetCampaningRepository()
                         .getCampaningsByUser(context.contextUserID)
-                        .Select(camp => new CampContext() { id = camp.id, UserId = camp.FK_User })
+                        .Select(camp => new CampContext() { id = camp.id })
                         .ToList();
             context.GroupsContext = _provider.GetGroupRepository()
                         .GetGroupsByUserId(context.contextUserID)
-                        .Select(g => new GroupContext() { CampId = g.FK_Camp, Id = g.id, UserId = context.contextUserID })
+                        .Select(g => new GroupContext() { id = g.id })
                         .ToList();
              
         }
@@ -32,6 +32,11 @@ namespace UserPanel.Helpers
         public static bool CampIsAllowed(this PermissionContext context, Guid guid)
         {
              return context.CampsContext.Select(camp => camp.id)?.Contains(guid) ?? false;
+        }
+
+        public static bool GroupIsAllowed(this PermissionContext context, Guid guid)
+        {
+            return context.GroupsContext.Select(group => group.id)?.Contains(guid) ?? false;
         }
     }
 }

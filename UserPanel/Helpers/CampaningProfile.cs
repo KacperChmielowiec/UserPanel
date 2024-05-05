@@ -48,6 +48,25 @@ namespace UserPanel.Helpers
                 .ForPath(e => e.details.Utm_Medium, (conf) => conf.MapFrom((src) => src.Utm_Medium))
                 .ForPath(e => e.details.Utm_Camp, (conf) => conf.MapFrom((src) => src.Utm_Camp));
 
+            CreateMap<GroupModel, GroupModelMock>();
+            CreateMap<GroupModelMock, GroupModel>();
+            CreateMap<GroupLists,GroupListMock>();
+            CreateMap<GroupListMock, GroupLists>();
+            CreateMap<Advertisement, AdvertisementMock>();
+            CreateMap<AdvertisementMock, Advertisement>();
+
+
+            CreateMap<CreateGroup,GroupModel>()
+                .ForPath(e => e.details.Billing, (conf) => conf.MapFrom((src) => src.Billing))
+                .ForPath(e => e.details.Devices, (conf) => conf.MapFrom((src) => src.Devices))
+                .ForPath(e => e.details.startTime, (conf) => conf.MapFrom((src) => src.startTime))
+                .ForPath(e => e.details.endTime, (conf) => conf.MapFrom((src) => src.endTime))
+                .ForPath(e => e.budget.totalBudget, (conf) => conf.MapFrom((src) => src.totalBudget))
+                .ForPath(e => e.budget.dayBudget, (conf) => conf.MapFrom((src) => src.dayBudget))
+                .ForPath(e => e.details.Utm_Source, (conf) => conf.MapFrom((src) => src.Utm_Source))
+                .ForPath(e => e.details.Utm_Medium, (conf) => conf.MapFrom((src) => src.Utm_Medium))
+                .ForPath(e => e.details.Utm_Camp, (conf) => conf.MapFrom((src) => src.Utm_Camp));
+
         }
     }
 }

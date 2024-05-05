@@ -2,11 +2,12 @@
 using System.Data;
 using UserPanel.Services;
 using UserPanel.Interfaces.Abstract;
+using UserPanel.References;
 namespace UserPanel.Models.User
 {
     public class MockRepository : UserRepository<UserModel>
     {
-        private string UserPath = "appConfig.database.mock.users";
+        private string UserPath = MockPathsReferences.usersPath;
         public MockRepository()
         {
             

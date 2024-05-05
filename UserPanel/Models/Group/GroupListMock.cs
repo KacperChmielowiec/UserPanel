@@ -2,8 +2,11 @@
 
 namespace UserPanel.Models.Group
 {
-    public class GroupLists
+    public class GroupListMock
     {
+        public int id_user {  get; set; }
+        public Guid id_camp { get; set; }
+        public Guid id_group { get; set; }
         public Guid id { get; set; }
         [JsonProperty("status")]
         public ListStatus Status { get; set; }
@@ -16,8 +19,7 @@ namespace UserPanel.Models.Group
         [JsonProperty("bid_rate")]
         public double BidRate { get; set; }
         [JsonProperty("cap")]
-        public int Cappping {get; set; }
-
+        public int Cappping { get; set; }
         public int start { get; set; }
         public int end { get; set; }
     }

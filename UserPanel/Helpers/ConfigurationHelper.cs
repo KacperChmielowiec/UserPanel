@@ -14,6 +14,7 @@ namespace UserPanel.Helpers
             AppReferences.CAMP_LOGO_PATH = config.GetValue<string>("LOGO_PATH")?.Replace("//", "/") ?? "";
             AppReferences.CAMP_LOGO_PATH_FETCH = config.GetValue<string>("LOGO_PATH_FETCH")?.Replace("//", "/") ?? "";
             AppReferences.BASE_APP_HOST = config.GetValue<string>("APP_HOST")?.Replace("//", "/") ?? "";
+            AppReferences.RepoType = config["ENVIROMENT:UserRepositoryType"]?.ToLower();
         }
     }
 }

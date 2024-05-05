@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using UserPanel.Helpers;
 using UserPanel.Interfaces;
+using UserPanel.Models;
 using UserPanel.Models.Camp;
 using UserPanel.Models.Group;
 using UserPanel.Providers;
@@ -17,18 +18,21 @@ namespace UserPanel.Services
         private IHttpContextAccessor _contextAccessor;
         private UserManager _userManager;
         private ISession session;
+        private PermissionContext _permissionContext;
         private static string CAMP_PATH = AppReferences.CAMP_LOGO_PATH;
         public CampaningManager(
             IDataBaseProvider provider,
             IConfiguration configuration, 
             IHttpContextAccessor httpContextAccessor,
-            UserManager userManager
+            UserManager userManager,
+            PermissionContext permissionContext
         )
         {
             _provider = provider;
             _configuration = configuration;
             _contextAccessor = httpContextAccessor;
             _userManager = userManager;
+            _permissionContext = permissionContext;
             session = httpContextAccessor.HttpContext.Session;
         }
 
@@ -37,6 +41,13 @@ namespace UserPanel.Services
             if (!_userManager.isLogin() || _userManager.getUserId() == -1) return new List<Campaning>();
             int id = _userManager.getUserId();
             return _provider.GetCampaningRepository().getCampaningsByUser(id);
+        }
+        public Campaning? GetCampaningById(Guid id)
+        {
+            if (!_userManager.isLogin() || _userManager.getUserId() == -1) return default(Campaning);
+            if (!_permissionContext.CampIsAllowed(id)) return default(Campaning);
+
+            return _provider.GetCampaningRepository().getCampaningById(id);
         }
         public void SetCampaningSession(Guid id)
         {
