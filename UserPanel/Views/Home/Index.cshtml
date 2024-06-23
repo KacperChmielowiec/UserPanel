@@ -50,7 +50,10 @@
             <div class="col-12 d-flex flex-wrap gap-x-4 gap-y-10">
                 <div class="grow">
                     <div class="d-flex justify-items-center justify-center p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                        <div id="visit" class="w-[450px] h-[250px]"></div>
+                        <div id="visit" class="w-[450px] h-[250px] canvas"></div>
+                        <div class="w-[450px] h-[250px] justify-items-center justify-center no_data" style="display: none">
+                            <img src="/assets/empty_doc.svg" width="200" height="200" />
+                        </div>
                     </div>
                      <div class="absolute">
                         <p class="p-2 text-lg italic text-gray-500">Views statistic</p>
@@ -59,7 +62,10 @@
                 </div>
                 <div class="grow">
                     <div class="d-flex justify-items-center justify-center p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                        <div id="clicks" class="w-[450px] h-[250px]"></div>
+                        <div id="clicks" class="w-[450px] h-[250px] canvas"></div>
+                        <div class="w-[450px] h-[250px] justify-items-center justify-center no_data" style="display: none">
+                            <img src="/assets/empty_doc.svg" width="200" height="200" />
+                        </div>
                     </div>
                      <div class="absolute">
                         <p class="p-2 text-lg italic text-gray-500">Clicks statistic</p>
@@ -68,7 +74,10 @@
                 </div>
                 <div class="grow">
                     <div class="d-flex justify-items-center justify-center p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                        <div id="budget" class="w-[450px] h-[250px]"></div>
+                        <div id="budget" class="w-[450px] h-[250px] canvas"></div>
+                        <div class="w-[450px] h-[250px] justify-items-center justify-center no_data" style="display: none">
+                            <img src="/assets/empty_doc.svg" width="200" height="200" />
+                        </div>
                     </div>
                      <div class="absolute">
                         <p class="p-2 text-lg italic text-gray-500">Budged statistic</p>
@@ -95,6 +104,87 @@
 </div>
 <script>
 
+    (function Init() {
+        if (window.addEventListener) {
+            window.addEventListener("load", () => {
+                loadContext();
+                FilterCampaningInit();
+                loadInit()
+            })
+        }
+    })()
+
+
+    const contextHTML = {
+        markups: {
+            selectedInputCamp: "#select-camp select",
+            selectedRate: "div.range-buttons a.check",
+        },
+        data: {
+            campaningsList: [],
+            range: null
+        }
+    }
+   
+    const loadContext = () => {
+
+        const selectElement = document.querySelector(contextHTML.markups.selectedInputCamp);
+        if (selectElement) {
+            const selectedList = [...selectElement.selectedOptions].map(option => option.value);
+            contextHTML.data.campaningsList.push(...selectedList);
+        }
+        contextHTML.data.range = document.querySelector(contextHTML.selectedRate)?.getAttribute('value') || 7;
+    }
+
+    const loadCharts = async () => {
+
+        const fetchApi = getFetchApi();
+
+        if (!contextHTML.data.campaningsList.length) {
+            loadMoris()
+            return
+        }
+
+        const range = contextHTML.data.range
+        const url = `api/campstats`;
+        let time = new Date(Date.now());
+        time.setDate(time.getDate() - Number(range))
+        time = time.toISOString()
+
+        try {
+            const result = await fetchApi.post(url, { list: contextHTML.data.campaningsList, end: time })
+            loadMoris(result);
+        } catch (e) {
+            console.error(e)
+        }
+    }
+
+
+
+
+
+    const display_empty = (key) =>
+    {
+        let element = null;
+        if (key == "visit") {
+            document.querySelector("#visit").style.display = 'none';
+            document.querySelector("#visit").parentNode.querySelector(".no_data").style.display = 'block';
+        }
+        if (key == "clicks") {
+            document.querySelector("#clicks").style.display = 'none';
+            document.querySelector("#clicks").parentNode.querySelector(".no_data").style.display = 'block';
+        }
+        if (key == "budget") {
+            document.querySelector("#budget").style.display = 'none';
+            document.querySelector("#budget").parentNode.querySelector(".no_data").style.display = 'block';
+        }
+    }
+
+    const check_data_valid = (data,typeKey) => {
+        return data.every(item => {
+            return item[typeKey].length !== 0
+        });
+    }
     const checkSelectState = (selectInput,spanPlaceholder) => {
         if (selectInput.selectedIndex !== -1) {
             spanPlaceholder.style.display = "none";
@@ -112,42 +202,7 @@
     const handleFilterClick = () => {
         document.querySelector("div.row[data-type-search-row]").classList.toggle("inactive")
     }
-    const handleFilter = async () => {
 
-        try {
-
-            const selectedList = [...document.querySelector("#select-camp select").selectedOptions].map(option => option.value);
-            if (!selectedList.length) {
-                loadMoris()
-                return
-            }
-            const range = document.querySelector("div.range-buttons a.check")?.getAttribute('value') || 7;
-            const host = `${window.location.protocol}//${window.location.host}`
-            const url = `${host}/api/campstats`;
-
-            let time = new Date(Date.now());
-            time.setDate(time.getDate() - Number(range))
-            time = time.toISOString()
-
-            const response = await fetch(url, {
-                method: "POST",
-                cache: "no-cache",
-                credentials: "same-origin",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                referrerPolicy: "no-referrer",
-                body: JSON.stringify({ list: selectedList, end: time }),
-            })
-            if (response.ok) {
-                const data = await response.json();
-                loadMoris(data)
-            }
-
-        } catch (e) {
-            console.error(e)
-        }
-    }
     const handleFilterChange = (id) => {
 
         checkSelectState(
@@ -159,15 +214,26 @@
 
     }
     const loadInit = async () => {
-      handleFilter()
+        loadCharts()
     }
     const loadMoris = (data) => {
+
         if (data == null) {
             return
         }
-        loadVisitChart(extractChartDataVisit(data,"visit"))
-        loadClicksChart(extractChartDataClicks(data, "clicks"))
-        loadBudgetChart(extractChartDataBudget(data, "budget"))
+
+        if (check_data_valid(data,"visit"))
+            loadVisitChart(extractChartDataVisit(data,"visit"))
+        else
+            display_empty("visit")
+        if (check_data_valid(data, "clicks"))
+            loadClicksChart(extractChartDataClicks(data, "clicks"))
+        else
+            display_empty("clicks")
+        if (check_data_valid(data, "budget"))
+            loadBudgetChart(extractChartDataBudget(data, "budget"))
+        else
+            display_empty("budget")
     }
     const loadVisitChart = (dataVisit) => {
         document.querySelector('div#visit').innerHTML = '';
@@ -210,6 +276,7 @@
         let payload = [];
         const labels = [];
         data.forEach((campaning, i) => {
+            if (campaning[keyString].length == 0) return
             labels.push(campaning.name)
             campaning[keyString].forEach((item, index) => {
                 if (payload.length <= index)
@@ -223,6 +290,7 @@
     const extractChartDataClicks = (data, keyString) => {
         let payload = [];
         data.forEach((campaning, i) => {
+            if (campaning[keyString].length == 0) return
             campaning[keyString].forEach((item, index) => {
                 if (payload.length <= i)
                     payload.push({ label: campaning.name, value: 0 })
@@ -236,6 +304,7 @@
         const labels = [];
         const budgetList = []
         data.forEach((campaning, i) => {
+            if (campaning[keyString].length == 0) return
             labels.push(campaning.name)
             campaning[keyString].forEach((item, index) => {
                 if (payload.length <= index)
@@ -252,14 +321,7 @@
         }
         return payload
     }
-    (function Init() {
-        if (window.addEventListener) {
-            window.addEventListener("load", () => {
-                FilterCampaningInit()
-                loadInit();
-            })
-        }
-    })()
+
 
 
 </script>

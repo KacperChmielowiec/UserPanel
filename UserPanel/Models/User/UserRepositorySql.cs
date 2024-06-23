@@ -14,7 +14,7 @@ namespace UserPanel.Models.User
         }
         public override UserModel GetModelById(int id)
         {
-            string query = $"SELECT * FROM dbo.Users WHERE Users.UserID = {id}";
+            string query = $"SELECT * FROM dbo.Users WHERE Users.Id = '{id}'";
 
             DataTable table = DataBase.query(query,"User");
             return _mapper.Map<UserModel>(table);
@@ -26,9 +26,15 @@ namespace UserPanel.Models.User
             throw new NotImplementedException();
         }
 
-        public override UserModel GetModelByEmail(string name)
+        public override UserModel GetModelByEmail(string email)
         {
-            throw new NotImplementedException();
+            string query = $"SELECT * FROM dbo.Users WHERE Users.Email = '{email}'";
+
+            DataTable table = DataBase.query(query, "User");
+            if(table.Rows.Count > 0)
+                return _mapper.Map<UserModel>(table.Rows[0]);
+            return null;
+
         }
     }
 }

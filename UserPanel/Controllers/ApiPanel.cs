@@ -6,6 +6,7 @@ using System.Text.Json;
 using UserPanel.Interfaces;
 using UserPanel.Models.Camp;
 using UserPanel.Models;
+using System.Drawing;
 namespace UserPanel.Controllers
 {
     [Route("api")]
@@ -106,20 +107,56 @@ namespace UserPanel.Controllers
             return new CampaningStat(campStat.Id_Camp, campStat.Visit, campStat.Clicks, campStat.Budged,name);
         }
 
-        private CampaningStat shrinkHelper(CampaningStat campStat,DateTime start,DateTime end)
+        private CampaningStat shrinkHelper(CampaningStat campStat, DateTime start, DateTime end)
         {
-            campStat.Visit = campStat.Visit
+            var diff = (start - end).Days;
+
+            var VisitEmpty = FillUnitDataEmptyInt(diff, start);
+            var ClcikstEmpty = FillUnitDataEmptyInt(diff, start);
+            var BudgetEmpty = FillUnitDataEmptyDecimal(diff, start);
+
+            campStat.Visit = ConcatUnitArray<int>(VisitEmpty, campStat.Visit
                 .Where(item => DateTime.Parse(item.Date).Date <= start.Date && DateTime.Parse(item.Date).Date >= end.Date)
-                .ToArray();
-            campStat.Clicks = campStat.Clicks
+                .ToArray());
+
+            campStat.Clicks = ConcatUnitArray<int>(ClcikstEmpty, campStat.Clicks
                 .Where(item => DateTime.Parse(item.Date).Date <= start.Date && DateTime.Parse(item.Date).Date >= end.Date)
-                .ToArray();
-            campStat.Budget = campStat.Budget
+                .ToArray());
+
+            campStat.Budget = ConcatUnitArray<decimal>(BudgetEmpty, campStat.Budget
                 .Where(item => DateTime.Parse(item.Date).Date <= start.Date && DateTime.Parse(item.Date).Date >= end.Date)
-                .ToArray();
+                .ToArray());
 
             return campStat;
 
         }
+
+        private UnitData<int>[] FillUnitDataEmptyInt(int size, DateTime start)
+        {
+            var Empty = new UnitData<int>[size];
+            for (var i = 0; i < size; i++)
+            {
+                Empty[i].Value = 0;
+                Empty[i].Date = start.AddDays(i).ToString();
+            }
+            return Empty;
+        }
+        private UnitData<decimal>[] FillUnitDataEmptyDecimal(int size, DateTime start)
+        {
+            var Empty = new UnitData<decimal>[size];
+            for (var i = 0; i < size; i++)
+            {
+                Empty[i].Value = 0;
+                Empty[i].Date = start.AddDays(i).ToString();
+            }
+            return Empty;
+
+        }
+
+        private UnitData<T>[] ConcatUnitArray<T>(UnitData<T>[] empty, UnitData<T>[] data) where T : struct
+        {
+            return data.Length >= empty.Length ? data : data.Concat(empty.Skip(data.Length)).ToArray();
+        }
+
     }
 }
