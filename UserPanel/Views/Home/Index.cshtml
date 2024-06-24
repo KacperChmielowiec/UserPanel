@@ -33,7 +33,7 @@
                 </select>
                 <span data-id="select-01" class="absolute top-1/2 -translate-y-1/2 pl-2 placeholder-span">choose campaning</span>
                 <span class="input-group-addon h-[40px] d-block">
-                    <button onclick="handleFilter()" class="btn-flat d-flex success">
+                    <button onclick="handleFilterSumbit()" class="btn-flat d-flex success">
                         <i class="icon-filter"></i> Zobacz
                     </button>
                 </span>
@@ -131,15 +131,14 @@
     
     const loadContext = () => {
 
-        const selectElement = document.querySelector(contextHTML.markups.selectedInputCamp);
-        if (selectElement) {
-            const selectedList = [...selectElement.selectedOptions].map(option => option.value);
-            contextHTML.data.campaningsList.push(...selectedList);
-        }
+        loadSelected()
         contextHTML.data.range = document.querySelector(contextHTML.markups.selectedRate)?.getAttribute('value') || 7;
 
     }
-
+    const handleFilterSumbit = () => {
+        loadSelected()
+        loadCharts()
+    }
     const loadCharts = async () => {
 
         const fetchApi = getFetchApi();
@@ -197,6 +196,12 @@
         if (check_data_valid(data, "budget")) Utils.loadBudgetChart(Utils.extractChartDataBudget(data, "budget"), contextHTML.markups.budget)
   
     }
-
+    const loadSelected = () => {
+        const selectElement = document.querySelector(contextHTML.markups.selectedInputCamp);
+        if (selectElement) {
+            const selectedList = [...selectElement.selectedOptions].map(option => option.value);
+            contextHTML.data.campaningsList = selectedList
+        }
+    }
 
 </script>
