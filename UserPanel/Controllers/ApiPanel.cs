@@ -109,6 +109,9 @@ namespace UserPanel.Controllers
 
         private CampaningStat shrinkHelper(CampaningStat campStat, DateTime start, DateTime end)
         {
+
+            if (campStat == null) return null;
+
             var diff = (start - end).Days;
 
             campStat.Visit = ConcatUnitArray<int>(campStat.Visit
