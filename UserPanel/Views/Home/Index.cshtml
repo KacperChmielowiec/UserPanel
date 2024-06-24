@@ -25,7 +25,7 @@
         <div class="col-12 container">
         <div class="w-100 d-flex items-center">
             <div class="w-100 d-flex items-center" id="select-camp">
-                <select name="campaning" class="w-full" data-id="select-01" data-role="select" multiple onchange="handleFilterChange(this.dataset.id)">
+                <select name="campaning" class="w-full" data-id="select-01" data-role="select" multiple onchange="handleFilterChange()">
                 @foreach(var c in Model.FilterParametr.FilterCampanings ?? new List<Campaning>())
                 {
                     <option selected value="@c.id">@c.name</option>
@@ -104,28 +104,31 @@
 </div>
 <script>
 
+    const Utils = MorrisUtils();
+
     (function Init() {
         if (window.addEventListener) {
             window.addEventListener("load", () => {
                 loadContext();
-                FilterCampaningInit();
-                loadInit()
+                loadCharts();
+                FilterCampaningInit()
             })
         }
     })()
-
-
     const contextHTML = {
         markups: {
             selectedInputCamp: "#select-camp select",
             selectedRate: "div.range-buttons a.check",
+            visit: "div#visit",
+            clicks: "div#clicks",
+            budget: "div#budget"
         },
         data: {
             campaningsList: [],
             range: null
         }
     }
-   
+    
     const loadContext = () => {
 
         const selectElement = document.querySelector(contextHTML.markups.selectedInputCamp);
@@ -133,7 +136,8 @@
             const selectedList = [...selectElement.selectedOptions].map(option => option.value);
             contextHTML.data.campaningsList.push(...selectedList);
         }
-        contextHTML.data.range = document.querySelector(contextHTML.selectedRate)?.getAttribute('value') || 7;
+        contextHTML.data.range = document.querySelector(contextHTML.markups.selectedRate)?.getAttribute('value') || 7;
+
     }
 
     const loadCharts = async () => {
@@ -148,180 +152,51 @@
         const range = contextHTML.data.range
         const url = `api/campstats`;
         let time = new Date(Date.now());
-        time.setDate(time.getDate() - Number(range))
+        time.setDate(time.getDate() - range)
         time = time.toISOString()
-
         try {
             const result = await fetchApi.post(url, { list: contextHTML.data.campaningsList, end: time })
+            console.log("result",result)
             loadMoris(result);
         } catch (e) {
             console.error(e)
         }
     }
-
-
-
-
-
-    const display_empty = (key) =>
-    {
-        let element = null;
-        if (key == "visit") {
-            document.querySelector("#visit").style.display = 'none';
-            document.querySelector("#visit").parentNode.querySelector(".no_data").style.display = 'block';
-        }
-        if (key == "clicks") {
-            document.querySelector("#clicks").style.display = 'none';
-            document.querySelector("#clicks").parentNode.querySelector(".no_data").style.display = 'block';
-        }
-        if (key == "budget") {
-            document.querySelector("#budget").style.display = 'none';
-            document.querySelector("#budget").parentNode.querySelector(".no_data").style.display = 'block';
-        }
-    }
-
     const check_data_valid = (data,typeKey) => {
-        return data.every(item => {
+        return data.some(item => {
             return item[typeKey].length !== 0
         });
     }
-    const checkSelectState = (selectInput,spanPlaceholder) => {
-        if (selectInput.selectedIndex !== -1) {
-            spanPlaceholder.style.display = "none";
-        }
-        else {
-            spanPlaceholder.style.display = "block";
-        }
-    }
     const FilterCampaningInit = () => {
-        var selectContainer = document.querySelector("#select-camp");
-        var selectInput = selectContainer.querySelector("select");
-        var selectPlaceholder = selectContainer.querySelector("span.placeholder-span");
-        if (selectInput && selectPlaceholder) checkSelectState(selectInput, selectPlaceholder)
+        var selectInput = document.querySelector("#select-camp select");
+        var selectPlaceholder = document.querySelector("#select-camp span.placeholder-span");
+        if (selectInput && selectPlaceholder) {
+
+            if (selectInput.selectedIndex !== -1) {
+                selectPlaceholder.style.display = "none";
+            }
+            else {
+                selectPlaceholder.style.display = "block";
+            }
+        }
     }
     const handleFilterClick = () => {
         document.querySelector("div.row[data-type-search-row]").classList.toggle("inactive")
     }
 
-    const handleFilterChange = (id) => {
+    const handleFilterChange = () => FilterCampaningInit()
 
-        checkSelectState(
-            [...document.querySelectorAll('select')]
-                .find((select) => select.dataset.id == id), 
-            [...document.querySelectorAll('span.placeholder-span')]
-                .find((select) => select.dataset.id == id)
-            )
-
-    }
-    const loadInit = async () => {
-        loadCharts()
-    }
     const loadMoris = (data) => {
 
         if (data == null) {
             return
         }
 
-        if (check_data_valid(data,"visit"))
-            loadVisitChart(extractChartDataVisit(data,"visit"))
-        else
-            display_empty("visit")
-        if (check_data_valid(data, "clicks"))
-            loadClicksChart(extractChartDataClicks(data, "clicks"))
-        else
-            display_empty("clicks")
-        if (check_data_valid(data, "budget"))
-            loadBudgetChart(extractChartDataBudget(data, "budget"))
-        else
-            display_empty("budget")
+        if (check_data_valid(data,"visit")) Utils.loadVisitChart(Utils.extractChartDataVisit(data, "visit"),contextHTML.markups.visit)
+        if (check_data_valid(data, "clicks")) Utils.loadClicksChart(Utils.extractChartDataClicks(data, "clicks"),contextHTML.markups.clicks)
+        if (check_data_valid(data, "budget")) Utils.loadBudgetChart(Utils.extractChartDataBudget(data, "budget"), contextHTML.markups.budget)
+  
     }
-    const loadVisitChart = (dataVisit) => {
-        document.querySelector('div#visit').innerHTML = '';
-        if(dataVisit == null) return
-        Morris.Bar({
-            element: 'visit',
-            data: dataVisit.data,
-            xkey: 'date',
-            ykeys: dataVisit.labels,
-            labels: dataVisit.labels
-        }).on('click', function (i, row) {
-            console.log(i, row);
-        });
-    }
-    const loadClicksChart = (dataClicks) => {
-        document.querySelector('div#clicks').innerHTML = '';
-        if (dataClicks == null) return
-        Morris.Donut({
-            element: 'clicks',
-            data: dataClicks,
-            formatter: function (x) { return x + " clicks" }
-        }).on('click', function (i, row) {
-            console.log(i, row);
-        });
-    }
-    const loadBudgetChart = (dataBudget) => {
-        document.querySelector('div#budget').innerHTML = '';
-        window.m = Morris.Line({
-            element: 'budget',
-            data: dataBudget.data,
-            xkey: 'date',
-            ykeys: dataBudget.labels,
-            labels: dataBudget.labels,
-            parseTime: false,
-            goals: [dataBudget.min, (dataBudget.min + dataBudget.max) / 2, dataBudget.max]
-        });
-    }
-    const extractChartDataVisit = (data, keyString) =>
-    {
-        let payload = [];
-        const labels = [];
-        data.forEach((campaning, i) => {
-            if (campaning[keyString].length == 0) return
-            labels.push(campaning.name)
-            campaning[keyString].forEach((item, index) => {
-                if (payload.length <= index)
-                    payload.push({date: item.date})
-                payload[index] = { ...payload[index], [campaning.name]: item.value }
-            })
-        })
-        payload = {data: payload, labels: labels}
-        return payload
-    }
-    const extractChartDataClicks = (data, keyString) => {
-        let payload = [];
-        data.forEach((campaning, i) => {
-            if (campaning[keyString].length == 0) return
-            campaning[keyString].forEach((item, index) => {
-                if (payload.length <= i)
-                    payload.push({ label: campaning.name, value: 0 })
-                payload[i] = { ...payload[i], value: Number(payload[i].value += item.value) }
-            })
-        })
-        return payload
-    }
-    const extractChartDataBudget = (data, keyString) => {
-        let payload = [];
-        const labels = [];
-        const budgetList = []
-        data.forEach((campaning, i) => {
-            if (campaning[keyString].length == 0) return
-            labels.push(campaning.name)
-            campaning[keyString].forEach((item, index) => {
-                if (payload.length <= index)
-                    payload.push({ date: item.date })
-                budgetList.push(item.value)
-                payload[index] = { ...payload[index], [campaning.name]: item.value }
-            })
-        })
-        payload = { 
-            data: payload, 
-            labels: labels, 
-            max: Math.max(...budgetList),
-            min: Math.min(...budgetList)
-        }
-        return payload
-    }
-
 
 
 </script>
