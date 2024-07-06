@@ -220,16 +220,16 @@
                             @foreach (var ad in Model.advertisementsList)
                             {
                                 <tr class="align-middle">
-                                    <td class="align-middle">@ad.name</td>
+                                    <td class="align-middle">@ad.Name</td>
                                     <td class="align-middle py-2">
-                                        @foreach (var format in ad.formats)
+                                        @foreach (var format in ad.Formats)
                                         {
-                                            @format
+                                            @format.Size
                                             <br>
                                         }
                                     </td>
                                     <td class="align-middle">
-                                        <button class="btn-flat @(ad.status ? "success" : "danger")">@(ad.status ? "Włączona" : "Wyłączona")</button>
+                                        <button class="btn-flat @(ad.IsActive ? "success" : "danger")">@(ad.IsActive ? "Włączona" : "Wyłączona")</button>
                                     </td>
                                     <td class="align-middle">
                                         <div class="d-flex items-center justify-center">

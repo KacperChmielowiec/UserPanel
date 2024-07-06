@@ -39,9 +39,6 @@ const getFetchApi = (url) => {
         const slugClear = cleanSlug(slug);
         
         const fullStringPath = `${baseURL}/${slugClear}${queryString}`;
-
-        console.log("fullPath", fullStringPath)
-        console.log("body", body)
         try {
             const response = await fetch(fullStringPath, {
                 method: 'POST',

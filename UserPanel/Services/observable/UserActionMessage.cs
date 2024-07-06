@@ -5,6 +5,6 @@ namespace UserPanel.Services.observable
     {
         public UserActionType ActionType { get; set; }
         public int ID { get; set; }
-        public bool IsLogin { get; set; }
+
     }
 }

@@ -102,3 +102,34 @@ const MorrisUtils = () => {
         loadBudgetChart: loadBudgetChart
     }
 }
+
+const tabUtils = (configuration) => {
+
+    if (typeof configuration !== 'object') return;
+
+    var tabWrapper = $(configuration.tabWrapper),
+        tabMnu = tabWrapper.find(configuration.tabItems),
+        tabContent = tabWrapper.find(configuration.tabContents);
+
+    tabContent.not(':first-child').hide();
+    tabMnu.first().addClass('active');
+    tabMnu.each(function (i) {
+        $(this).attr('data-tab', 'tab' + i);
+    });
+    tabContent.each(function (i) {
+        $(this).attr('data-tab', 'tab' + i);
+    });
+
+    tabMnu.click(function () {
+        var tabData = $(this).data('tab');
+        tabWrapper.find(tabContent).hide();
+        tabWrapper.find(tabContent).filter('[data-tab=' + tabData + ']').show();
+    });
+
+    $(configuration.tabItems).click(function () {
+        var before = $(configuration.tabItems + ".active");
+        before.removeClass('active');
+        $(this).addClass('active');
+    });
+
+}

@@ -22,29 +22,12 @@ namespace UserPanel.Installers
             builder.Services.AddSwaggerGen(c =>{c.SwaggerDoc("v1", new OpenApiInfo { Title = "AddingStuffAndCheckingI", Version = "v1" });});
             builder.Services.AddScoped<EmailService, EmailService>();
             builder.Services.AddControllersWithViews();
+            builder.Services.AddSession();
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddSingleton<DataBase, SqlDataBase>();
             builder.Services.AddSingleton<IDataBaseProvider, DataBaseProvider>();
-
-            builder.Services.AddSingleton<PermissionContextProvider>();
-            builder.Services.AddSingleton(ctx => ctx
-                .GetRequiredService<PermissionContextProvider>()
-                .GetPermissionContext()
-            );
-            builder.Services.AddScoped<PermissionContextActions>();
-            builder.Services.AddScoped(ctx => ctx
-                .GetRequiredService<PermissionContextProvider>()
-                .GetPermissionContextActions(ctx.GetRequiredService<PermissionContext>())
-            );
-            builder.Services.AddScoped(ctx => ctx
-                .GetRequiredService<PermissionContextProvider>()
-                .GetUserActionSubject(ctx.GetRequiredService<PermissionContextActions>())
-            );
-            builder.Services.AddScoped(ctx => ctx
-             .GetRequiredService<PermissionContextProvider>()
-             .GetGroupActionSubject(ctx.GetRequiredService<PermissionContextActions>())
-         );
+            builder.Services.AddSingleton<PermissionContext<Guid>>( p => new PermissionContextUserPanel());
             builder.Services.AddScoped<GroupManager, GroupManager>();
             builder.Services.AddScoped<UserManager, UserManager>();
             builder.Services.AddScoped<CampaningManager, CampaningManager>();
@@ -63,6 +46,8 @@ namespace UserPanel.Installers
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
                 options.LoginPath = "/Login";
                 options.AccessDeniedPath = "/Forbidden";
+                options.Events.OnValidatePrincipal = PrincipalValidator.ValidateAsync;
+                options.Events.OnSigningOut  = PrincipalValidator.OnSignOutValidate;
             });
            
             builder.Services.AddAuthorization(options =>

@@ -1,0 +1,7 @@
+﻿@model AdvertForm
+@{
+    Layout = "_Layout";
+    ViewData["type"] = "create";
+}
+@await Html.PartialAsync("_Form", Model);
+

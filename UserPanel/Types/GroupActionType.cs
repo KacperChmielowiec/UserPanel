@@ -1,6 +1,6 @@
 ﻿namespace UserPanel.Types
 {
-    public enum GroupActionType
+    public enum DataActionType
     {
         ADD,
         REMOVE,

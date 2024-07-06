@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using UserPanel.Models.Adverts;
 using UserPanel.Models.Camp;
 using UserPanel.Models.Group;
 
@@ -49,14 +50,12 @@ namespace UserPanel.Helpers
                 .ForPath(e => e.details.Utm_Camp, (conf) => conf.MapFrom((src) => src.Utm_Camp));
 
             CreateMap<GroupModel, GroupModelMock>();
-            CreateMap<GroupModelMock, GroupModel>();
+            CreateMap<GroupModelMock, GroupModel>()
+                .ForMember(e => e.Parent, (conf) => conf.MapFrom((src) => src.id_camp));
             CreateMap<GroupLists,GroupListMock>();
             CreateMap<GroupListMock, GroupLists>();
-            CreateMap<Advertisement, AdvertisementMock>();
-            CreateMap<AdvertisementMock, Advertisement>();
 
-
-            CreateMap<CreateGroup,GroupModel>()
+            CreateMap<CreateGroup, GroupModel>()
                 .ForPath(e => e.details.Billing, (conf) => conf.MapFrom((src) => src.Billing))
                 .ForPath(e => e.details.Devices, (conf) => conf.MapFrom((src) => src.Devices))
                 .ForPath(e => e.details.startTime, (conf) => conf.MapFrom((src) => src.startTime))
@@ -66,6 +65,20 @@ namespace UserPanel.Helpers
                 .ForPath(e => e.details.Utm_Source, (conf) => conf.MapFrom((src) => src.Utm_Source))
                 .ForPath(e => e.details.Utm_Medium, (conf) => conf.MapFrom((src) => src.Utm_Medium))
                 .ForPath(e => e.details.Utm_Camp, (conf) => conf.MapFrom((src) => src.Utm_Camp));
+
+
+            CreateMap<Advert, AdvertisementMock>()
+                .ForMember(e => e.id_group, (conf) => conf.MapFrom((src) => src.Parent));
+            CreateMap<AdvertisementMock, Advert>()
+                .ForMember(e => e.IsActive, (conf) => conf.MapFrom((src) => src.status))
+                .ForMember(e => e.Parent, (conf) => conf.MapFrom((src) => src.id_group));
+            CreateMap<AdvertForm, Advert>()
+                .ForMember(e => e.Parent, (conf) => conf.MapFrom((src) => src.id_group));
+            CreateMap<AdvertFormatForm, AdvertFormat>();
+            CreateMap<Advert, AdvertForm>();
+            CreateMap<AdvertForm, Advert>();
+            CreateMap<AdvertFormat, AdvertFormatForm>();
+            CreateMap<AdvertFormatForm, AdvertFormat>();
 
         }
     }

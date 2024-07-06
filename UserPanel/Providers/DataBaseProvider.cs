@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using UserPanel.Interfaces;
 using UserPanel.Interfaces.Abstract;
+using UserPanel.Models.Adverts;
 using UserPanel.Models.Camp;
 using UserPanel.Models.Group;
 using UserPanel.Models.User;
@@ -28,7 +29,7 @@ namespace UserPanel.Providers
             _mapper = mapper;
             _contextAccessor = accessor;
             _serviceProvider = serviceProvider;
-            _session = _contextAccessor.HttpContext.Session;
+            _session = _contextAccessor?.HttpContext?.Session;
         }
         public UserRepository<UserModel> GetUserRepository()
         {
@@ -68,12 +69,17 @@ namespace UserPanel.Providers
         {
             if (_configuration["ENVIROMENT:UserRepositoryType"]?.ToLower() == AppReferences.CONFIG_MOCK)
             {
-                return new MockGroupRepository(_session, _mapper, _contextAccessor, _serviceProvider);
+                return new MockGroupRepository(_session, _mapper, _contextAccessor);
             }
             else
             {
                 throw new AccessViolationException("");
             }
+        }
+
+        AdvertRepository<Advert> IDataBaseProvider.GetAdvertRepository()
+        {
+            return new AdvertRepositoryMock(_session, _mapper, _contextAccessor);
         }
     }
 }

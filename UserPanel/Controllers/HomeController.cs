@@ -21,6 +21,8 @@ namespace UserPanel.Controllers
             _logger = logger;
             _configuration = configuration;
             _campaningManager = campaningManager;
+            var p = PermissionActionManager<Guid>.InstanceContext;
+
         }
         [EndpointName(EndpointNames.DashboardHomeGet)]
         public IActionResult Index([FromQuery] int timerate = 7)
