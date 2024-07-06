@@ -44,12 +44,18 @@ namespace UserPanel.Services
 
            }
            if(descriptor.TypeAccess == AppReferences.TypeAccessForbidden)
-                visible = !descriptor.Pages.Contains(context.Request.Path.Value.ToLower()) && visible;
+           {
+                visible = !descriptor.Pages.Any(page => context.Request.Path.Value.Contains(page)) && visible;
+                
+           }
            else
-                visible = descriptor.Pages.Contains(context.Request.Path.Value.ToLower()) && visible;
-
+           {
+                visible = descriptor.Pages.Any(page => context.Request.Path.Value.Contains(page)) && visible;
+           }
            return visible;
        }
+
+        
         
     }
 }

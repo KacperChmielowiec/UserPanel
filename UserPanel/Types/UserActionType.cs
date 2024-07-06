@@ -2,6 +2,7 @@
 {
     public enum UserActionType
     {
-        Login
+        Login,
+        Logout,
     }
 }

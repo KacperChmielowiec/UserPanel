@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using MimeKit;
 using NuGet.Packaging;
 using System.Reflection;
 using System.Security.Cryptography;
@@ -15,18 +16,15 @@ namespace UserPanel.Services
         private IDataBaseProvider _provider;
         private IConfiguration _configuration;
         private UserManager _userManager;
-        private PermissionContext _permissionContext;
         public GroupManager(
             IDataBaseProvider provider, 
             IConfiguration configuration, 
-            UserManager userManager, 
-            PermissionContext permission
+            UserManager userManager
          )
         {
             this._provider = provider;
             this._configuration = configuration;
             this._userManager = userManager;
-            this._permissionContext = permission;
         }
         public List<GroupModel> GetGroupsByCampID(Guid idCamp)
         {
@@ -60,26 +58,26 @@ namespace UserPanel.Services
         public GroupModel? GetGroupById(Guid idGroup, bool deep = false)
         {
             if (!_userManager.isLogin() || _userManager.getUserId() == -1) return new GroupModel();
-            int id = _userManager.getUserId();
+        
 
-            var group = _provider.GetGroupRepository().GetGroupById(idGroup,deep);
+            var group = _provider.GetGroupRepository().GetGroupById(idGroup);
 
-            if(_permissionContext.GroupIsAllowed(idGroup))
-            {
-                return group;
+            if (deep && group != null) {
+              var ad = _provider.GetAdvertRepository().GetAdvertGroupId(idGroup);
+              group.advertisementsList = ad.ToArray();
             }
-            
-            return null;
+
+
+            return group;
         }
         public void UpdateGroup(GroupModel model)
         {
             if (model == null || model.id == Guid.Empty) throw new ArgumentNullException(); 
             if (!_userManager.isLogin() || _userManager.getUserId() == -1) return;
-            int id = _userManager.getUserId();
+         
 
-            if(!_permissionContext.GroupIsAllowed(model.id)) return;
 
-            var group = _provider.GetGroupRepository().GetGroupById(model.id, true);
+            var group = _provider.GetGroupRepository().GetGroupById(model.id);
 
             model.advertisementsList = group.advertisementsList;
             model.Lists = group.Lists;
@@ -93,7 +91,7 @@ namespace UserPanel.Services
             if (!_userManager.isLogin() || _userManager.getUserId() == -1) return;
             int id = _userManager.getUserId();
 
-            if (!_permissionContext.CampIsAllowed(camp_id)) return;
+          ;
 
             if(model.id == Guid.Empty) model.id = Guid.NewGuid();
 

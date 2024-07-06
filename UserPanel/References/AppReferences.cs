@@ -1,4 +1,5 @@
-﻿using System.Security.Policy;
+﻿using Newtonsoft.Json.Serialization;
+using System.Security.Policy;
 using UserPanel.Controllers;
 using UserPanel.Helpers;
 using UserPanel.Models;
@@ -11,10 +12,12 @@ namespace UserPanel.References
         public static string USER_MOCK_PATH = "";
         public static string CAMP_LOGO_PATH = "";
         public static string CAMP_LOGO_PATH_FETCH = "";
+        public static string ADVERT_PATH = "";
         public static string BASE_APP_HOST = "";
         public static string CONFIG_MOCK = "mock";
         public static string RepoType = "";
 
+        public const string UserIdClaim = "Id";
         public const string PERMISSION_SCHEME = "permission";
 
         public static string TypeAccessForbidden = "Forbidden";
@@ -25,7 +28,7 @@ namespace UserPanel.References
             { "USER", UserRole.USER },
             { "EMPLOYEE", UserRole.EMPLOYEE },
         };
-
+        
         public static class PathRoutes
         {
             public static string Login = "Login";

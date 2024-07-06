@@ -11,4 +11,11 @@ namespace UserPanel.References
         [StringValue("Group")]
         GROUP,
     }
+
+    public enum DataType
+    {
+        Campaning,
+        Group,
+        Advert
+    }
 }

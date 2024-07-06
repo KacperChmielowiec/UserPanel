@@ -7,11 +7,12 @@ namespace UserPanel.Services.observable
     public class UserActionObserver : Observer<UserActionMessage>
     {
         public Dictionary<UserActionType,Action<UserActionMessage>> Actions { get; private set; } = new Dictionary<UserActionType, Action<UserActionMessage>>();
-        private PermissionContextActions _permissionContextActions;
-        public UserActionObserver(Subject<UserActionMessage> _subject, PermissionContextActions permissionContextActions) : base(_subject)
+   
+        public UserActionObserver(Subject<UserActionMessage> _subject) : base(_subject)
         {
-            _permissionContextActions= permissionContextActions;
+     
             Actions[UserActionType.Login] = UserLoginNotify;
+            Actions[UserActionType.Logout] = UserLogoutNotify;
         }
 
         public override void notify(UserActionMessage context)
@@ -21,8 +22,11 @@ namespace UserPanel.Services.observable
 
         private void UserLoginNotify(UserActionMessage context)
         {
-          _permissionContextActions
-                .UpdatePermissionContextUser(new PermissionContext() { contextUserID = context.ID, IsLogin = context.IsLogin });
+          
+        }
+        private void UserLogoutNotify(UserActionMessage context)
+        {
+            
         }
     }
 }

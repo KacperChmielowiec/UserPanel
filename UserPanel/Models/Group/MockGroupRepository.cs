@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using UserPanel.Helpers;
 using UserPanel.Interfaces;
 using UserPanel.Interfaces.Abstract;
+using UserPanel.Models.Adverts;
 using UserPanel.Models.Camp;
 using UserPanel.References;
 using UserPanel.Services;
@@ -19,20 +20,15 @@ namespace UserPanel.Models.Group
         private IMapper _mapper;
         private readonly string Path = MockPathsReferences.groupsPath;
         private IHttpContextAccessor _contextAccessor;
-        private GroupActionSubject _actionSubject;
+  
         public MockGroupRepository(
             ISession session, 
             IMapper mapper, 
-            IHttpContextAccessor httpContextAccessor, 
-            IServiceProvider serviceProvider)
+            IHttpContextAccessor httpContextAccessor)
         {
             _Session = session;
             _mapper = mapper;
             _contextAccessor = httpContextAccessor;
-            _actionSubject = serviceProvider
-                .CreateScope()
-                .ServiceProvider
-                .GetService<GroupActionSubject>() ?? new GroupActionSubject();
         }
  
         public override List<GroupModel> GetGroupsByCampId(Guid id)
@@ -70,7 +66,7 @@ namespace UserPanel.Models.Group
             return groupsModels;
         }
 
-        public override GroupModel GetGroupById(Guid id, bool deep = false)
+        public override GroupModel GetGroupById(Guid id)
         {
             var curr = _Session.GetJson<List<GroupModelMock>>(SessionKeysReferences.groupsKey)
                 ?.Where(group => group.id == id)
@@ -78,18 +74,6 @@ namespace UserPanel.Models.Group
 
             if (curr != null)
             {
-                if(deep)
-                {
-                    var lists = _Session
-                        .GetJson<List<GroupListMock>>(SessionKeysReferences.listsKey)
-                        .FindAll(l => l.id_group == id) ?? new List<GroupListMock>();
-
-                    var adverts = _Session.GetJson<List<AdvertisementMock>>(SessionKeysReferences.advertKey)
-                         .FindAll(l => l.id_group == id) ?? new List<AdvertisementMock>();
-
-                    curr.advertisementsList = _mapper.Map<IEnumerable<Advertisement>>(adverts).ToArray();
-                    curr.Lists = _mapper.Map<IEnumerable<GroupLists>>(lists).ToArray();
-                }
                 return _mapper.Map<GroupModel>(curr);
             }
 
@@ -121,6 +105,7 @@ namespace UserPanel.Models.Group
 
         public override void CreateGroup(Guid id, GroupModel model)
         {
+
             if(id == Guid.Empty) throw new ArgumentNullException("id");
             var SessionModels = _Session.GetJson<List<GroupModelMock>>(SessionKeysReferences.groupsKey) ?? new List<GroupModelMock>();
             var mockModel = _mapper.Map<GroupModelMock>(model);
@@ -129,8 +114,6 @@ namespace UserPanel.Models.Group
             mockModel.id_user = UserManager.getUserId(_contextAccessor);
 
             _Session.SetJson(SessionKeysReferences.groupsKey, SessionModels);
-
-            _actionSubject.notify(new GroupActionMessage() { actionType = GroupActionType.ADD,id = mockModel.id });
 
 
         }

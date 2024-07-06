@@ -14,7 +14,7 @@ namespace UserPanel.Services
     {
         private IHttpContextAccessor _contextAccessor;
         private List<EndpointMetaData> _endpoints;
-        private PermissionContext _permissionContext;
+ 
         private IDataBaseProvider _dataBaseProvider;
         public PermissionAuthHandler(
             IOptionsMonitor<CookieAuthenticationOptions> options, 
@@ -23,14 +23,14 @@ namespace UserPanel.Services
             ISystemClock clock,
             IHttpContextAccessor httpContextAccessor,
             IOptions<List<EndpointMetaData>> optionsEndpoint,
-            PermissionContext permissionContext,
+     
             IDataBaseProvider dataBaseProvider
     
         ) : base(options, logger, encoder, clock)
         {
             _contextAccessor = httpContextAccessor;
             _endpoints = optionsEndpoint.Value;
-            _permissionContext = permissionContext;
+          
             _dataBaseProvider = dataBaseProvider;
            
         }
@@ -41,7 +41,7 @@ namespace UserPanel.Services
 
             if (result.Succeeded)
             {
-                if (!_permissionContext.IsLoad) _permissionContext.LoadContext(_dataBaseProvider, result.Ticket);
+               
                 var endpoint = context.GetEndpoint();
                
                 EndpointNameAttribute endpointNameAttribute = endpoint?.Metadata?.GetMetadata<EndpointNameAttribute>();
@@ -52,7 +52,7 @@ namespace UserPanel.Services
 
                     if (matched != null)
                     {
-                        bool res = context.ControlAccess(matched, _permissionContext);
+                        bool res = context.ControlAccess<Guid>(matched);
                         if (!res)
                         {
                             return AuthenticateResult.Fail("");

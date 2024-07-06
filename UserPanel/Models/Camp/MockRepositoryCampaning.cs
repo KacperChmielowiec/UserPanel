@@ -26,6 +26,7 @@ namespace UserPanel.Models.User
             var curr = _Session.GetJson<List<Campaning>>("campanings") ?? new List<Campaning>();
             curr.Add(model);
             _Session.SetJson("campanings", curr);
+            Subjects.dataActionSubject.notify(new Services.observable.DataActionMessage() { actionType = Types.DataActionType.ADD, dataType = DataType.Campaning });
         }
 
         public override void DeleteCampaning(Guid id)
@@ -33,6 +34,7 @@ namespace UserPanel.Models.User
             var curr = _Session.GetJson<List<Campaning>>("campanings") ?? new List<Campaning>();
             curr.RemoveAll(model => model.id == id);
             _Session.SetJson("campanings", curr);
+            Subjects.dataActionSubject.notify(new Services.observable.DataActionMessage() { actionType = Types.DataActionType.REMOVE, dataType = DataType.Campaning });
         }
 
         public override Campaning? getCampaningById(Guid id)

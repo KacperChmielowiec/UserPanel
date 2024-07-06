@@ -13,8 +13,10 @@ namespace UserPanel.Helpers
             AppReferences.USER_MOCK_PATH = "appConfig.database.mock.users";
             AppReferences.CAMP_LOGO_PATH = config.GetValue<string>("LOGO_PATH")?.Replace("//", "/") ?? "";
             AppReferences.CAMP_LOGO_PATH_FETCH = config.GetValue<string>("LOGO_PATH_FETCH")?.Replace("//", "/") ?? "";
-            AppReferences.BASE_APP_HOST = config.GetValue<string>("APP_HOST")?.Replace("//", "/") ?? "";
+            AppReferences.BASE_APP_HOST = config.GetValue<string>("APP_HOST") ?? "";
             AppReferences.RepoType = config["ENVIROMENT:UserRepositoryType"]?.ToLower();
+            AppReferences.ADVERT_PATH = config.GetValue<string>("ADVERT_PATH")?.Replace("//", "/") ?? "";
+
         }
     }
 }
