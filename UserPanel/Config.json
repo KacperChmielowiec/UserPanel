@@ -1,6 +1,7 @@
 {
   "BASE_PATH": "C:\\Users\\kacpe\\source\\repos\\UserPanel\\UserPanel\\",
   "APP_HOST": "https://localhost:7119",
+  "ADVERT_PATH": "wwwroot/static/advertisement",
   "LOGO_PATH": "wwwroot/static/campaning/logo/",
   "LOGO_PATH_FETCH": "static/campaning/logo/",
   "CONFIG_PATH": "Configs",
@@ -15,7 +16,7 @@
   "SectionsAccess": {
     "SideBar": {
       "typeAccess": "Forbidden",
-      "Pages": [ "register", "login" ],
+      "Pages": [ "/register", "/login", "/advertisement/create-form", "/advertisement/update-form" ],
       "Auth": true,
       "Roles": [ "ADMIN", "USER" ]
     }
@@ -23,7 +24,7 @@
   "Endpoints": [
     {
       "name": "dashboard.home",
-      "method":  "get",
+      "method": "get",
       "permission": false,
       "delegate": ""
     },

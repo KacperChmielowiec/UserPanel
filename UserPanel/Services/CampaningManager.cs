@@ -18,21 +18,19 @@ namespace UserPanel.Services
         private IHttpContextAccessor _contextAccessor;
         private UserManager _userManager;
         private ISession session;
-        private PermissionContext _permissionContext;
         private static string CAMP_PATH = AppReferences.CAMP_LOGO_PATH;
         public CampaningManager(
             IDataBaseProvider provider,
             IConfiguration configuration, 
             IHttpContextAccessor httpContextAccessor,
-            UserManager userManager,
-            PermissionContext permissionContext
+            UserManager userManager
+      
         )
         {
             _provider = provider;
             _configuration = configuration;
             _contextAccessor = httpContextAccessor;
             _userManager = userManager;
-            _permissionContext = permissionContext;
             session = httpContextAccessor.HttpContext.Session;
         }
 
@@ -45,7 +43,7 @@ namespace UserPanel.Services
         public Campaning? GetCampaningById(Guid id)
         {
             if (!_userManager.isLogin() || _userManager.getUserId() == -1) return default(Campaning);
-            if (!_permissionContext.CampIsAllowed(id)) return default(Campaning);
+        
 
             return _provider.GetCampaningRepository().getCampaningById(id);
         }

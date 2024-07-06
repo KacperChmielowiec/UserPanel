@@ -144,7 +144,7 @@
       ],
       "lists": [
         {
-             "id_user": "1",
+          "id_user": "1",
           "id_camp": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
           "id_group": "540344ba-aba7-47a5-a13f-ab3c260c092a",
           "id": "83fda443-03bf-48ff-8d2f-9bbe0c6bd1e7",
@@ -164,9 +164,16 @@
           "id_camp": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
           "id_group": "540344ba-aba7-47a5-a13f-ab3c260c092a",
           "id": "3964cff5-320b-44ee-b50e-b9651ee28bb6",
-          "name": "reklama1",
+          "name": "Mock_AD_1",
+          "desc":  "mock ads...",
           "template": "Static",
-          "formats": [ "160x600", "300x600", "300x300" ],
+          "formats": [
+            {
+              "url": "https://mock-panel.com",
+              "size": "300x300",
+              "src": "static/advertisement/96e898ff-754d-45c8-9704-93326e8f0c21/300x300/test.png"
+            }
+          ],
           "status": true
         }
       ],

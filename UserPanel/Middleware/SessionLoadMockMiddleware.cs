@@ -5,6 +5,7 @@ using UserPanel.Models.User;
 using UserPanel.References;
 using UserPanel.Services;
 using UserPanel.Helpers;
+using UserPanel.Models.Adverts;
 namespace UserPanel.Middleware
 {
     public class SessionLoadMockMiddleware

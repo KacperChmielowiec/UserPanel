@@ -1,0 +1,316 @@
+﻿@model AdvertForm
+@{
+
+}
+@functions{
+    bool isEdit(){
+        if (!ViewData.ContainsKey("type")) return false;
+        return ViewData["type"] == "Edit" ? true : false;
+    }
+}
+
+<div class="w-full flex items-center h-full advert-page">
+        <div class="wrapper-ads-edit shadow-md mb-10">
+        <form class="w-full" asp-controller="Advert" asp-action="Create"  method="post" enctype="multipart/form-data">
+            <header class="header-section">
+                <h2 class="text-2xl font-semibold">Edycja reklamy</h2>
+            </header>
+            <div class="form-section">
+                 <div class="form-group">
+                     <label class="w-full mr-8 text-right" for="">Szablon:</label>
+                     <div class="col-10"><p>standardowy</p></div>
+                 </div>
+                <div class="form-group">
+                    <input hidden asp-for="id_group" value="@Model.id_group"/>
+                    <label class="w-full mr-8 text-right" for="">Nazwa: </label>
+                    <input asp-for="Name" class="col-10 appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4  leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Nazwa reklamy">
+                </div>
+                <div class="form-group">
+                    <label class="w-full mr-8 text-right" for="">Opis: </label>
+                    <textarea asp-for="Description" id="message" rows="4" class="col-10 block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Opis..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="w-full mr-8 text-right" for="">Status: </label>
+                    <select asp-for="IsActive" id="countries" class="col-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        <option value="true">Włącz</option>
+                        <option value="false">Wyłącz</option>
+                    </select>
+                </div>
+            </div>
+            <header class="header-section">
+                <h2 class="text-2xl font-semibold">Formaty reklam</h2>
+            </header>
+            <section class="format-section">
+                <ul class="nav nav-tabs">
+                    <li class=""><a href="#adt_GLOBAL">Wszystkie</a></li>
+                    <li class=""><a href="#adt_LOCAL_e306fc59-c22b-40ab-8436-85e818552127">300x300</a></li>
+                </ul>
+                <div class="tab-cont">
+                    <div class="tab-pane mt-10">
+                        <div class="form-group-content">
+                            <label class="mr-8 text-right" for="">URL: </label>
+                            <input data-type="url" id="main_url" class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4  leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Nazwa reklamy">
+                        </div>
+                    </div>
+                    <div class="tab-pane mt-10" data-id="file_300x300">
+                        <div class="form-group-content">
+                            <label class="mr-8 text-right" for="">URL: </label>
+                            <input asp-for="Formats[0].Url" data-type="url" class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4  leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Nazwa reklamy">
+                        </div>
+                        <div class="form-group-content">
+                            <input hidden type="text" value="300x300" asp-for="Formats[0].Size" />
+                            <label class="mr-8 text-right" for="">Baner: </label>
+                            <input asp-for="Formats[0].StaticImg" data-id="file_300x300" type="file" hidden />
+                            <span data-id="file_300x300" onclick="openFile()" class="btn glow btn-flat success px-5"><i class="icon-upload mr-1"></i>Zmień</span>
+                            <span data-id="file_300x300" onclick="removeFile('file_300x300')" class="btn btn-flat danger px-5 ml-4"><i class="icon-trash mr-1"></i>Wyczyść</span>
+                        </div>
+                        <div class="preview">
+                            <div class="preview-frame" style="width: 300px; height: 300px; @(isEdit() ? $"background-image: url({PathGenerate.FormatToHostPath(Model.Formats[0].Src)})" : "" )">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="pt-10">
+                    <button type="submit" class="btn glow btn-flat success px-5 float-right">Zatwierdź</button>
+                </div>
+            </section>
+        </form>
+        </div>
+</div>
+<script>
+    const fileInputsArray = [...document.querySelectorAll("input[type='file']")];
+    const urlInputsArray = [...document.querySelectorAll("input[data-type='url']:not(#main_url)")]
+    const mainUrlInput = document.querySelector("input#main_url")
+    let upload;
+    var _URL = window.URL || window.webkitURL;
+
+    tabUtils({ tabWrapper: ".format-section", tabItems: ".nav-tabs li", tabContents: ".tab-cont > .tab-pane" })
+
+    const openFile = () => {
+        const fileInput = document.querySelector(`input[type='file'][data-id='${event.target.dataset.id}']`)?.click()
+    }
+    const removeFile = (id) => {
+        const frame = document.querySelector(`.tab-pane[data-id='${id}'] .preview-frame`)
+        const input = document.querySelector(`input[type='file'][data-id='${id}']`)
+        if (frame && input) {
+            frame.style.backgroundImage = ""
+            input.value = '';
+        }
+    }
+    mainUrlInput.addEventListener("input", (event) => {
+        urlInputsArray.forEach((i) => {
+            i.value = event.target.value
+        })
+    })
+
+    fileInputsArray.forEach((input) => input.addEventListener("change", () => {
+
+        const reader = new FileReader();
+        const img = new Image();
+        const str = input.dataset.id;
+        const [width, height] = input.dataset.id.split("_")[1].split("x");
+
+        reader.addEventListener("load", () => {
+            var objectUrl = _URL.createObjectURL(input.files[0]);
+            img.src = objectUrl;
+            img.onload = () => {
+                upload = reader.result
+                const frame = document.querySelector(`.tab-pane[data-id='${input.dataset.id}'] .preview-frame`)
+                _URL.revokeObjectURL(objectUrl);
+                if (img.height == height && img.width == width) {
+
+                    frame.style.backgroundImage = `url(${upload})`
+                    frame.style.backgroundPosition = 'center';
+                    frame.style.backgroundRepeat = 'no-repeat';
+
+                }
+                else {
+
+                    alert(`Obrazek musi mieć rozmiar: ${width}x${height}`)
+
+                }
+            }
+
+        })
+        reader.readAsDataURL(input.files[0])
+    }))
+
+
+</script>
+
+<style>
+    .advert-page{
+        margin-top: 20px;
+        justify-content: center;
+    }
+    .header-section,.format-section{
+        padding: 40px;
+    }
+    .wrapper-ads-edit{
+        background-color: #f5f5f5;
+        min-height: 90%;
+        min-width: 90%;
+    }
+    .form-section{
+        width: 80%;
+        margin: 70px 100px;
+    }
+    .form-group{
+        display: flex;
+        margin: 10px 80px;
+        font-size: 18px;
+        align-items:center;
+    }
+    .form-group-content{
+        display: flex;
+        margin: 10px 10px;
+        padding: 20px 0;
+        width: 60%;
+        font-size: 18px;
+        align-items: center;
+    }
+
+    .form-group label, .form-group-content label{
+        font-weight: 600;
+        min-width: 50px;
+    }
+    .preview{
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        padding: 10px 0;
+    }
+    .preview .preview-frame
+    {
+        border: 1px solid #000000;
+    }
+    .nav-tabs {
+      border-bottom: 1px solid #dddddd;
+    }
+    .nav-tabs > li {
+      float: left;
+      margin-bottom: -1px;
+    }
+    .nav-tabs > li > a {
+      margin-right: 2px;
+      line-height: 1.428571429;
+      border: 1px solid transparent;
+      border-radius: 4px 4px 0 0;
+    }
+    .nav-tabs > li > a:hover {
+      border-color: #eeeeee #eeeeee #dddddd;
+    }
+    .nav-tabs > li.active > a,
+    .nav-tabs > li.active > a:hover,
+    .nav-tabs > li.active > a:focus {
+      color: #555555;
+      background-color: #ffffff;
+      border: 1px solid #dddddd;
+      border-bottom-color: transparent;
+      cursor: default;
+    }
+    .nav-tabs.nav-justified {
+      width: 100%;
+      border-bottom: 0;
+    }
+    .nav-tabs.nav-justified > li {
+      float: none;
+    }
+    .nav-tabs.nav-justified > li > a {
+      text-align: center;
+    }
+ 
+    .nav-tabs.nav-justified > li > a {
+      border-bottom: 1px solid #dddddd;
+      margin-right: 0;
+    }
+    .nav-tabs.nav-justified > .active > a {
+      border-bottom-color: #ffffff;
+    }
+
+    .nav-pills > li {
+  float: left;
+}
+.nav-pills > li > a {
+  border-radius: 5px;
+}
+.nav-pills > li + li {
+  margin-left: 2px;
+}
+.nav-pills > li.active > a,
+.nav-pills > li.active > a:hover,
+.nav-pills > li.active > a:focus {
+  color: #ffffff;
+  background-color: #428bca;
+}
+
+.nav {
+    margin-bottom: 0;
+    padding-left: 0;
+    list-style: none;
+}
+
+.nav:before,
+.nav:after {
+content: " ";
+/* 1 */
+
+display: table;
+/* 2 */
+}
+
+.nav:after {
+clear: both;
+}
+
+.nav:before,
+.nav:after {
+content: " ";
+/* 1 */
+
+display: table;
+/* 2 */
+}
+
+.nav:after {
+clear: both;
+}
+
+.nav > li {
+position: relative;
+display: block;
+}
+
+.nav > li > a {
+position: relative;
+display: block;
+padding: 10px 15px;
+}
+
+.nav > li > a:hover,
+.nav > li > a:focus {
+    text-decoration: none;
+    background-color: #eeeeee;
+}
+
+.nav > li.disabled > a {
+color: #999999;
+}
+
+.nav > li.disabled > a:hover,
+.nav > li.disabled > a:focus {
+    color: #999999;
+    text-decoration: none;
+    background-color: transparent;
+    cursor: not-allowed;
+}
+
+.nav .open > a,
+.nav .open > a:hover,
+.nav .open > a:focus {
+background-color: #eeeeee;
+border-color: #428bca;
+}
+
+</style>

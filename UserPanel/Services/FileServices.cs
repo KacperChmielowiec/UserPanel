@@ -46,7 +46,6 @@ namespace UserPanel.Services
         {
 
             return string.Join("_", filename.Split(Path.GetInvalidFileNameChars()));
-
         }
     }
 }

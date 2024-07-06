@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 using UserPanel.Models.Camp;
-
+using UserPanel.Models.Adverts;
 namespace UserPanel.Models.Group
 {
     public class GroupModelMock
@@ -14,7 +14,7 @@ namespace UserPanel.Models.Group
         public GroupDetails details { get; set; }
         public bool status { get; set; }
         [JsonProperty("advertisements")]
-        public Advertisement[] advertisementsList { get; set; }
+        public Advert[] advertisementsList { get; set; }
         [JsonProperty("lists")]
         public GroupLists[] Lists { get; set; }
     }

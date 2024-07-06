@@ -1,42 +1,62 @@
 ﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Security.Claims;
 using UserPanel.Interfaces;
 using UserPanel.Models;
 using UserPanel.Services;
+using UserPanel.References;
 
 namespace UserPanel.Helpers
 {
     public static class PermissionExtension
     {
-        public static void LoadContext(this PermissionContext context, IDataBaseProvider _provider, AuthenticationTicket ticket)
+        public static Func<FullUserContext> LoadContext(IDataBaseProvider _provider, int id)
         {
-            context.IsLoad = true;
-            context.IsLogin = ticket.Principal?.Identity?.IsAuthenticated ?? false;
-            var id = ticket.Principal.Claims.Where(x => x.Type.ToLower() == "id")?.Select(x => x.Value).FirstOrDefault();
-            if (id != null)
+            return () =>
             {
-                int ID = 0;
-                int.TryParse(id, out ID);
-                context.contextUserID = ID;
+                FullUserContext fullUserContext = new FullUserContext();
+
+                fullUserContext.UserId = id;
+                fullUserContext.Campanings = _provider.GetCampaningRepository().getCampaningsByUser(fullUserContext.UserId);
+                fullUserContext.Groups = _provider.GetGroupRepository().GetGroupsByUserId(fullUserContext.UserId);
+                fullUserContext.Adverts = _provider.GetAdvertRepository().GetAdvertByUserId(fullUserContext.UserId);
+
+                return fullUserContext;
+
+            };
+        }
+       
+
+    }
+    public static class PrincipalValidator
+    {
+        public static async Task ValidateAsync(CookieValidatePrincipalContext context)
+        {
+            if (context == null) throw new ArgumentNullException(nameof(context));
+            PermissionContext<Guid> permissionContext = context.HttpContext.RequestServices.GetRequiredService<PermissionContext<Guid>>();
+            IDataBaseProvider provider = context.HttpContext.RequestServices.GetRequiredService<IDataBaseProvider>();
+            var userIdClaim = context.Principal.Claims.FirstOrDefault(c => c.Type == AppReferences.UserIdClaim);
+
+            if (userIdClaim != null)
+            { 
+                if(int.TryParse(userIdClaim.Value, out var userId))
+                {
+                    if (permissionContext.IsLoad == false)
+                    {
+                        permissionContext.SetupContext(PermissionExtension.LoadContext(provider, userId));
+                        PermissionActionManager<Guid>.SetupInstance(permissionContext);
+                        permissionContext.IsLoad = true;
+                        permissionContext.IsLogin = true;
+                    }
+                }
             }
-            context.CampsContext = _provider.GetCampaningRepository()
-                        .getCampaningsByUser(context.contextUserID)
-                        .Select(camp => new CampContext() { id = camp.id })
-                        .ToList();
-            context.GroupsContext = _provider.GetGroupRepository()
-                        .GetGroupsByUserId(context.contextUserID)
-                        .Select(g => new GroupContext() { id = g.id })
-                        .ToList();
-             
-        }
+          
 
-        public static bool CampIsAllowed(this PermissionContext context, Guid guid)
-        {
-             return context.CampsContext.Select(camp => camp.id)?.Contains(guid) ?? false;
         }
-
-        public static bool GroupIsAllowed(this PermissionContext context, Guid guid)
+        public static async Task OnSignOutValidate(CookieSigningOutContext context)
         {
-            return context.GroupsContext.Select(group => group.id)?.Contains(guid) ?? false;
+            PermissionActionManager<Guid>.InstanceContext.ClearContext();
         }
     }
+
 }
