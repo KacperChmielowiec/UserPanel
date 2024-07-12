@@ -1,20 +1,14 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.ComponentModel;
-using UserPanel.Helpers;
-using UserPanel.Interfaces.Abstract;
-using UserPanel.Models;
 using UserPanel.Models.Camp;
-using UserPanel.Models.User;
 using UserPanel.References;
 using UserPanel.Services;
 
 namespace UserPanel.Controllers
 {
     [Authorize]
-    [Route(template: "/campaning", Name = "TEST")]
+    [Route(template: "/campaning")]
     public class CampaningController : Controller
     {
         private readonly CampaningManager _campaningManager;

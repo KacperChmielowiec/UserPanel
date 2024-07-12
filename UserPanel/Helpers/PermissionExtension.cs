@@ -5,57 +5,42 @@ using UserPanel.Interfaces;
 using UserPanel.Models;
 using UserPanel.Services;
 using UserPanel.References;
-
+using UserPanel.Interfaces.Abstract;
 namespace UserPanel.Helpers
 {
     public static class PermissionExtension
     {
-        public static Func<FullUserContext> LoadContext(IDataBaseProvider _provider, int id)
+        public static Func<FullContext> LoadContext(IDataBaseProvider _provider, int id)
         {
             return () =>
             {
-                FullUserContext fullUserContext = new FullUserContext();
-
-                fullUserContext.UserId = id;
-                fullUserContext.Campanings = _provider.GetCampaningRepository().getCampaningsByUser(fullUserContext.UserId);
-                fullUserContext.Groups = _provider.GetGroupRepository().GetGroupsByUserId(fullUserContext.UserId);
-                fullUserContext.Adverts = _provider.GetAdvertRepository().GetAdvertByUserId(fullUserContext.UserId);
-
-                return fullUserContext;
-
+                return _provider.GetFullContextRepository().GetContext(id);
             };
         }
        
 
     }
-    public static class PrincipalValidator
+    public static class PermissionUtils
     {
-        public static async Task ValidateAsync(CookieValidatePrincipalContext context)
+        public static void LoadContext(HttpContext context, int id)
         {
             if (context == null) throw new ArgumentNullException(nameof(context));
-            PermissionContext<Guid> permissionContext = context.HttpContext.RequestServices.GetRequiredService<PermissionContext<Guid>>();
-            IDataBaseProvider provider = context.HttpContext.RequestServices.GetRequiredService<IDataBaseProvider>();
-            var userIdClaim = context.Principal.Claims.FirstOrDefault(c => c.Type == AppReferences.UserIdClaim);
+            PermissionContext<Guid> permissionContext = context.RequestServices.GetRequiredService<PermissionContext<Guid>>();
+            IDataBaseProvider provider = context.RequestServices.GetRequiredService<IDataBaseProvider>();
 
-            if (userIdClaim != null)
-            { 
-                if(int.TryParse(userIdClaim.Value, out var userId))
-                {
-                    if (permissionContext.IsLoad == false)
-                    {
-                        permissionContext.SetupContext(PermissionExtension.LoadContext(provider, userId));
-                        PermissionActionManager<Guid>.SetupInstance(permissionContext);
-                        permissionContext.IsLoad = true;
-                        permissionContext.IsLogin = true;
-                    }
-                }
+            if (permissionContext.IsLoad == false)
+            {
+                permissionContext.SetupContext(PermissionExtension.LoadContext(provider, id));
+                PermissionActionManager<Guid>.SetupInstance(permissionContext);
+                permissionContext.IsLoad = true;
+                permissionContext.IsLogin = true;
+                
             }
-          
 
         }
         public static async Task OnSignOutValidate(CookieSigningOutContext context)
         {
-            PermissionActionManager<Guid>.InstanceContext.ClearContext();
+            PermissionActionManager<Guid>.ClearContext();
         }
     }
 

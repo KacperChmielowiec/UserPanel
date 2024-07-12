@@ -8,24 +8,24 @@ namespace UserPanel.Models.Adverts
 {
     public class AdvertRepositoryMock : AdvertRepository<Advert>
     {
-        public ISession Session { get; set; }
-        public IMapper Mapper { get; set; }
+        public ISession _session { get; set; }
+        public IMapper _mapper { get; set; }
 
-        public IHttpContextAccessor Context { get; set; }   
+        public IHttpContextAccessor _context { get; set; }   
         public AdvertRepositoryMock(ISession session,IMapper mapper, IHttpContextAccessor contextAccessor) { 
-            Session = session;
-            Mapper = mapper;
-            Context = contextAccessor;
+            _session = session;
+            _mapper = mapper;
+            _context = contextAccessor;
         }
         public override Advert GetAdvertById(Guid id)
         {
-            var curr = Session.GetJson<List<AdvertisementMock>>(SessionKeysReferences.advertKey)
+            var SessionModel = _session.GetJson<List<AdvertisementMock>>(SessionKeysReferences.advertKey)
                ?.Where(ad => ad.id == id)
                .FirstOrDefault();
 
-            if (curr != null)
+            if (SessionModel != null)
             {
-                return Mapper.Map<Advert>(curr);
+                return _mapper.Map<Advert>(SessionModel);
             }
 
             return null;
@@ -33,17 +33,17 @@ namespace UserPanel.Models.Adverts
 
         public override List<Advert> GetAdvertGroupId(Guid id)
         {
-            var ads_session = Session.GetJson<List<AdvertisementMock>>(SessionKeysReferences.advertKey);
+            var SessionModelList = _session.GetJson<List<AdvertisementMock>>(SessionKeysReferences.advertKey);
                
 
-            if (ads_session != null)
+            if (SessionModelList != null)
             {
                 var ads_real = new List<Advert>();
-                var ads_mock = ads_session.Where(a => a.id_group == id).ToList();
+                var ads_mock = SessionModelList.Where(a => a.id_groups.Contains(id)).ToList();
               
                 foreach (var item in ads_mock)
                 {
-                    ads_real.Add(Mapper.Map<Advert>(item));
+                    ads_real.Add(_mapper.Map<Advert>(item));
                 }
                 return ads_real;
             }
@@ -51,24 +51,51 @@ namespace UserPanel.Models.Adverts
 
         }
 
-        public override void CreateAdvert(Advert entity)
+        public override void CreateAdvert(Advert entity, Guid idGroup)
         {
-            if (entity.Id == Guid.Empty || entity.Parent == Guid.Empty) throw new ArgumentNullException("id");
-            var SessionModels = Session.GetJson<List<AdvertisementMock>>(SessionKeysReferences.advertKey) ?? new List<AdvertisementMock>();
-            var mockModel = Mapper.Map<AdvertisementMock>(entity);
-
-            mockModel.id_user = UserManager.getUserId(Context);
-            mockModel.id_camp = PermissionActionManager<Guid>.GetFullPath(mockModel.id_group).Camp;
+            if (entity.Id == Guid.Empty) throw new ArgumentNullException("Empty Id parametr of AdverModel in CreateAdvert Method");
+            var SessionModels = _session.GetJson<List<AdvertisementMock>>(SessionKeysReferences.advertKey) ?? new List<AdvertisementMock>();
+            var mockModel = _mapper.Map<AdvertisementMock>(entity);
+            mockModel.id_groups = new Guid[] { idGroup };
+            mockModel.id_user = UserManager.getUserId(_context);
+            mockModel.id_camp = PermissionActionManager<Guid>.GetFullPath(idGroup).Camp.First();
 
             SessionModels.Add(mockModel);
-            Session.SetJson(SessionKeysReferences.advertKey, SessionModels);
-            Subjects.dataActionSubject.notify(new DataActionMessage() { id = entity.Id,Parent = entity.Parent, actionType = Types.DataActionType.ADD, dataType = DataType.Advert });
+            _session.SetJson(SessionKeysReferences.advertKey, SessionModels);
+            Subjects.dataActionSubject.notify(new DataActionMessage() { id = entity.Id,Parent = idGroup, actionType = Types.DataActionType.ADD, dataType = DataType.Advert });
         }
+        public override void UpdateAdvert(Advert model)
+        {
+            if (model == null) return;
+            if (model.Id == Guid.Empty) throw new ArgumentNullException("Empty Guid for Advert model in UpdateAdvert method");
 
+            var SessionModelList = _session.GetJson<List<AdvertisementMock>>(SessionKeysReferences.advertKey).ToList() ?? new List<AdvertisementMock>();
+            var SesionModel = SessionModelList.Where(m => m.id == model.Id).FirstOrDefault();
+
+            if (SesionModel == null )
+            {
+                return;
+            }
+
+            SessionModelList.RemoveAll(m => m.id == model.Id);
+
+            AdvertisementMock UpdateModel = _mapper.Map<AdvertisementMock>(model);
+
+            UpdateModel.id_camp = SesionModel.id_camp;
+            UpdateModel.id_groups = SesionModel.id_groups;
+            UpdateModel.id_user = SesionModel.id_user;
+
+            SessionModelList.Add(UpdateModel);
+
+            _session.SetJson(SessionKeysReferences.advertKey, SessionModelList);
+
+            //Subjects.dataActionSubject.notify(new DataActionMessage() { id = entity.Id, Parent = idGroup, actionType = Types.DataActionType.UPDATE, dataType = DataType.Advert });
+
+        }
         public override List<Advert> GetAdvertByUserId(int id)
         {
            
-            var SessionModels = Session.GetJson<List<AdvertisementMock>>(SessionKeysReferences.advertKey) ?? new List<AdvertisementMock>();
+            var SessionModels = _session.GetJson<List<AdvertisementMock>>(SessionKeysReferences.advertKey) ?? new List<AdvertisementMock>();
 
             var FilteredModels = SessionModels.Where( model => model.id_user == id).ToList();
 
@@ -76,11 +103,23 @@ namespace UserPanel.Models.Adverts
 
             foreach(var model in FilteredModels)
             {
-                ParsedModels.Add(Mapper.Map<Advert>(model));
+                ParsedModels.Add(_mapper.Map<Advert>(model));
             }
 
             return ParsedModels;
         }
 
+        public override void DeleteAdvertsById(Guid[] ids)
+        {
+            if (ids.Length == 0) return;
+            var SessionModels = _session.GetJson<List<AdvertisementMock>>(SessionKeysReferences.advertKey) ?? new List<AdvertisementMock>();
+            return;
+        }
+
+        public override void DettachAdvertsFromGroup(Guid[] ids, Guid group)
+        {
+            if (ids.Length == 0 || group == Guid.Empty) return;
+            var SessionModelsGroup = _session.GetJson<List<AdvertisementMock>>(SessionKeysReferences.advertKey) ?? new List<AdvertisementMock>();
+        }
     }
 }

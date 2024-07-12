@@ -10,14 +10,14 @@ namespace UserPanel.Models.User
 
         [Required]
         [DataType(DataType.Password)]
-        [StringLength(12, MinimumLength = 3, ErrorMessage = "Length of chars must be between 3 - 12")]
-        [RegularExpression(@"^[A-Z](?=.*[0-9])(?=.*[a-z])(?=.*[#$@!%&*?]).*", ErrorMessage = "First letter must be uppercase and include special character")]
+        [StringLength(15, MinimumLength = 3, ErrorMessage = "Length of chars must be between 3 - 12")]
+        [RegularExpression(@"^[A-Z](?=.*[0-9])(?=.*[a-z])(?=.*[#$@!%&*?]).*$", ErrorMessage = "First letter must be uppercase and include special character")]
         public string Password { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
-        [StringLength(12, MinimumLength = 3, ErrorMessage = "Length of chars must be between 3 - 12")]
-        [RegularExpression(@"^[A-Z](?=.*[0-9])(?=.*[a-z])(?=.*[#$@!%&*?]).*", ErrorMessage = "First letter must be uppercase and include special character")]
+        [StringLength(15, MinimumLength = 3, ErrorMessage = "Length of chars must be between 3 - 12")]
+        [RegularExpression(@"^[A-Z](?=.*[0-9])(?=.*[a-z])(?=.*[#$@!%&*?]).*$", ErrorMessage = "First letter must be uppercase and include special character")]
         [Compare("Password", ErrorMessage = "Passwords do not match.")]
         public string CPassword { get; set;}
 

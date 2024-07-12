@@ -1,14 +1,12 @@
 ﻿using UserPanel.Models.User;
 using System.Security.Claims;
-using UserPanel.References;
-using System;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using UserPanel.Interfaces;
-using UserPanel.Providers;
 using UserPanel.Helpers;
 using UserPanel.Models;
-using NETCore.MailKit.Core;
-using UserPanel.Models.Group;
+using UserPanel.References;
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Http.HttpResults;
 namespace UserPanel.Services
 {
     public class UserManager
@@ -18,15 +16,27 @@ namespace UserPanel.Services
         private IDataBaseProvider _provider;
         private IConfiguration _configuration;
         EmailService _emailService;
-        IHttpContextAccessor HttpContextAccessor;
-        public UserManager(SignInService signInService, IDataBaseProvider provider, IConfiguration configuration, EmailService emailService, IHttpContextAccessor httpContextAccessor)
+        HttpContext _context;
+        EnviromentSettings _enviromentSettings;
+        PasswordHasher _passwordHasher;
+        public UserManager(
+            SignInService signInService, 
+            IDataBaseProvider provider, 
+            IConfiguration configuration, 
+            EmailService emailService, 
+            IHttpContextAccessor httpContextAccessor,
+            IOptions<EnviromentSettings> enviroment,
+            PasswordHasher passwordHasher
+        )
         {
-            this._signInService = signInService;
-            this._provider = provider;
-            this._emailService = emailService;
-            InitStrategy();
+            _signInService = signInService;
+            _provider = provider;
+            _emailService = emailService;
             _configuration = configuration;
-            HttpContextAccessor = httpContextAccessor;
+            _context = httpContextAccessor?.HttpContext;
+            _enviromentSettings = enviroment.Value;
+            _passwordHasher = passwordHasher;
+            InitStrategy();
         }
 
 
@@ -39,9 +49,11 @@ namespace UserPanel.Services
         }
         private async Task SignInAsUser(UserModel userModel, string scheme)
         {
-            List<Claim> claims = new List<Claim>();
-            claims.Add(new Claim(ClaimTypes.Role, Enum.GetName(typeof(UserRole), userModel.Role)));
-            claims.Add(new Claim("Id", userModel.Id.ToString()));
+            List<Claim> claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Role, Enum.GetName(typeof(UserRole), userModel.Role)),
+                new Claim(AppReferences.UserIdClaim, userModel.Id.ToString())
+            };
             ClaimsIdentity identity = new ClaimsIdentity(claims, scheme);
             var principal = new ClaimsPrincipal(identity);
             await _signInService.SignIn(principal);
@@ -49,15 +61,18 @@ namespace UserPanel.Services
         }
         public bool VerifyEmailToken(UserModel userModel,string token)
         {
-            return TokenHasher.HashToken(_configuration["EmailSalt"], userModel.Email + ":" + userModel.Password) == token;
+            return TokenHasher.HashToken(_configuration[AppReferences.EmailSalt], userModel.Email + ":" + userModel.Name) == token;
         }
-        public bool VerifyEmailToken(string email, string pass, string token)
+        public bool VerifyEmailToken(string email, string token)
         {
-            return TokenHasher.HashToken(_configuration["EmailSalt"], email + ":" + pass) == token;
+            UserModel user = _provider.GetUserRepository().GetModelByEmail(email);
+            if(user == null) return false;
+
+            return TokenHasher.HashToken(_configuration[AppReferences.EmailSalt], email + ":" + user.Name) == token;
         }
         public bool UserExistsByEmail(string email)
         {
-            return this._provider.GetUserRepository().GetModelByEmail(email) != null ? true : false;
+            return _provider.GetUserRepository().GetModelByEmail(email) != null ? true : false;
         }
 
         public bool UserExistsByPhone(string phone)
@@ -66,11 +81,14 @@ namespace UserPanel.Services
         }
         public void SendEmailVerify(UserModel registerModel)
         {
-            string token = TokenHasher.HashToken(ConfigurationHelper.config["EmailSalt"], registerModel.Email + ":" + registerModel.Password);
-            string link = new LinkBuilder(HttpContextAccessor.HttpContext).GenerateConfirmEmailLink(token, registerModel.Email);
-            Email email = new Email(new List<string>() { registerModel.Email }, "CONFIRM YOUR ACCOUNT", link);
-            _emailService.SendEmail(email);
-            HttpContextAccessor.HttpContext.Session.SetString("pass", registerModel.Password);
+            string token = TokenHasher.HashToken(ConfigurationHelper.config[AppReferences.EmailSalt], registerModel.Email + ":" + registerModel.Name);
+            string link = new LinkBuilder(_context).GenerateConfirmEmailLink(token, registerModel.Email);
+            if (!_enviromentSettings.EnvDevEmail)
+            {
+                Email email = new Email(new List<string>() { registerModel.Email }, "CONFIRM YOUR ACCOUNT", link);
+                _emailService.SendEmail(email);
+            }
+            
         }
         public async Task SignIn(UserModel userModel, string scheme = CookieAuthenticationDefaults.AuthenticationScheme)
         {
@@ -87,7 +105,7 @@ namespace UserPanel.Services
         }
         public bool isLogin()
         {
-            return HttpContextAccessor.HttpContext.User.Identity.IsAuthenticated;
+            return _context.User.Identity.IsAuthenticated;
         }
         public static bool isLogin(IHttpContextAccessor accessor)
         {
@@ -96,16 +114,45 @@ namespace UserPanel.Services
         public int getUserId()
         {
             int id = -1;
-            int.TryParse(HttpContextAccessor.HttpContext.User.FindFirst("Id")?.Value, out id);
+            int.TryParse(_context.User.FindFirst(AppReferences.UserIdClaim)?.Value, out id);
             return id;
         }
         public static int getUserId(IHttpContextAccessor accessor)
         {
             int id = -1;
-            int.TryParse(accessor.HttpContext?.User?.FindFirst("Id")?.Value, out id);
+            int.TryParse(accessor.HttpContext?.User?.FindFirst(AppReferences.UserIdClaim)?.Value, out id);
             return id;
         }
 
+        public void CreateUser(UserModel user)
+        {
+            if(user.Password.Length < 4) throw new ArgumentNullException(nameof(user.Password));
+            user.Password = _passwordHasher.HashPassword(user.Password);
+            _provider.GetUserRepository().CreateUser(user);
+        }
 
+        public string GetVierifyEmailForUser(string email)
+        {
+            UserModel user = _provider.GetUserRepository().GetModelByEmail(email);
+            if (user != null)
+            {
+                string token = TokenHasher.HashToken(ConfigurationHelper.config[AppReferences.EmailSalt], user.Email + ":" + user.Name);
+                return new LinkBuilder(_context).GenerateConfirmEmailLink(token, email);
+            }
+            return "";
+        }
+
+        public void ChangeUserState(string email, bool state)
+        {
+            var user = _provider.GetUserRepository().GetModelByEmail(email);
+            if (user == null)
+            {
+                throw new KeyNotFoundException(nameof(user));
+            }
+
+            user.IsActive = state;
+
+            _provider.GetUserRepository().UpdateModel(user);
+        }
     }
 }

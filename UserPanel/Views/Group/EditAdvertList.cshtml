@@ -1,0 +1,105 @@
+﻿@model AdvertGroupListView;
+@{
+    Layout = "_Layout";
+}
+
+<div class="w-full flex h-full items-start advert-page">
+    <div class="wrapper-ads-edit shadow-md mb-10">
+            <header class="header-section">
+                <h2 class="text-2xl font-semibold">Edycja reklam grupy: <span class="text-green-600 font-semibold">@Model.Name_Group</span> </h2>
+            </header>
+            <form asp-action="EditAdvertList" asp-controller="Group" method="post">
+                <div class="mx-4 grid">
+                    <table class="items-center w-full bg-transparent">
+                            <thead class="thead">
+                                <tr>
+                                    <th class="px-4 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-center">
+                                        Nazwa
+                                    </th>
+                                    <th class="px-4 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-center">
+                                        Data modyfikacji
+                                    </th>
+                                    <th class="px-4 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-center">
+                                        Szablon
+                                    </th>
+                                    <th class="px-4 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-center">
+                                        Formaty
+                                    </th>
+                                    <th class="px-4 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-center">
+                                        Status
+                                    </th>
+                                    <th class="px-4 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-center">
+                                        Zaznacz/Odznacz
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="height:1px; padding:0px; background-color:black" colspan="6"></td>
+                                </tr>
+                                @foreach(var (row,i) in Model.AdvertGroups.Select((x,y) => (x,y)))
+                                {
+                                    <tr class="text-center">
+                                        <td class="px-4 py-2">@row.Name</td>
+                                        <td class="px-4 py-2">@row.ModifiedTime.ToString("yyyy-MM-dd HH:mm")</td>
+                                        <td class="px-4 py-2">@row.Template.GetStringValue()</td>
+                                        <td class="px-4 py-2">
+                                            @foreach(string format in row.Formats)
+                                            {
+                                                <p>@format</p>
+                                            }
+                                        </td>
+                                        <td class="px-4 py-2">
+                                            <button class="btn-flat @(row.isActive ? "success" : "danger")">@(row.isActive ? "Włączona" : "Wyłączona")</button>
+                                        </td>
+                                        <td class="px-4 py-2">
+                                        <div class="flex items-center justify-center gap-x-3">
+                                                <label for="green-checkbox" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Należy:</label>
+                                                <input asp-for="AdvertGroups[i].IsAttached" style="accent-color: #16a34a;" checked id="green-checkbox" type="checkbox" class="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                                <input hidden asp-for="AdvertGroups[i].Id"/>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                    </table>
+                    <div class="btn-group d-flex justify-end items-center gap-x-2 w-full py-4">
+                        <div class="pull-right">
+                            <a href="/" class="btn btn-flat white"><i class="icon-reply"></i> Wróć</a>
+                            <button type="submit" class="btn btn-flat success"><i class="icon-plus"></i> Utwórz</button>
+                        </div>
+                    </div>
+                </div>
+                <input hidden asp-for="Name_Group"/>
+                <input hidden asp-for="Id_Group" />
+                <input hidden asp-for="Id_Group" />
+            </form>
+    </div>
+</div>
+
+<style>
+    .advert-page {
+        margin-top: 20px;
+        justify-content: center;
+    }
+    .grid
+    {
+        display: grid;
+        grid-template-rows: minmax(400px,1fr) 80px;
+        height: 100%;
+        align-items: start;
+    }
+    .header-section, .format-section {
+        padding: 40px;
+    }
+    td{
+        vertical-align: middle;
+    }
+    .wrapper-ads-edit {
+        background-color: #f5f5f5;
+        min-height: 50%;
+        min-width: 50%;
+        margin-top: 40px;
+
+    }
+</style>

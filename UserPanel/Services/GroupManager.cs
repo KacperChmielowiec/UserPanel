@@ -31,7 +31,7 @@ namespace UserPanel.Services
             if (!_userManager.isLogin() || _userManager.getUserId() == -1) return new List<GroupModel>();
             int id = _userManager.getUserId();
 
-            if (_provider.GetCampaningRepository().getCampaningsByUser(id).Where(camp => camp.id == idCamp).FirstOrDefault() != null)
+            if (_provider.GetCampaningRepository().GetCampaningsByUser(id).Where(camp => camp.id == idCamp).FirstOrDefault() != null)
             {
               return  _provider.GetGroupRepository().GetGroupsByCampId(idCamp);
             }
@@ -44,15 +44,7 @@ namespace UserPanel.Services
             int id = _userManager.getUserId();
             if (idUser != id) return new List<GroupModel>();
 
-            var UserCamps = _provider.GetCampaningRepository()
-                .getCampaningsByUserWithGroups(idUser) ?? new List<Campaning>();
-
-            return UserCamps?
-                .Where(camp => camp.groups != null)
-                ?.Select(camp => camp.groups)
-                ?.Aggregate((curr, acc) => { acc.AddRange(curr); return acc; })
-                ?.ToList() ?? new List<GroupModel>();
-
+            return _provider.GetGroupRepository().GetGroupsByUserId(idUser);
         }
 
         public GroupModel? GetGroupById(Guid idGroup, bool deep = false)

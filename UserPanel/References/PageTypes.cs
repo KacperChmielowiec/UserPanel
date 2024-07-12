@@ -14,6 +14,7 @@ namespace UserPanel.References
 
     public enum DataType
     {
+        User,
         Campaning,
         Group,
         Advert
