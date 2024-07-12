@@ -9,4 +9,5 @@ namespace UserPanel.Services.observable
         public DataActionType actionType;
         public DataType dataType;
     }
+
 }

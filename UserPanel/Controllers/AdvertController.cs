@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 using UserPanel.Helpers;
 using UserPanel.Interfaces;
 using UserPanel.Models;
 using UserPanel.Models.Adverts;
-using UserPanel.References;
 using UserPanel.Services;
+
 namespace UserPanel.Controllers
 {
     public class AdvertController : Controller
@@ -20,12 +20,11 @@ namespace UserPanel.Controllers
             _dataBaseProvider = dataBaseProvider;
         }
 
-
+        [Authorize]
         [HttpGet("/advertisement/create-form")]
         public IActionResult Index([FromQuery] Guid id_group)
         {
-            var result = Directory.Exists("static/advertisement/96e898ff-754d-45c8-9704-93326e8f0c21/300x300");
-
+            
             if(id_group == Guid.Empty)
             {
                 return BadRequest();
@@ -37,7 +36,7 @@ namespace UserPanel.Controllers
 
             return View( new AdvertForm() { id_group = id_group } );
         }
-
+        [Authorize]
         [HttpPost("/advertisement/create")]
         public IActionResult Create(AdvertForm advert)
         {
@@ -49,7 +48,7 @@ namespace UserPanel.Controllers
                 Advert advertModel = _mapper.Map<Advert>(advert);
                 advertModel.Id = Guid.NewGuid();
 
-                if (!PermissionActionManager<Guid>.CheckPermisionAccess(new Guid[] { advertModel.Parent }))
+                if (!PermissionActionManager<Guid>.CheckPermisionAccess(new Guid[] { advert.id_group }))
                 {
                     return StatusCode(403);
                 }
@@ -65,10 +64,10 @@ namespace UserPanel.Controllers
                         return BadRequest("Cannot save the photo");
                     }
 
-                    advertModel.Formats[i].Url = PathGenerate.ShrinkRoot(FormFileService.GettFullSavedPath());
+                    advertModel.Formats[i].Src = PathGenerate.ShrinkRoot(FormFileService.GettFullSavedPath());
                     try
                     {
-                        _dataBaseProvider.GetAdvertRepository().CreateAdvert(advertModel);
+                        _dataBaseProvider.GetAdvertRepository().CreateAdvert(advertModel,advert.id_group);
 
                     }catch(Exception ex)
                     {
@@ -80,7 +79,7 @@ namespace UserPanel.Controllers
             }
             return RedirectToAction("Index");
         }
-
+        [Authorize]
         [HttpGet("/advertisement/update-form/{id}")]
         public IActionResult Edit(Guid id)
         {
@@ -104,6 +103,25 @@ namespace UserPanel.Controllers
             
 
             return View(Curr_Ad_Form);
+        }
+        [Authorize]
+        [HttpPost("/advertisement/update-form/sent")]
+        public IActionResult Edit(AdvertForm form)
+        {
+            if(ModelState.IsValid)
+            {
+                _dataBaseProvider.GetAdvertRepository().UpdateAdvert(_mapper.Map<Advert>(form));
+                return Redirect("/");
+            }
+
+            ViewData["Edit"] = true;
+            return View();
+        }
+        [Authorize]
+        [HttpGet("/list-all/{id}")]
+        public string ListAll(int id)
+        {
+            return JsonSerializer.Serialize(_dataBaseProvider.GetAdvertRepository().GetAdvertByUserId(id));
         }
 
     }

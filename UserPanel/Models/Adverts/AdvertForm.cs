@@ -5,6 +5,7 @@ namespace UserPanel.Models.Adverts
     
     public class AdvertForm
     {
+        public Guid Id { get; set; }
         [Required]
         public Guid id_group { get; set; }
         [Required]

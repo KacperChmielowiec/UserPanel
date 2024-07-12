@@ -15,7 +15,7 @@ namespace UserPanel.Models.Adverts
         [FileTypeValidation(".jpg", ".png", ErrorMessage = "Dozwolone są tylko pliki typu: JPG lub PNG.")]
         public IFormFile StaticImg { get; set; }
 
-        public string Src { get; set; }
+        public string Src { get; set; } = "";
 
     }
 }

@@ -23,7 +23,7 @@ namespace UserPanel.Middleware
                 var users = ConfigManager.GetConfig(MockPathsReferences.usersPath)
                     .Parse<List<UserModel>>() ?? new List<UserModel>();
                 var camps = ConfigManager.GetConfig(MockPathsReferences.campaningsPath)
-                    .Parse<List<Campaning>>() ?? new List<Campaning>();
+                    .Parse<List<CampaningMock>>() ?? new List<CampaningMock>();
                 var groups = ConfigManager.GetConfig(MockPathsReferences.groupsPath)
                     .Parse<List<GroupModelMock>>() ?? new List<GroupModelMock>();
                 var lists = ConfigManager.GetConfig(MockPathsReferences.listsPath)

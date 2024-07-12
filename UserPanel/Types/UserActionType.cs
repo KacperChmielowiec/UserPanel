@@ -4,5 +4,7 @@
     {
         Login,
         Logout,
+        Create,
+        Update
     }
 }

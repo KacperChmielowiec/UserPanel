@@ -35,8 +35,6 @@ if(AppReferences.RepoType == AppReferences.CONFIG_MOCK)
 {
     app.UseMiddleware<SessionLoadMockMiddleware>();
 }
-
-
 app.UseRouting();
 
 app.UseMiddleware<PageTypeMiddleware>();

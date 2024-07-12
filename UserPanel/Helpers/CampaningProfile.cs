@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using UserPanel.Interfaces.Abstract;
 using UserPanel.Models.Adverts;
 using UserPanel.Models.Camp;
 using UserPanel.Models.Group;
+using UserPanel.Models.User;
 
 namespace UserPanel.Helpers
 {
@@ -26,6 +28,9 @@ namespace UserPanel.Helpers
                 .ForPath(e => e.budget.dayBudget, (conf) => conf.MapFrom((src) => src.dayBudget))
                 .ForPath(e => e.details.Utm_Source, (conf) => conf.MapFrom((src) => src.Utm_Source))
                 .ForPath(e => e.details.Utm_Medium, (conf) => conf.MapFrom((src) => src.Utm_Medium));
+
+            CreateMap<CampaningMock, Campaning>();
+            CreateMap<Campaning, CampaningMock>();
 
             CreateMap<GroupModel, EditGroup>()
                 .ForMember(e => e.Billing, (conf) => conf.MapFrom((src) => src.details.Billing))
@@ -67,18 +72,19 @@ namespace UserPanel.Helpers
                 .ForPath(e => e.details.Utm_Camp, (conf) => conf.MapFrom((src) => src.Utm_Camp));
 
 
-            CreateMap<Advert, AdvertisementMock>()
-                .ForMember(e => e.id_group, (conf) => conf.MapFrom((src) => src.Parent));
+            CreateMap<Advert, AdvertisementMock>();
             CreateMap<AdvertisementMock, Advert>()
-                .ForMember(e => e.IsActive, (conf) => conf.MapFrom((src) => src.status))
-                .ForMember(e => e.Parent, (conf) => conf.MapFrom((src) => src.id_group));
-            CreateMap<AdvertForm, Advert>()
-                .ForMember(e => e.Parent, (conf) => conf.MapFrom((src) => src.id_group));
+                .ForMember(e => e.IsActive, (conf) => conf.MapFrom((src) => src.IsActive));
+            CreateMap<AdvertForm, Advert>();
             CreateMap<AdvertFormatForm, AdvertFormat>();
             CreateMap<Advert, AdvertForm>();
             CreateMap<AdvertForm, Advert>();
             CreateMap<AdvertFormat, AdvertFormatForm>();
             CreateMap<AdvertFormatForm, AdvertFormat>();
+
+
+            CreateMap<Campaning, FullContextCampaning>();
+              
 
         }
     }

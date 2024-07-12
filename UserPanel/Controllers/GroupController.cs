@@ -2,7 +2,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UserPanel.Interfaces;
-using UserPanel.Models.Camp;
+using UserPanel.Models;
+using UserPanel.Models.Adverts;
 using UserPanel.Models.Group;
 using UserPanel.References;
 using UserPanel.Services;
@@ -16,20 +17,22 @@ namespace UserPanel.Controllers
         private GroupManager _groupManager;
         private IMapper _mapper;
         private CampaningManager _campaningManager;
-        public GroupController(GroupManager groupManager,CampaningManager campaningManager, IMapper mapper) 
+        private IDataBaseProvider _dataBaseProvider;
+        public GroupController(GroupManager groupManager,CampaningManager campaningManager, IMapper mapper, IDataBaseProvider dataBaseProvider) 
         {
             _groupManager = groupManager;
             _campaningManager = campaningManager;
             _mapper = mapper;
+            _dataBaseProvider = dataBaseProvider;
         }
         [Authorize]
         [HttpGet("/group/details/{id}")]
         [EndpointName(EndpointNames.GroupDetails)]
         public IActionResult Index(Guid id)
         {
-          var group = _groupManager.GetGroupById(id,true);
-          if (group == null) return BadRequest();
-          return View(group);
+            var group = _groupManager.GetGroupById(id,true);
+            if (group == null) return BadRequest();
+            return View(group);
         }
         [Authorize]
         [HttpGet("/groups")]
@@ -79,6 +82,44 @@ namespace UserPanel.Controllers
             var group = _mapper.Map<GroupModel>(editGroup);
             _groupManager.UpdateGroup(group);
             return RedirectToAction("Index", new { id = editGroup.id });   
+        }
+        [HttpGet("edit-advertisements/{groupId}")]
+        public IActionResult EditAdvertList(Guid groupId)
+        {
+            if(groupId == Guid.Empty) return BadRequest();
+            if (!PermissionActionManager<Guid>.CheckPermisionAccess(new Guid[] { groupId })) return StatusCode(401);
+
+            List<Advert> Adverts = _dataBaseProvider.GetAdvertRepository().GetAdvertGroupId(groupId);
+            GroupModel groupModel = _groupManager.GetGroupById(groupId);
+
+            AdvertGroupListView ModelView = new AdvertGroupListView() { Id_Group = groupId, Name_Group = groupModel.name};
+
+            ModelView.AdvertGroups = Adverts.Select(a => new AdvertGroupEdit()
+            {
+                Id = a.Id,
+                IsAttached = true,
+                Template = a.Template,
+                Name = a.Name,
+                ModifiedTime = DateTime.Now,
+                isActive = a.IsActive,
+                Formats = a.Formats.Select(f => f.Size).ToList()
+
+            }).ToList();
+
+            return View(ModelView);
+        }
+
+        [HttpPost("edit-advertisements/sent")]
+        public IActionResult EditAdvertList([FromForm] AdvertGroupListView ModelView)
+        {
+            if(ModelState.IsValid)
+            {
+                foreach(var ad in ModelView.AdvertGroups)
+                {
+                    if (ad.IsAttached) continue;
+                }
+            }
+            return View(ModelView);
         }
     }
 }

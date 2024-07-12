@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
+﻿ using Microsoft.AspNetCore.Authentication.Cookies;
 using UserPanel.Interfaces;
 using UserPanel.Providers;
 using UserPanel.Services.database;
@@ -46,8 +46,7 @@ namespace UserPanel.Installers
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
                 options.LoginPath = "/Login";
                 options.AccessDeniedPath = "/Forbidden";
-                options.Events.OnValidatePrincipal = PrincipalValidator.ValidateAsync;
-                options.Events.OnSigningOut  = PrincipalValidator.OnSignOutValidate;
+                options.Events.OnSigningOut  = PermissionUtils.OnSignOutValidate;
             });
            
             builder.Services.AddAuthorization(options =>
@@ -77,7 +76,7 @@ namespace UserPanel.Installers
 
             });
             builder.Services.Configure<EmailConfiguration>(builder.Configuration.GetSection("STMP_CONFIG"));
-   
+            builder.Services.Configure<EnviromentSettings>(builder.Configuration.GetSection("ENVIROMENT"));
         }
 
     }

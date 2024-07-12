@@ -7,6 +7,8 @@ using UserPanel.Models;
 using System.Threading.Tasks;
 using UserPanel.Interfaces;
 using Microsoft.AspNetCore.Http;
+using UserPanel.References;
+using System.Linq;
 
 namespace UserPanel.Services
 {
@@ -14,24 +16,17 @@ namespace UserPanel.Services
     {
         private IHttpContextAccessor _contextAccessor;
         private List<EndpointMetaData> _endpoints;
- 
-        private IDataBaseProvider _dataBaseProvider;
         public PermissionAuthHandler(
             IOptionsMonitor<CookieAuthenticationOptions> options, 
             ILoggerFactory logger, 
             UrlEncoder encoder, 
             ISystemClock clock,
             IHttpContextAccessor httpContextAccessor,
-            IOptions<List<EndpointMetaData>> optionsEndpoint,
-     
-            IDataBaseProvider dataBaseProvider
-    
+            IOptions<List<EndpointMetaData>> optionsEndpoint
         ) : base(options, logger, encoder, clock)
         {
             _contextAccessor = httpContextAccessor;
             _endpoints = optionsEndpoint.Value;
-          
-            _dataBaseProvider = dataBaseProvider;
            
         }
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
@@ -41,7 +36,20 @@ namespace UserPanel.Services
 
             if (result.Succeeded)
             {
-               
+                if(!PermissionActionManager<Guid>.Inited)
+                {
+                    var userIdClaim = result.Ticket.Principal.Claims
+                        .Where(p => p.Type == AppReferences.UserIdClaim)
+                        .Select(p => p.Value)
+                        .DefaultIfEmpty("")
+                        .FirstOrDefault();
+
+                    if (int.TryParse(userIdClaim, out int id))
+                    {
+                        PermissionUtils.LoadContext(context, id);
+                    }
+                }
+
                 var endpoint = context.GetEndpoint();
                
                 EndpointNameAttribute endpointNameAttribute = endpoint?.Metadata?.GetMetadata<EndpointNameAttribute>();

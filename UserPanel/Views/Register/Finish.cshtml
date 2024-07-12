@@ -1,5 +1,14 @@
-﻿@model string
+﻿@model FinishPageModel
 @{
-    ViewData["Title"] = "Privacy Policy";
+    ViewData["Title"] = "Finish";
 }
-<p>Email has been sent to @Model</p>
+<div class="mt-20 w-100 flex justify-content">
+    @if(Model.Development)
+    {
+        <p class="pl-10">Verify Token: <a href="@Model.HashLink">@Model.HashLink</a></p>
+    }
+    else
+    {
+        <p class="pl-10">Verify token has been sent to @Model.Email</p>
+    }
+</div>

@@ -1,6 +1,8 @@
 ﻿using UserPanel.Models.Camp;
 using UserPanel.Models.Group;
 using UserPanel.Models.Adverts;
+using UserPanel.Interfaces.Abstract;
+using Microsoft.AspNetCore.Mvc.Formatters;
 
 namespace UserPanel.Models
 {
@@ -12,36 +14,30 @@ namespace UserPanel.Models
             try
             {
                 FullContext context = fetch();
-                if (context is FullUserContext user)
+
+                foreach (var item in context.f_camp)
                 {
-
-                    foreach (Campaning campaning in user.Campanings)
+                    if(!MapContext.ContainsKey(item.id))
                     {
-                        if (!MapContext.ContainsKey(campaning.id))
-                        {
-                            MapContext[campaning.id] = CampaningContextMap(campaning);
-                        }
-                    }
-
-                    foreach (GroupModel groupModel in user.Groups)
-                    {
-                        if (!MapContext.ContainsKey(groupModel.id))
-                        {
-                            MapContext[groupModel.id] = GroupContextMap(groupModel, groupModel.Parent);
-                        }
-                    }
-
-                    foreach (Advert adModel in user.Adverts)
-                    {
-                        if (!MapContext.ContainsKey(adModel.Id))
-                        {
-                            MapContext[adModel.Id] = AdContextMap(adModel, adModel.Parent);
-                        }
+                        MapContext[item.id] = MapFullContextCamp(item);
                     }
                 }
-                else
+
+                foreach (var item in context.f_group)
                 {
-                    throw new ArgumentException("Bad Type of FullContext !");
+                    if (!MapContext.ContainsKey(item.id))
+                    {
+                        MapContext[item.id] = MapFullContextGroup(item);
+                    }
+                }
+
+
+                foreach (var item in context.f_advert)
+                {
+                    if (!MapContext.ContainsKey(item.id))
+                    {
+                        MapContext[item.id] = MapFullContextAdvert(item);
+                    }
                 }
 
             }
@@ -52,50 +48,29 @@ namespace UserPanel.Models
 
             return this;
         }
-
-        private ContextNode<Guid> GroupContextMap(GroupModel groupModel, Guid parent)
+        public ContextNode<Guid> MapFullContextCamp(FullContextCampaning full_c)
         {
-            var Value = new ContextElement<Guid>() { ID = groupModel.id, ElementType = ContextNodeType.Group };
-            var Parent = new ContextElement<Guid>() { ID = parent, ElementType = ContextNodeType.Camp };
+            ContextElement<Guid> value = new ContextElement<Guid>() { ElementType = ContextNodeType.Camp, ID = full_c.id };
+            List<ContextElement<Guid>> children = full_c.Children.Select(c => new ContextElement<Guid>() { ElementType = ContextNodeType.Group, ID = c}).ToList();
 
-            if (parent == Guid.Empty) throw new ArgumentException("Empty Parent Guid");
-
-            if(MapContext.ContainsKey(parent))
-            {
-                MapContext[parent].Children.Add(Value);
-            }
-            else
-            {
-                throw new InvalidDataException("Parent does not exists");
-            }
-
-            return new ContextNode<Guid>(Value, Parent, MapContext);
+            return new ContextNode<Guid>(value, children, MapContext);
         }
-
-        private ContextNode<Guid> CampaningContextMap(Campaning campaning)
+        public ContextNode<Guid> MapFullContextGroup(FullContextGroup full_g)
         {
-            var Value = new ContextElement<Guid>() { ID = campaning.id, ElementType = ContextNodeType.Camp };
+            ContextElement<Guid> value = new ContextElement<Guid>() { ElementType = ContextNodeType.Group, ID = full_g.id };
+            List<ContextElement<Guid>> children = full_g.Adverts.Select(a => new ContextElement<Guid>() { ElementType = ContextNodeType.Advert,ID = a}).ToList();
+            List<ContextElement<Guid>> parents = new List<ContextElement<Guid>>() { new ContextElement<Guid>() { ElementType = ContextNodeType.Camp, ID = full_g.Campaning } };
 
-            return new ContextNode<Guid>(Value, MapContext);
+            return new ContextNode<Guid>(value, parents, children, MapContext);
         }
-
-        private ContextNode<Guid> AdContextMap(Advert adModel, Guid parent)
+        public ContextNode<Guid> MapFullContextAdvert(FullContextAdvert full_a)
         {
-            var Value = new ContextElement<Guid>() { ID = adModel.Id, ElementType = ContextNodeType.ADVERT };
-            var Parent = new ContextElement<Guid>() { ID = parent, ElementType = ContextNodeType.Group };
+            ContextElement<Guid> value = new ContextElement<Guid>() { ElementType = ContextNodeType.Advert, ID = full_a.id };
+            List<ContextElement<Guid>> groups = full_a.Groups.Select(c => new ContextElement<Guid>() { ElementType = ContextNodeType.Group, ID = c }).ToList();
 
-            if (parent == Guid.Empty) throw new ArgumentException("Empty Parent Guid");
 
-            if (MapContext.ContainsKey(parent))
-            {
-                MapContext[parent].Children.Add(Value);
-            }
-            else
-            {
-                throw new InvalidDataException("Parent does not exists");
-            }
-
-            return new ContextNode<Guid>(Value, Parent, MapContext);
+            return new ContextNode<Guid>(value, groups, MapContext);
         }
     }
+   
 }

@@ -1,4 +1,6 @@
-﻿using Org.BouncyCastle.Bcpg;
+﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Org.BouncyCastle.Bcpg;
+using UserPanel.Interfaces.Abstract;
 using UserPanel.Models.Camp;
 using UserPanel.References;
 using UserPanel.Services.observable;
@@ -8,15 +10,21 @@ namespace UserPanel.Models
     public static class PermissionActionManager<T> where T : IComparable
     {
         public static PermissionContext<T>? InstanceContext { get; private set; }
-        public static DataActionObserverPermission observer { get; private set; }
+        public static DataActionObserverPermission _dataObserver { get; private set; }
+        public static UserActionObserver _userObserver { get; private set; }
         public static bool Inited { get; private set; } = false;
         public static void SetupInstance(PermissionContext<T> context)
         {
             InstanceContext = context;
-            observer = new DataActionObserverPermission(Subjects.dataActionSubject);
+            _dataObserver = new DataActionObserverPermission(Subjects.dataActionSubject);
+            _userObserver = new UserActionObserver(Subjects.userActionSubject);
             Inited = true;
         }
-
+        public static void ClearContext()
+        {
+            InstanceContext.ClearContext();
+            Inited = false; 
+        }
         public static void AddNode(T node, T parent, ContextNodeType ElementType)
         {
             if (!Inited) throw new InvalidOperationException("Manager is not inited");
@@ -51,12 +59,12 @@ namespace UserPanel.Models
                 switch(node.Value.ElementType)
                 {
                     case ContextNodeType.Camp:
-                        path.Camp = guid;
+                        path.Camp.Add(guid);
                         break;
                     case ContextNodeType.Group:
-                        path.Group = guid;
+                        path.Group.Add(guid);
                         break;
-                    case ContextNodeType.ADVERT:
+                    case ContextNodeType.Advert:
                         path.Advert = guid;
                         break;
                     default:
@@ -64,7 +72,12 @@ namespace UserPanel.Models
 
                 }
                 if(node.Value.ElementType == ContextNodeType.Camp) return path;
-                return GetFullPath(node.Parent.ID, path);
+
+                foreach(var p in node.Parents)
+                {
+                    return GetFullPath(p.ID, path);
+                }
+                return path;
             }
         }
         public static bool CheckPermisionAccess(T[] path)
@@ -89,7 +102,7 @@ namespace UserPanel.Models
                             continue;
                         }
                         
-                        if(prevNode.Value.ID.CompareTo(node.Parent.ID) == 0)
+                        if(prevNode.Value.IncludeIn(node.Parents))
                         {
                             prevNode = node;
                             continue;
@@ -115,7 +128,7 @@ namespace UserPanel.Models
             {
                 case ContextNodeType.Group:
                     return ContextNodeType.Camp;
-                case ContextNodeType.ADVERT:
+                case ContextNodeType.Advert:
                     return ContextNodeType.Group;
                 default:
                     return ContextNodeType.NULL;
@@ -128,34 +141,57 @@ namespace UserPanel.Models
     {
         Camp,
         Group,
-        ADVERT,
+        Advert,
         NULL
     }
-    public class ContextElement<T>
+    public class ContextElement<T> where T : IComparable
     {
         public ContextNodeType ElementType { get; set; }
         public T ID { get; set; }
+
+        public bool IncludeIn(List<ContextElement<T>> list )
+        {
+            return list.Any(i => i.ID.CompareTo(this.ID) == 0);   
+        }
 
     }
 
     public class ContextPath<T>
     {
-        public T Camp { get; set; }
-        public T Group { get; set; }
+        public List<T> Camp { get; set; } = new List<T>();
+        public List<T> Group { get; set; } = new List<T>();
         public T Advert { get; set; }
     }
     public class ContextNode<T> where T : IComparable
     {
         public Dictionary<T, ContextNode<T>> MapContextRef { get; set; }
         public ContextElement<T> Value { get; set; }
-        public ContextElement<T> Parent { get; set; }
+        public List<ContextElement<T>> Parents { get; set; }
         public List<ContextElement<T>> Children { get; set; }
 
         public ContextNode(ContextElement<T> value, ContextElement<T> parent, Dictionary<T, ContextNode<T>> _ref) {
             
             Value = value;
-            Parent = parent;
+            Parents = new List<ContextElement<T>> { parent };
             Children = new List<ContextElement<T>>();
+            MapContextRef = _ref;
+
+        }
+        public ContextNode(ContextElement<T> value, List<ContextElement<T>> children, Dictionary<T, ContextNode<T>> _ref)
+        {
+
+            Value = value;
+            Parents = null;
+            Children = children;
+            MapContextRef = _ref;
+
+        }
+        public ContextNode(ContextElement<T> value, List<ContextElement<T>> parents, List<ContextElement<T>> children, Dictionary<T, ContextNode<T>> _ref)
+        {
+
+            Value = value;
+            Parents = parents;
+            Children = children;
             MapContextRef = _ref;
 
         }
@@ -164,7 +200,7 @@ namespace UserPanel.Models
 
             Value = value;
             Children = new List<ContextElement<T>>();
-            Parent = null;
+            Parents = null;
             MapContextRef = _ref;
 
         }
@@ -175,9 +211,12 @@ namespace UserPanel.Models
         public void DettachFromParentNode()
         {
             if (Value.ElementType == ContextNodeType.Camp) return;
-            if (MapContextRef.TryGetValue(Parent.ID, out ContextNode<T> node))
+            foreach(var p in Parents)
             {
-                node.DettachChildrenNode(Value.ID);
+                if (MapContextRef.TryGetValue(p.ID, out ContextNode<T> node))
+                {
+                    node.DettachChildrenNode(Value.ID);
+                }
             }
         }
     
@@ -195,7 +234,31 @@ namespace UserPanel.Models
             IsLoad = false;
             IsLogin = false;
         }
-
+        public bool IncludeAny(List<ContextElement<T>> nodes)
+        {
+            bool result = false;
+            foreach (var node in nodes)
+            {
+                if (MapContext.ContainsKey(node.ID))
+                {
+                    result = true;
+                }
+            }
+            return result;
+        }
+        public bool IncludeAll(List<ContextElement<T>> nodes)
+        {
+            bool result = true;
+            foreach (var node in nodes)
+            {
+                if (!MapContext.ContainsKey(node.ID))
+                {
+                    result = false;
+                }
+            }
+            return nodes.Count() > 0 ? result : false;
+        }
+   
         public void RemoveNode(T node)
         {
             if (MapContext.ContainsKey(node))
@@ -204,6 +267,18 @@ namespace UserPanel.Models
                 MapContext.Remove(node);
             }
         }
+        public void AddChilldToParents(List<T> values, ContextElement<T> element )
+        {
+            foreach(var id in values)
+            {
+                if(MapContext.TryGetValue(id, out ContextNode<T> node))
+                {
+                    node.Children.Add(element);
+                }
+            }
+
+        }
+
         public void AddContextNode(ContextNode<T> node)
         {
             if (node.Value.ElementType == ContextNodeType.Camp)
@@ -214,15 +289,14 @@ namespace UserPanel.Models
                 }
                 else
                 {
-                    node.Parent = null;
                     MapContext.Add(node.Value.ID, node);
                 }
             }
             else
             {
-                if (MapContext.ContainsKey(node.Parent.ID))
+                if (IncludeAll(node.Parents))
                 {
-                    MapContext[node.Parent.ID].Children.Add(node.Value);
+                    AddChilldToParents(node.Parents.Select(p => p.ID).ToList(), node.Value);
                     MapContext.Add(node.Value.ID, node);
                 }
                 else
@@ -237,6 +311,7 @@ namespace UserPanel.Models
             MapContext = new Dictionary<T, ContextNode<T>>();
             IsLogin = false;
             IsLoad = false;
+            
         }
         public abstract PermissionContext<T> SetupContext(Func<FullContext> fetch);
         

@@ -6,7 +6,6 @@ using UserPanel.Models.Camp;
 using UserPanel.Models.Group;
 using UserPanel.Models.User;
 using UserPanel.References;
-using UserPanel.Services.observable;
 namespace UserPanel.Providers
 {
     public class DataBaseProvider : IDataBaseProvider
@@ -14,72 +13,91 @@ namespace UserPanel.Providers
         private IConfiguration _configuration;
         private IMapper _mapper;
         private IHttpContextAccessor _contextAccessor;
-        IServiceProvider _serviceProvider;
         ISession _session;
-        private DataBase DataBase { get; set; }
+        DataBase _database;
+
+        public static string env_repo_type = AppReferences.EnvRepositoryType;
         public DataBaseProvider(
             IConfiguration configuration, 
-            DataBase dataBase, 
             IMapper mapper, 
             IHttpContextAccessor accessor, 
-            IServiceProvider serviceProvider
+            DataBase dataBase
         )
         {
             _configuration = configuration;
             _mapper = mapper;
             _contextAccessor = accessor;
-            _serviceProvider = serviceProvider;
             _session = _contextAccessor?.HttpContext?.Session;
+            _database = dataBase;
         }
         public UserRepository<UserModel> GetUserRepository()
         {
-            if (_configuration["ENVIROMENT:UserRepositoryType"]?.ToLower() == AppReferences.CONFIG_MOCK)
+            if (_configuration[env_repo_type]?.ToLower() == AppReferences.CONFIG_MOCK)
             {
-                return new MockRepository();
+                return new UserRepositoryMock(_session);
             }
             else
-            {
-                return new UserRepositorySql(DataBase, _mapper);
+            {                                                                                                                                                                                                       
+                return new UserRepositorySql(_database, _mapper);
             }
         }
         public CampaningRepository<Campaning> GetCampaningRepository()
         {
-            if (_configuration["ENVIROMENT:UserRepositoryType"]?.ToLower() == AppReferences.CONFIG_MOCK)
+            if (_configuration[env_repo_type]?.ToLower() == AppReferences.CONFIG_MOCK)
             {
-                return new MockRepositoryCampaning(_contextAccessor.HttpContext.Session);
+                return new MockRepositoryCampaning(_session,_mapper);                                                                          
             }
             else
             {
-                throw new AccessViolationException("");
+                throw new NotImplementedException("CampaningRepository is not implemented yet ( try mock type )");
             }
         }
 
         public GroupStatRepository<GroupStat> GetGroupStatRepository()
         {
-            if (_configuration["ENVIROMENT:UserRepositoryType"]?.ToLower() == AppReferences.CONFIG_MOCK)
+            if (_configuration[env_repo_type]?.ToLower() == AppReferences.CONFIG_MOCK)
             {
                 return new MockRepositoryGroupStat();
             }
             else
             {
-                throw new AccessViolationException("");
+                throw new NotImplementedException("GroupStatRepository repository is not implemented yet ( try mock type )");
             }
         }
         public GroupRepository<GroupModel> GetGroupRepository()
         {
-            if (_configuration["ENVIROMENT:UserRepositoryType"]?.ToLower() == AppReferences.CONFIG_MOCK)
+            if (_configuration[env_repo_type]?.ToLower() == AppReferences.CONFIG_MOCK)
             {
                 return new MockGroupRepository(_session, _mapper, _contextAccessor);
             }
             else
             {
-                throw new AccessViolationException("");
+                throw new NotImplementedException("GroupRepository repository is not implemented yet ( try mock type )");
             }
         }
 
-        AdvertRepository<Advert> IDataBaseProvider.GetAdvertRepository()
+        public AdvertRepository<Advert> GetAdvertRepository()
         {
-            return new AdvertRepositoryMock(_session, _mapper, _contextAccessor);
+            if (_configuration[env_repo_type]?.ToLower() == AppReferences.CONFIG_MOCK)
+            {
+                return new AdvertRepositoryMock(_session, _mapper, _contextAccessor);
+            }
+            else
+            {
+                throw new NotImplementedException("AdvertRepository repository is not implemented yet ( try mock type )");
+            }
+        }
+
+        public FullContextRepository GetFullContextRepository()
+        {
+            if (_configuration[env_repo_type]?.ToLower() == AppReferences.CONFIG_MOCK)
+            {
+                return new FullContextRepositoryMock(_session, _mapper);
+            }
+            else
+            {
+                throw new NotImplementedException("FullContextRepository repository is not implemented yet ( try mock type )");
+            }
         }
     }
 }

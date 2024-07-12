@@ -36,5 +36,20 @@ namespace UserPanel.Models.User
             return null;
 
         }
+
+        public override void CreateUser(UserModel model)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override List<UserModel> GetAllUser()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void UpdateModel(UserModel model)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

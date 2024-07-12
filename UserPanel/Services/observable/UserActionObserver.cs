@@ -11,22 +11,32 @@ namespace UserPanel.Services.observable
         public UserActionObserver(Subject<UserActionMessage> _subject) : base(_subject)
         {
      
-            Actions[UserActionType.Login] = UserLoginNotify;
-            Actions[UserActionType.Logout] = UserLogoutNotify;
+            Actions[UserActionType.Login] = UserLoginNotification;
+            Actions[UserActionType.Logout] = UserLogoutNotification;
+            Actions[UserActionType.Create] = UserCreateNotification;
+            Actions[UserActionType.Update] = UserUpdateNotification;
         }
 
         public override void notify(UserActionMessage context)
         {
-            Actions[context.ActionType](context);
+            Actions[context.actionType](context);
         }
 
-        private void UserLoginNotify(UserActionMessage context)
+        private void UserLoginNotification(UserActionMessage context)
         {
           
         }
-        private void UserLogoutNotify(UserActionMessage context)
+        private void UserLogoutNotification(UserActionMessage context)
         {
             
+        }
+        private void UserCreateNotification(UserActionMessage context)
+        {
+
+        }
+        private void UserUpdateNotification(UserActionMessage context)
+        {
+
         }
     }
 }

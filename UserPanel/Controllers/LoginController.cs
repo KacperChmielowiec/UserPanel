@@ -1,36 +1,30 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Components.Web;
-using UserPanel.Services;
+﻿using UserPanel.Services;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
-using System.Diagnostics;
-using System.Security.Claims;
-using UserPanel.Models;
 using UserPanel.Models.User;
-using UserPanel.Providers;
-using UserPanel.References;
-using UserPanel.Helpers;
 using UserPanel.Interfaces;
 
 namespace UserPanel.Controllers
 {
     public class LoginController : Controller
-    {
-        private readonly ILogger<HomeController> _logger;
-        private IDataBaseProvider DataBaseProvider { get; set; }
-        private UserManager UserManager;
-        private PasswordHasher Hasher;
+    {   
+        private IDataBaseProvider _dataBaseProvider { get; set; }
+        private UserManager _userManager;
+        private PasswordHasher _hasher;
+        private IConfiguration _configuration;
 
-        private static string INVALID_USER = ConfigManager.GetConfig("appConfig.messages.loginMessages.InvalidPassword").ToString();
-        private static string NOT_FOUND = ConfigManager.GetConfig("appConfig.messages.loginMessages.NotFound").ToString();
-
-        public LoginController(ILogger<HomeController> logger, IDataBaseProvider dataBase, UserManager userManager, PasswordHasher hasher)
+        string invalidPasswordMessage = "";
+        string notFoundMessage = "";
+        string notActiveMessage = "";
+        public LoginController(IDataBaseProvider dataBase, UserManager userManager, PasswordHasher hasher, IConfiguration configuration)
         {
-            _logger = logger;
-            DataBaseProvider = dataBase;
-            UserManager = userManager;
-            Hasher = hasher;
+            _dataBaseProvider = dataBase;
+            _userManager = userManager;
+            _hasher = hasher;
+            _configuration = configuration;
+
+            invalidPasswordMessage = _configuration["messages:loginMessages:InvalidPassword"];
+            notFoundMessage = _configuration["messages:loginMessages:NotFound"];
+            notActiveMessage = _configuration["messages:loginMessages:NotActive"];
         }
 
         
@@ -44,7 +38,7 @@ namespace UserPanel.Controllers
         public async Task<IActionResult> Logout()
         {
             HttpContext.Session.Clear();
-            await UserManager.SignOut();
+            await _userManager.SignOut();
             return RedirectToAction("Index");
         }
 
@@ -56,23 +50,28 @@ namespace UserPanel.Controllers
            
             var result = true;
 
-            UserModel userModel = DataBaseProvider
+            UserModel userModel = _dataBaseProvider
                 .GetUserRepository()
                 .GetModelByEmail(loginModel.Email);
 
             if (userModel == null)
             {
-                ModelState.AddModelError("LoginError", NOT_FOUND);
+                ModelState.AddModelError("LoginError", notFoundMessage);
                 result = false;
             }
-            if (!Hasher.VerifyHashedPassword(userModel?.Password ?? "",loginModel.Password) && result)
+            if (!_hasher.VerifyHashedPassword(userModel?.Password ?? "",loginModel.Password) && result)
             {
-                ModelState.AddModelError("LoginError", INVALID_USER);
+                ModelState.AddModelError("LoginError", invalidPasswordMessage);
+                result = false;
+            }
+            if(!userModel.IsActive && result)
+            {
+                ModelState.AddModelError("LoginError", notActiveMessage);
                 result = false;
             }
             if (result) {
 
-                await UserManager.SignIn(userModel);
+                await _userManager.SignIn(userModel);
                 return Redirect(loginModel.ReturnUrl);
 
             }
