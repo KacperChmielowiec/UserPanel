@@ -80,7 +80,7 @@ namespace UserPanel.Controllers
                .GetGroupStatRepository()
                .getGroupStatByCampId(id);
 
-            string name = DataBaseProvider.GetCampaningRepository().getCampaningById(id)?.name;
+            string name = DataBaseProvider.GetCampaningRepository().GetCampaningById(id)?.name;
 
             if (list == null || list.Count == 0) return null;
 

@@ -1,17 +1,17 @@
 ﻿@model AdvertForm
 @{
-
+    bool isEdit = ViewData["Edit"] != null ? (bool)ViewData["Edit"] : false;
 }
 @functions{
-    bool isEdit(){
-        if (!ViewData.ContainsKey("type")) return false;
-        return ViewData["type"] == "Edit" ? true : false;
+    public string PhotoEditSrc(int index)
+    {
+        return $"background-image: url({Model.Formats[index].Src})";
     }
 }
 
 <div class="w-full flex items-center h-full advert-page">
         <div class="wrapper-ads-edit shadow-md mb-10">
-        <form class="w-full" asp-controller="Advert" asp-action="Create"  method="post" enctype="multipart/form-data">
+        <form class="w-full" asp-controller="Advert" asp-action="@(isEdit ? "Edit" : "Create")"  method="post" enctype="multipart/form-data">
             <header class="header-section">
                 <h2 class="text-2xl font-semibold">Edycja reklamy</h2>
             </header>
@@ -22,6 +22,7 @@
                  </div>
                 <div class="form-group">
                     <input hidden asp-for="id_group" value="@Model.id_group"/>
+                    <input hidden asp-for="Id" value="@Model.Id" />
                     <label class="w-full mr-8 text-right" for="">Nazwa: </label>
                     <input asp-for="Name" class="col-10 appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4  leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Nazwa reklamy">
                 </div>
@@ -65,7 +66,7 @@
                             <span data-id="file_300x300" onclick="removeFile('file_300x300')" class="btn btn-flat danger px-5 ml-4"><i class="icon-trash mr-1"></i>Wyczyść</span>
                         </div>
                         <div class="preview">
-                            <div class="preview-frame" style="width: 300px; height: 300px; @(isEdit() ? $"background-image: url({PathGenerate.FormatToHostPath(Model.Formats[0].Src)})" : "" )">
+                            <div class="preview-frame" style="width: 300px; height: 300px; @(isEdit  ? PhotoEditSrc(0) : "") ">
 
                             </div>
                         </div>

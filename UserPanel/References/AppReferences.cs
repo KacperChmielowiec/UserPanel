@@ -19,8 +19,10 @@ namespace UserPanel.References
 
         public const string UserIdClaim = "Id";
         public const string PERMISSION_SCHEME = "permission";
-
+        public const string EmailSalt = "EmailSalt";
         public static string TypeAccessForbidden = "Forbidden";
+
+        public static string EnvRepositoryType = "ENVIROMENT:UserRepositoryType";
 
         public static Dictionary<string, UserRole> RoleMap = new Dictionary<string, UserRole>()
         {

@@ -1,11 +1,16 @@
 ﻿@model bool
 @{
-    ViewData["Title"] = "Privacy Policy";
+    ViewData["Title"] = "Confirm Register";
 }
-@if (Model)
-{
-    <p>CONFIRM</p>
-}
-else{
-    <p>NO CONFIRM</p>
-}
+<div>
+    <div class="mt-20 w-100 flex justify-content">
+        @if(Model == true)
+        {
+            <p>The user has been verified positive</p>
+        }
+        else
+        {
+            <p>The user has not been verified. Something gone wrong</p>
+        }
+    </div>
+</div>

@@ -13,5 +13,7 @@ namespace UserPanel.Interfaces
         public GroupStatRepository<GroupStat> GetGroupStatRepository();
         public GroupRepository<GroupModel> GetGroupRepository();
         public AdvertRepository<Advert> GetAdvertRepository();
+
+        public FullContextRepository GetFullContextRepository();
     }
 }

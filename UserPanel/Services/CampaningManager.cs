@@ -38,20 +38,20 @@ namespace UserPanel.Services
         {
             if (!_userManager.isLogin() || _userManager.getUserId() == -1) return new List<Campaning>();
             int id = _userManager.getUserId();
-            return _provider.GetCampaningRepository().getCampaningsByUser(id);
+            return _provider.GetCampaningRepository().GetCampaningsByUser(id);
         }
         public Campaning? GetCampaningById(Guid id)
         {
             if (!_userManager.isLogin() || _userManager.getUserId() == -1) return default(Campaning);
         
 
-            return _provider.GetCampaningRepository().getCampaningById(id);
+            return _provider.GetCampaningRepository().GetCampaningById(id);
         }
         public void SetCampaningSession(Guid id)
         {
             Campaning campaning = _provider
                 .GetCampaningRepository()
-                .getCampaningById(id);
+                .GetCampaningById(id);
 
             List<Campaning> campaningsSession = session.GetJson<List<Campaning>>("sessionCamp") ?? new List<Campaning>();
 
@@ -78,9 +78,8 @@ namespace UserPanel.Services
             {
                 model.details.CampaningFlags = camps[0].details.CampaningFlags;
             }
-            model.FK_User = id;
 
-            _provider.GetCampaningRepository().UpdateCampaningById(model.id,model);
+            _provider.GetCampaningRepository().UpdateCampaningById(model,id);
 
         }
         public void CreateCampaning(CreateCampaning model)
@@ -91,7 +90,6 @@ namespace UserPanel.Services
             Campaning campaning = new Campaning();
             campaning.id = Guid.NewGuid();
             campaning.status = false;
-            campaning.FK_User = id;
             campaning.name = model.name;
             campaning.website = model.url;
             campaning.details = new DetailsCampaning();
@@ -118,7 +116,7 @@ namespace UserPanel.Services
                 totalBudgetLeft = 0,
             };
             WriteLogoCampaning(model.logo, campaning.id.ToString());
-            _provider.GetCampaningRepository().CreateCampaning(campaning);
+            _provider.GetCampaningRepository().CreateCampaning(campaning,id);
 
         }
         public void DeleteCampaning(Guid id)

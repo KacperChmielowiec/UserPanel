@@ -1,111 +1,88 @@
 ﻿using AutoMapper;
 using System.Data;
 using UserPanel.Services;
-using UserPanel.Models;
 using UserPanel.Models.Camp;
 using UserPanel.Interfaces.Abstract;
 using UserPanel.Helpers;
-using Microsoft.AspNetCore.Http;
-using System.Reflection;
-using System.Security.Cryptography.Xml;
 using UserPanel.References;
+using System.Collections.Generic;
 
 namespace UserPanel.Models.User
 {
     public class MockRepositoryCampaning : CampaningRepository<Campaning>
     {
-        private readonly string PathCamp = MockPathsReferences.campaningsPath;
-        private ISession _Session;
-        public MockRepositoryCampaning(ISession session)
+        private readonly string PathCamp = SessionKeysReferences.campsKey;
+        private ISession _session;
+        private IMapper _mapper;
+        public MockRepositoryCampaning(ISession session, IMapper mapper)
         {
-            _Session = session;
+            _session = session;
+            _mapper = mapper;
         }
             
-        public override void CreateCampaning(Campaning model)
+        public override void CreateCampaning(Campaning model, int userId)
         {
-            var curr = _Session.GetJson<List<Campaning>>("campanings") ?? new List<Campaning>();
-            curr.Add(model);
-            _Session.SetJson("campanings", curr);
+            if (model == null) return;
+            var SessionCampList = _session.GetJson<List<CampaningMock>>(PathCamp) ?? new List<CampaningMock>();
+
+            CampaningMock CampaningMock = _mapper.Map<CampaningMock>(model);
+            CampaningMock.FK_User = userId;
+
+            SessionCampList.Add(CampaningMock);
+            _session.SetJson(PathCamp, SessionCampList);
+
             Subjects.dataActionSubject.notify(new Services.observable.DataActionMessage() { actionType = Types.DataActionType.ADD, dataType = DataType.Campaning });
         }
 
         public override void DeleteCampaning(Guid id)
         {
-            var curr = _Session.GetJson<List<Campaning>>("campanings") ?? new List<Campaning>();
-            curr.RemoveAll(model => model.id == id);
-            _Session.SetJson("campanings", curr);
+            var SessionCampList = _session.GetJson<List<CampaningMock>>(PathCamp) ?? new List<CampaningMock>();
+            SessionCampList.RemoveAll(model => model.id == id);
+            _session.SetJson(PathCamp, SessionCampList);
+
             Subjects.dataActionSubject.notify(new Services.observable.DataActionMessage() { actionType = Types.DataActionType.REMOVE, dataType = DataType.Campaning });
         }
 
-        public override Campaning? getCampaningById(Guid id)
+        public override Campaning? GetCampaningById(Guid id)
         {
-            var campSess = _Session
-              .GetJson<List<Campaning>>("campanings")?
+            var SessionCamp = _session
+              .GetJson<List<CampaningMock>>(PathCamp)?
               .Where(c => c.id == id)?
               .FirstOrDefault();
 
-            if (campSess != null)
+            if (SessionCamp != null)
             {
-                return campSess;
+                return _mapper.Map<Campaning>(SessionCamp);
             }
 
-            var camp = ConfigManager
-                .GetConfig(PathCamp)
-                .Parse<List<Campaning>>()
-                .Where(c => c.id == id)
-                .FirstOrDefault();
-
-            if (camp != null)
-            {
-                var curr = _Session.GetJson<List<Campaning>>("campanings") ?? new List<Campaning>();
-                curr.Add(camp);
-                _Session.SetJson("campanings", curr);
-            }
-            return camp;
+            return null;   
         }
 
-        public override List<Campaning>? getCampaningsByUser(int userId)
+        public override List<Campaning>? GetCampaningsByUser(int userId)
         {
-            var UserCamp = getCampaningsByUserWithGroups(userId);
-            UserCamp?.ForEach(camp =>
-            {
-                camp.groups = null;
-            });
-            return UserCamp;
+            var SessionCampList = _session.GetJson<List<CampaningMock>>(PathCamp).Where(c => c.FK_User == userId).ToList() ?? new List<CampaningMock>();
+            if (SessionCampList.Count == 0) return new List<Campaning>();
+            return _mapper.Map<List<CampaningMock>,List<Campaning>>(SessionCampList);
         }
         
-        public override List<Campaning> getCampaningsByUserWithGroups(int userId)
+        public override void UpdateCampaningById(Campaning model, int userId)
         {
-            var campSess = _Session
-                .GetJson<List<Campaning>>("campanings")?
-                .Where(c => c.FK_User == userId)?
-                .ToList() ?? new List<Campaning>();
+            if (model == null) return;
+            if (model.id == null) return;
 
-            if (campSess != null && campSess.Count > 0)
-            {
-                return campSess;
-            }
+            var SessionCampList = _session.GetJson<List<CampaningMock>>(PathCamp) ?? new List<CampaningMock>();
+            int elements = SessionCampList.RemoveAll(m => m.id == model.id );
 
-            var camp = ConfigManager.GetConfig(PathCamp)
-                .Parse<List<Campaning>>()
-                .Where(c => c.FK_User == userId).ToList();
+            if(elements == 0) return;
 
-            if (camp != null && camp.Count > 0)
-            {
-                var curr = _Session.GetJson<List<Campaning>>("campanings") ?? new List<Campaning>();
-                curr.AddRange(camp);
-                _Session.SetJson("campanings", curr);
-            }
+            CampaningMock campaningMock = _mapper.Map<CampaningMock>(model);
+            campaningMock.FK_User = userId;
 
-            return camp;
-        }
+            SessionCampList.Add(campaningMock);
 
-        public override void UpdateCampaningById(Guid id, Campaning model)
-        {
-            var curr = _Session.GetJson<List<Campaning>>("campanings") ?? new List<Campaning>();
-            curr.RemoveAll(model => model.id == id);
-            curr.Add(model);
-            _Session.SetJson("campanings", curr);
+            _session.SetJson(PathCamp, SessionCampList);
+
+            Subjects.dataActionSubject.notify(new Services.observable.DataActionMessage() { actionType = Types.DataActionType.UPDATE, dataType = DataType.Campaning });
         }
 
     }

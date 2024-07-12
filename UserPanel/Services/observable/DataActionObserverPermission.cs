@@ -46,7 +46,7 @@ namespace UserPanel.Services.observable
         }
         private void OnCreateAd(DataActionMessage contex)
         {
-            PermissionActionManager<Guid>.AddNode(contex.id, contex.Parent, ContextNodeType.ADVERT);
+            PermissionActionManager<Guid>.AddNode(contex.id, contex.Parent, ContextNodeType.Advert);
         }
         private void OnDeleteCamp(DataActionMessage contex)
         {

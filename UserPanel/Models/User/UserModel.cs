@@ -1,4 +1,5 @@
-﻿using UserPanel.References;
+﻿using Newtonsoft.Json;
+using UserPanel.References;
 using static UserPanel.References.AppReferences;
 namespace UserPanel.Models.User
 {
@@ -12,5 +13,7 @@ namespace UserPanel.Models.User
         public string Phone { get; set; }
         public string Company { get; set; }
         public string Address { get; set; }
+        [JsonProperty("State")]
+        public bool IsActive { get; set; }
     }
 }
