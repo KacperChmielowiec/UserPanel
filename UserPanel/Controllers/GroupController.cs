@@ -11,7 +11,6 @@ using UserPanel.Services;
 namespace UserPanel.Controllers
 {
     [Authorize]
-    [Route("/groups")]
     public class GroupController : Controller
     {
         private GroupManager _groupManager;
@@ -35,7 +34,7 @@ namespace UserPanel.Controllers
             return View(group);
         }
         [Authorize]
-        [HttpGet("/groups")]
+        [HttpGet("campaign/groups")]
         public IActionResult Groups([FromQuery(Name="camp_id")] Guid id)
         {
             if(id == null || id == Guid.Empty) return NotFound();

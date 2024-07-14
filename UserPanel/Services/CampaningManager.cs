@@ -1,12 +1,6 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Identity;
-using System.Security.Claims;
-using UserPanel.Helpers;
+﻿using UserPanel.Helpers;
 using UserPanel.Interfaces;
-using UserPanel.Models;
 using UserPanel.Models.Camp;
-using UserPanel.Models.Group;
-using UserPanel.Providers;
 using UserPanel.References;
 
 namespace UserPanel.Services
@@ -14,24 +8,19 @@ namespace UserPanel.Services
     public class CampaningManager
     {
         private IDataBaseProvider _provider;
-        private IConfiguration _configuration;
-        private IHttpContextAccessor _contextAccessor;
         private UserManager _userManager;
-        private ISession session;
+        private ISession _session;
         private static string CAMP_PATH = AppReferences.CAMP_LOGO_PATH;
+        private static string CAMP_SESSION_PATH = SessionKeysReferences.campsKey;
         public CampaningManager(
             IDataBaseProvider provider,
-            IConfiguration configuration, 
             IHttpContextAccessor httpContextAccessor,
             UserManager userManager
-      
         )
         {
             _provider = provider;
-            _configuration = configuration;
-            _contextAccessor = httpContextAccessor;
             _userManager = userManager;
-            session = httpContextAccessor.HttpContext.Session;
+            _session = httpContextAccessor.HttpContext.Session;
         }
 
         public List<Campaning> GetCampanings()
@@ -42,9 +31,8 @@ namespace UserPanel.Services
         }
         public Campaning? GetCampaningById(Guid id)
         {
-            if (!_userManager.isLogin() || _userManager.getUserId() == -1) return default(Campaning);
+            if (!_userManager.isLogin() || _userManager.getUserId() == -1) return null;
         
-
             return _provider.GetCampaningRepository().GetCampaningById(id);
         }
         public void SetCampaningSession(Guid id)
@@ -53,12 +41,12 @@ namespace UserPanel.Services
                 .GetCampaningRepository()
                 .GetCampaningById(id);
 
-            List<Campaning> campaningsSession = session.GetJson<List<Campaning>>("sessionCamp") ?? new List<Campaning>();
+            List<Campaning> campaningsSession = _session.GetJson<List<Campaning>>(AppReferences.SessionCamp) ?? new List<Campaning>();
 
             if (campaningsSession.FirstOrDefault(item => item.id == id) == null)
                 campaningsSession.Add(campaning);
 
-            session.SetJson("sessionCamp", campaningsSession);
+            _session.SetJson(AppReferences.SessionCamp, campaningsSession);
         }
         public void UpdateCampaning(Campaning model)
         {

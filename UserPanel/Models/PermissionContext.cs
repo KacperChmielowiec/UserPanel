@@ -122,6 +122,15 @@ namespace UserPanel.Models
             }
             return false;
         }
+
+        public static ContextNodeType GetNodeType(T id)
+        {
+            if(InstanceContext.MapContext.TryGetValue(id, out ContextNode<T> node))
+            {
+                return node.Value.ElementType;
+            }
+            return ContextNodeType.NULL;
+        }
         private static ContextNodeType GetParentNodeType(ContextNodeType type)
         {
             switch(type)

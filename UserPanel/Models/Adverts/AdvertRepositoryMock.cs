@@ -121,5 +121,18 @@ namespace UserPanel.Models.Adverts
             if (ids.Length == 0 || group == Guid.Empty) return;
             var SessionModelsGroup = _session.GetJson<List<AdvertisementMock>>(SessionKeysReferences.advertKey) ?? new List<AdvertisementMock>();
         }
+
+        public override void DeleteAdvertsById(Guid id)
+        {
+            if(id == Guid.Empty) throw new ArgumentNullException($"Guid is empty in DeleteAdvertsById method");
+
+            var SessionModelsGroup = _session.GetJson<List<AdvertisementMock>>(SessionKeysReferences.advertKey) ?? new List<AdvertisementMock>();
+            int elements = SessionModelsGroup.RemoveAll(m => m.id == id);
+
+            if (elements == 0) return;
+
+            _session.SetJson(SessionKeysReferences.advertKey, SessionModelsGroup);
+
+        }
     }
 }

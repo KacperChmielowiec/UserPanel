@@ -73,8 +73,7 @@ namespace UserPanel.Helpers
 
 
             CreateMap<Advert, AdvertisementMock>();
-            CreateMap<AdvertisementMock, Advert>()
-                .ForMember(e => e.IsActive, (conf) => conf.MapFrom((src) => src.IsActive));
+            CreateMap<AdvertisementMock, Advert>();
             CreateMap<AdvertForm, Advert>();
             CreateMap<AdvertFormatForm, AdvertFormat>();
             CreateMap<Advert, AdvertForm>();
