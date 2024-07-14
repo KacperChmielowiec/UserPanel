@@ -6,10 +6,18 @@ namespace UserPanel.References
     {
         [StringValue("Home")]
         HOME,
-        [StringValue("Campaning")]
+        [StringValue("Campaign")]
         CAMP,
-        [StringValue("Group")]
-        GROUP,
+        [StringValue("Campaigns")]
+        CAMPS,
+        [StringValue("Other")]
+        OTHER,
+        [StringValue("Campaigns List")]
+        LIST_CAMPS,
+        [StringValue("Campaign Details")]
+        CAMP_DETAILS,
+        [StringValue("Groups")]
+        GROUPS,
     }
 
     public enum DataType

@@ -31,7 +31,7 @@ namespace UserPanel.Models.User
             SessionCampList.Add(CampaningMock);
             _session.SetJson(PathCamp, SessionCampList);
 
-            Subjects.dataActionSubject.notify(new Services.observable.DataActionMessage() { actionType = Types.DataActionType.ADD, dataType = DataType.Campaning });
+            Subjects.dataActionSubject.notify(new Services.observable.DataActionMessage() { actionType = Types.DataActionType.ADD, dataType = DataType.Campaning, id = model.id });
         }
 
         public override void DeleteCampaning(Guid id)
@@ -40,7 +40,7 @@ namespace UserPanel.Models.User
             SessionCampList.RemoveAll(model => model.id == id);
             _session.SetJson(PathCamp, SessionCampList);
 
-            Subjects.dataActionSubject.notify(new Services.observable.DataActionMessage() { actionType = Types.DataActionType.REMOVE, dataType = DataType.Campaning });
+            Subjects.dataActionSubject.notify(new Services.observable.DataActionMessage() { actionType = Types.DataActionType.REMOVE, dataType = DataType.Campaning, id = id });
         }
 
         public override Campaning? GetCampaningById(Guid id)

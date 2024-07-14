@@ -4,11 +4,7 @@ using Microsoft.Extensions.Options;
 using UserPanel.Helpers;
 using System.Text.Encodings.Web;
 using UserPanel.Models;
-using System.Threading.Tasks;
-using UserPanel.Interfaces;
-using Microsoft.AspNetCore.Http;
 using UserPanel.References;
-using System.Linq;
 
 namespace UserPanel.Services
 {
@@ -56,7 +52,7 @@ namespace UserPanel.Services
                 if (endpointNameAttribute != null)
                 {
                     EndpointMetaData matched = _endpoints?.Where(end => end.permission == true)
-                        ?.Where(e => e.name + ":" + e.method.ToLower() == endpointNameAttribute.EndpointName).FirstOrDefault();
+                        ?.Where(e => $"{e.name}:{e.method}".ToLower() == endpointNameAttribute.EndpointName).FirstOrDefault();
 
                     if (matched != null)
                     {

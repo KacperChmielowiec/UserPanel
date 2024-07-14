@@ -1,10 +1,6 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using System.Security.Claims;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using UserPanel.Interfaces;
 using UserPanel.Models;
-using UserPanel.Services;
-using UserPanel.References;
 using UserPanel.Interfaces.Abstract;
 namespace UserPanel.Helpers
 {

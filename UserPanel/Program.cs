@@ -1,9 +1,6 @@
-using Microsoft.Extensions.FileProviders;
-using System.Configuration;
 using UserPanel.Helpers;
 using UserPanel.Installers;
 using UserPanel.Middleware;
-using UserPanel.Models;
 using UserPanel.References;
 using UserPanel.Services;
 
@@ -14,13 +11,14 @@ builder.InstallServices();
 ConfigurationHelper.Initialize(builder.Configuration);
 ConfigManager.LoadConfig();
 
-
 var app = builder.Build();
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
+
 app.UseSwagger();
 
 app.UseSwaggerUI(c =>
@@ -31,16 +29,16 @@ app.UseSwaggerUI(c =>
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseSession();
+
 if(AppReferences.RepoType == AppReferences.CONFIG_MOCK)
 {
     app.UseMiddleware<SessionLoadMockMiddleware>();
 }
+
 app.UseRouting();
-
-app.UseMiddleware<PageTypeMiddleware>();
-
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<PageTypeMiddleware>();
 app.MapControllerRoute(
     name: "home",
     pattern: "{Dashboard:regex(^(?i)dashboard$)}",

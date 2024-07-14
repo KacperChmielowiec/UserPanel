@@ -6,6 +6,7 @@ namespace UserPanel.Models.components
     {
         public List<Campaning> campaningList {  get; set; }
         public Guid activeCamp {  get; set; } = Guid.Empty;
-        public PageTypes Page {  get; set; } = PageTypes.HOME;
+        public PageTypes PageMain { get; set; } = PageTypes.HOME;
+        public PageTypes PageSub1 { get; set; } = PageTypes.OTHER;
     }
 }

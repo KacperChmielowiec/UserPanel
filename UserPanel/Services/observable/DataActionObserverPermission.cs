@@ -12,6 +12,7 @@ namespace UserPanel.Services.observable
         {
             Actions[DataActionType.ADD] = OnCreate;
             Actions[DataActionType.REMOVE] = OnDelete;
+            Actions[DataActionType.UPDATE] = OnUpdate;
         }
 
         public override void notify(DataActionMessage context)
@@ -39,6 +40,10 @@ namespace UserPanel.Services.observable
                 default:
                     break;
             }
+        }
+        private void OnUpdate(DataActionMessage context)
+        {
+           
         }
         private void OnCreateCamp(DataActionMessage contex)
         {
