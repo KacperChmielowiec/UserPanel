@@ -19,8 +19,8 @@
                 <h2>Podgląd kampanii</h2>
             </div>
             <div class="pull-right d-flex items-center gap-x-2">
-                <a asp-action="edit" asp-controller="campaning" asp-route-id="@Model.id" class="btn btn-flat success"><i class="icon-edit"></i> Edytuj</a>
-                <form method="post" class="btn btn-flat danger" asp-action="delete" asp-controller="campaning">
+                <a asp-action="edit" asp-controller="campaign" asp-route-id="@Model.id" class="btn btn-flat success"><i class="icon-edit"></i> Edytuj</a>
+                <form method="post" class="btn btn-flat danger" asp-action="delete" asp-controller="campaign">
                     <input hidden type="text" name="id" value="@Model.id"/>
                     <button type="submit" ><i class="icon-trash"></i> Usuń</button>
                 </form>
@@ -106,7 +106,7 @@
                         </td>
                         <td>
                             <div class="btn-group pull-right">
-                            <form asp-action="switch" asp-controller="campaning" method="post">
+                            <form asp-action="switch" asp-controller="campaign" method="post">
                                 <input hidden value="@Model.id" name="id"/>
                                 <input hidden value="@Model.status" name="status" />
                                 <button type="submit" class="btn-flat @( Model.status ? "success" : "danger" )"><i class="icon-off mr-1"></i>@(Model.status ? "Wyłącz" : "Włącz")</button>

@@ -2,68 +2,102 @@
 using Microsoft.AspNetCore.Mvc;
 using UserPanel.Helpers;
 using UserPanel.Models.components;
-using UserPanel.Providers;
-using UserPanel.Interfaces;
 using UserPanel.Models.Camp;
 using UserPanel.References;
+using Microsoft.Extensions.Primitives;
 namespace UserPanel.ViewComponents
 {
     [Authorize]
     [ViewComponent(Name = "Sidebar")]
     public class SidebarViewComponent : ViewComponent
     {
-        private IDataBaseProvider Provider;
-        public SidebarViewComponent(IDataBaseProvider provider ) { 
-            this.Provider = provider;
+        private delegate bool RouteIDDelegate(HttpContext context, out Guid result);
+        private RouteIDDelegate[] strategy;
+        public SidebarViewComponent() {
+            strategy = new RouteIDDelegate[] { GetIDFromRoute, GetIDFromQueryCamp, GetIDFromQueryGroup };
         }
         
-        private Guid getCampId()
+        private bool GetIDFromRoute(HttpContext context, out Guid result)
         {
-            if(HttpContext.Request.RouteValues.ContainsKey("id") && HttpContext.Request.Path.ToString().Contains("/details"))
+            result = Guid.Empty;
+            if(context.Request.RouteValues.TryGetValue("id", out object id))
             {
-               return new Guid(HttpContext.Request.RouteValues["id"].ToString());
+                string value = (string)id;
+                if(Guid.TryParse(value, out Guid r))
+                {
+                    result = r;
+                    return true;
+                }
             }
-            if(HttpContext.Request.Query.ContainsKey(AppReferences.QueryCamp))
+            return false;
+        }
+        private bool GetIDFromQueryCamp(HttpContext context, out Guid result)
+        {
+            result = Guid.Empty;
+            if(context.Request.Query.TryGetValue("camp_id", out StringValues value))
             {
-                return new Guid(HttpContext.Request.Query[AppReferences.QueryCamp].ToString());
+                if(Guid.TryParse(value, out Guid r))
+                {
+                    result = r; 
+                    return true;
+                }
+            }
+            return false;
+        }
+        private bool GetIDFromQueryGroup(HttpContext context, out Guid result)
+        {
+            result = Guid.Empty;
+            return false;
+        }
+
+        private Guid TryFetchIDFromRequest()
+        {
+            foreach(var _strategy in strategy) {
+
+                bool result = _strategy.Invoke(HttpContext, out Guid result_guid);
+                if(result)
+                {
+                    return result_guid;
+                }
+
             }
             return Guid.Empty;
         }
 
+
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var list = HttpContext.Session.GetJson<List<Campaning>>("sessionCamp");
-            if(list == null || list?.Count == 0)
+            var list = HttpContext.Session.GetJson<List<Campaning>>(AppReferences.SessionCamp);
+
+            if(list == null)
             {
                 list = new List<Campaning>();
             }
+
             SidebarModel sidebarModel = new SidebarModel() { campaningList = list };
+
             if (HttpContext.Items.ContainsKey(AppReferences.CurrPageType))
             {
-                if (HttpContext.Items[AppReferences.CurrPageType] is PageTypes type)
+                if (HttpContext.Items[AppReferences.CurrPageType] is PageTypes[] type)
                 {
-                    var PageType = (PageTypes)HttpContext.Items[AppReferences.CurrPageType];
-                    switch (PageType)
+                    var PageType = (PageTypes[])HttpContext.Items[AppReferences.CurrPageType];
+                    foreach (var (pageType,i) in PageType.Select((x,y) => (x,y)))
                     {
-                        case PageTypes.HOME:
-                            sidebarModel.Page = PageTypes.HOME;
-                            sidebarModel.activeCamp = Guid.Empty;
-                            break;
-                        case PageTypes.CAMP:
-                            sidebarModel.activeCamp = getCampId();
-                            sidebarModel.Page = PageTypes.CAMP;
-                            break;
-                        case PageTypes.GROUP:
-                            sidebarModel.activeCamp = getCampId();
-                            sidebarModel.Page = PageTypes.GROUP;
-                            break;
-                        default:
-                            sidebarModel.activeCamp = Guid.Empty;
-                            sidebarModel.Page = PageTypes.HOME;
-                            break;
+                        if(i == 0)
+                        {
+                            sidebarModel.PageMain = pageType;
+
+                        }
+                        if(i == 1)
+                        {
+                            sidebarModel.PageSub1 = pageType;
+                        }
                     }
                 }
             }
+
+            sidebarModel.activeCamp = TryFetchIDFromRequest();
+
             return View(sidebarModel);
         }
     }

@@ -31,7 +31,7 @@ namespace UserPanel.Controllers
             }
             if(!PermissionActionManager<Guid>.CheckPermisionAccess(new Guid[] {id_group}))
             {
-                return StatusCode(403);
+                return StatusCode(401);
             }
 
             return View( new AdvertForm() { id_group = id_group } );
@@ -50,7 +50,7 @@ namespace UserPanel.Controllers
 
                 if (!PermissionActionManager<Guid>.CheckPermisionAccess(new Guid[] { advert.id_group }))
                 {
-                    return StatusCode(403);
+                    return StatusCode(401);
                 }
                 
 
@@ -89,7 +89,7 @@ namespace UserPanel.Controllers
             }
             if (!PermissionActionManager<Guid>.CheckPermisionAccess(new Guid[] { id }))
             {
-                return StatusCode(403);
+                return StatusCode(401);
             }
 
             Advert Curr_Ad = _dataBaseProvider.GetAdvertRepository().GetAdvertById(id);
@@ -117,6 +117,32 @@ namespace UserPanel.Controllers
             ViewData["Edit"] = true;
             return View();
         }
+
+        [Authorize]
+        [HttpPost("/advertisement/remove/{id}")]
+        public IActionResult Delete(Guid id, [FromQuery] string ReturnUrl = "")
+        {
+            if(id == Guid.Empty)
+            {
+                return BadRequest();
+            }
+            if(!PermissionActionManager<Guid>.CheckPermisionAccess(new Guid[] { id }))
+            {
+                return StatusCode(401);
+            }
+
+            _dataBaseProvider.GetAdvertRepository().DeleteAdvertsById(id);
+
+            if(ReturnUrl.Length > 0)
+            {
+                return Redirect(ReturnUrl);
+            }
+
+            return Redirect("/");
+
+        }
+
+
         [Authorize]
         [HttpGet("/list-all/{id}")]
         public string ListAll(int id)

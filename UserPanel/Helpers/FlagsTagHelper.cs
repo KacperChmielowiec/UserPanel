@@ -1,9 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Razor.TagHelpers;
-using static System.Net.Mime.MediaTypeNames;
 using UserPanel.Models.Camp;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using System.Text.Encodings.Web;

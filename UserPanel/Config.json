@@ -51,7 +51,7 @@
     "loginMessages": {
       "InvalidPassword": "Incorrect password.",
       "NotFound": "User has not been found.",
-      "NotActive":  "User is not verified by email"
+      "NotActive": "User is not verified by email"
     },
     "RegisterMessages": {
       "PhoneExists": "User with given Phone number already exists",
