@@ -7,7 +7,7 @@ namespace UserPanel.Models.Adverts
     {
         public Guid Id { get; set; }
         [Required]
-        public Guid id_group { get; set; }
+        public Guid id_camp { get; set; }
         [Required]
         public string Name { get; set; }
         [Required]

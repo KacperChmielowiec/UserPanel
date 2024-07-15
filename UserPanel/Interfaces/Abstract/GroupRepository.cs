@@ -1,4 +1,6 @@
-﻿namespace UserPanel.Interfaces.Abstract
+﻿using UserPanel.Models.Group;
+
+namespace UserPanel.Interfaces.Abstract
 {
     public abstract class GroupRepository<T>
     {
@@ -7,5 +9,6 @@
         public abstract void UpdateGroup(Guid id, T model);
         public abstract T GetGroupById(Guid id);
         public abstract void CreateGroup(Guid id, T model);
+        public abstract GroupAdvertJoin GroupJoinAdvert(Guid id);
     }
 }

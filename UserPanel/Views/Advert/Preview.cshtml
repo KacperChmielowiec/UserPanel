@@ -1,5 +1,8 @@
 ﻿@model Advert
+@{
+    bool isReturn = Context.Request.Query.TryGetValue("ReturnUrl", out Microsoft.Extensions.Primitives.StringValues ReturnUrl);
 
+}
 <div class="w-full flex items-center h-full advert-page">
     <div class="wrapper-ads-edit shadow-md mb-10">
         <div>
@@ -31,7 +34,7 @@
             </div>
         }
         <div class="button-container w-full py-10">
-            <a href="/" class="btn btn-flat white"><i class="icon-reply"></i> Wróć</a>
+            <a href="@(isReturn ? ReturnUrl : "/")" class="btn btn-flat white"><i class="icon-reply"></i> Wróć</a>
         </div>
     </div>
 </div>

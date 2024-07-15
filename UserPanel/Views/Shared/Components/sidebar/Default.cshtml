@@ -38,7 +38,7 @@
                         <a data-href="#">Listy</a>
                     </li>
                     <li>
-                        <a data-href="#">Reklamy</a>
+                        <a class="@(c.id == Model.activeCamp && Model.PageSub1 == PageTypes.ADVERT_LIST ? "active" : "")" asp-action="List" asp-controller="Advert" asp-route-id="@c.id">Reklamy</a>
                     </li>
                     <li>
                         <a class="@(c.id == Model.activeCamp && Model.PageSub1 == PageTypes.GROUPS ? "active" : "")" asp-action="groups" asp-controller="group" asp-route-camp_id="@c.id">Grupy reklam</a>

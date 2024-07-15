@@ -66,7 +66,7 @@ namespace UserPanel.Controllers
 
             return RedirectToAction("groups", new { camp_id = model.id_camp });
         }
-        [HttpGet("edit/{id}")]
+        [HttpGet("campaign/group/edit/{id}")]
         public IActionResult Edit(Guid id)
         {
             return View(_mapper.Map<EditGroup>(_groupManager.GetGroupById(id)));
@@ -86,19 +86,27 @@ namespace UserPanel.Controllers
         public IActionResult EditAdvertList(Guid id)
         {
             if (id == Guid.Empty) return BadRequest();
+
             if (!PermissionActionManager<Guid>.CheckPermisionAccess(new Guid[] { id })) return StatusCode(401);
 
             Guid CampId = PermissionActionManager<Guid>.GetFullPath(id).Camp;
 
-            List<Advert> Adverts = _dataBaseProvider.GetAdvertRepository().GetAdvertsByCampId(CampId);
+            List<Advert> Adverts = _dataBaseProvider
+                .GetAdvertRepository()
+                .GetAdvertsByCampId(CampId);
+
             GroupModel groupModel = _groupManager.GetGroupById(id);
 
             AdvertGroupListView ModelView = new AdvertGroupListView() { Id_Group = id, Name_Group = groupModel.name };
 
+            Guid[] join_adverts = _dataBaseProvider
+                .GetGroupRepository()
+                .GroupJoinAdvert(groupModel.id)?.one_to_many?.ToArray() ?? new Guid[0];
+
             ModelView.AdvertGroups = Adverts.Select(a => new AdvertGroupEdit()
             {
                 Id = a.Id,
-                IsAttached = true,
+                IsAttached = join_adverts.Contains(a.Id),
                 Template = a.Template,
                 Name = a.Name,
                 ModifiedTime = DateTime.Now,

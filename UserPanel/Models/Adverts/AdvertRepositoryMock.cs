@@ -178,5 +178,22 @@ namespace UserPanel.Models.Adverts
             
             return _mapper.Map<List<AdvertisementMock>,List<Advert>>(SessionModelList);
         }
+
+        public override AdvertGroupJoin GetGroupRelation(Guid id)
+        {
+            if (id == Guid.Empty) throw new ArgumentNullException("Empty Guid in GetGroupRelation");
+            var AdvertModelMock = _session.GetJson<List<AdvertisementMock>>(SessionKeysReferences.advertKey).Where(m => m.id == id).FirstOrDefault();
+
+            if(AdvertModelMock != null )
+            {
+                var table = new AdvertGroupJoin();
+                table.id_advert = id;
+                table.one_to_many = AdvertModelMock.id_groups.ToList();
+                return table;
+            }
+
+            return null;
+            
+        }
     }
 }

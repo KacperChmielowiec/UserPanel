@@ -55,10 +55,16 @@
                                         <td class="px-4 py-2">
                                         <div class="flex items-center justify-center gap-x-3">
                                                 <label for="green-checkbox" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Należy:</label>
-                                                <input asp-for="AdvertGroups[i].IsAttached" style="accent-color: #16a34a;" checked id="green-checkbox" type="checkbox" class="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                                <input asp-for="AdvertGroups[i].IsAttached"  style="accent-color: #16a34a;" id="green-checkbox" type="checkbox" class="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                                                 <input hidden asp-for="AdvertGroups[i].Id"/>
                                             </div>
                                         </td>
+                                    </tr>
+                                }
+                                @if(Model.AdvertGroups.Count == 0)
+                                {
+                                    <tr>
+                                        <td colspan="6"><span>Brak Reklam dla tej grupy reklam</span></td>
                                     </tr>
                                 }
                             </tbody>
