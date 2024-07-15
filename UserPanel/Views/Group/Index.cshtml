@@ -19,7 +19,7 @@
             <h2>Podgląd Grupy</h2>
         </div>
         <div class="pull-right d-flex items-center gap-x-2">
-            <a href="/groups/edit/@Model.id" class="btn btn-flat success"><i class="icon-edit"></i> Edytuj</a>
+            <a href="/campaign/group/edit/@Model.id" class="btn btn-flat success"><i class="icon-edit"></i> Edytuj</a>
             <form method="post" class="btn btn-flat danger" asp-action="delete" asp-controller="group">
                 <input hidden type="text" name="id" value="@Model.id" />
                 <button type="submit"><i class="icon-trash"></i> Usuń</button>
@@ -241,6 +241,12 @@
                                     </td>
                                 </tr>
                             }
+                            @if(Model.advertisementsList.Count() == 0)
+                            {
+                                <tr class="h-20">
+                                    <td class="align-middle" colspan="6"><span class="font-semibold">Brak Reklam dla tej grupy reklam</span></td>
+                                </tr>
+                            }
                         </tbody>
                 </table>
             </div>
@@ -262,7 +268,7 @@
                         <a href="/group/create" class="btn btn-flat success"><i class="icon-edit"></i> Edytuj</a>
                     </div>
                 </div>
-            </div    
+            </div>   
                 <div class="block w-full overflow-x-auto">
                     <table class="items-center bg-transparent w-full border-collapse">
                         <thead>

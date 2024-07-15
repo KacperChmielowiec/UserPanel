@@ -1,4 +1,6 @@
-﻿namespace UserPanel.Interfaces.Abstract
+﻿using UserPanel.Models.Adverts;
+
+namespace UserPanel.Interfaces.Abstract
 {
     public abstract class AdvertRepository<T>
     {
@@ -12,5 +14,6 @@
         public abstract void ChangeAttachStateAdverts(Guid[] ids, Guid group, bool attach);
         public abstract List<T> GetAdvertsByCampId(Guid id);
         public abstract void UpdateAdvert(T entity);
+        public abstract AdvertGroupJoin GetGroupRelation(Guid id);
     }
 }

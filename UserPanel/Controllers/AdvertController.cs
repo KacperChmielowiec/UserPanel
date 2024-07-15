@@ -21,24 +21,24 @@ namespace UserPanel.Controllers
         }
 
         [Authorize]
-        [HttpGet("/advertisement/create-form")]
-        public IActionResult Index([FromQuery] Guid id_group)
+        [HttpGet("campaign/advertisement/create-form")]
+        public IActionResult Create([FromQuery] Guid id_camp)
         {
             
-            if(id_group == Guid.Empty)
+            if(id_camp == Guid.Empty)
             {
                 return BadRequest();
             }
-            if(!PermissionActionManager<Guid>.CheckPermisionAccess(new Guid[] {id_group}))
+            if(!PermissionActionManager<Guid>.CheckPermisionAccess(new Guid[] {id_camp}))
             {
                 return StatusCode(401);
             }
 
-            return View( new AdvertForm() { id_group = id_group } );
+            return View( new AdvertForm() { id_camp = id_camp } );
         }
         [Authorize]
-        [HttpPost("/advertisement/create")]
-        public IActionResult Create(AdvertForm advert)
+        [HttpPost("campaign/advertisement/create")]
+        public IActionResult CreatePost(AdvertForm advert)
         {
           
 
@@ -48,7 +48,7 @@ namespace UserPanel.Controllers
                 Advert advertModel = _mapper.Map<Advert>(advert);
                 advertModel.Id = Guid.NewGuid();
 
-                if (!PermissionActionManager<Guid>.CheckPermisionAccess(new Guid[] { advert.id_group }))
+                if (!PermissionActionManager<Guid>.CheckPermisionAccess(new Guid[] { advert.id_camp }))
                 {
                     return StatusCode(401);
                 }
@@ -67,7 +67,7 @@ namespace UserPanel.Controllers
                     advertModel.Formats[i].Src = PathGenerate.ShrinkRoot(FormFileService.GettFullSavedPath());
                     try
                     {
-                        _dataBaseProvider.GetAdvertRepository().CreateAdvert(advertModel,advert.id_group);
+                        _dataBaseProvider.GetAdvertRepository().CreateAdvert(advertModel,advert.id_camp);
 
                     }catch(Exception ex)
                     {
@@ -100,13 +100,13 @@ namespace UserPanel.Controllers
             }
             
             AdvertForm Curr_Ad_Form = _mapper.Map<AdvertForm>(Curr_Ad);
-            
+            Curr_Ad_Form.id_camp = PermissionActionManager<Guid>.GetFullPath(id).Camp;
 
             return View(Curr_Ad_Form);
         }
         [Authorize]
         [HttpPost("/advertisement/update-form/sent")]
-        public IActionResult Edit(AdvertForm form)
+        public IActionResult EditPost(AdvertForm form)
         {
             if(ModelState.IsValid)
             {
@@ -185,6 +185,25 @@ namespace UserPanel.Controllers
             return View(advert);
 
         }
+
+        [Authorize]
+        [HttpGet("campaign/advertisements-list/{id}")]
+        public IActionResult List(Guid id)
+        {
+            if (id == Guid.Empty)
+            {
+                return BadRequest();
+            }
+            if (!PermissionActionManager<Guid>.CheckPermisionAccess(new Guid[] { id }))
+            {
+                return StatusCode(401);
+            }
+            
+            List<Advert> AdvertsList = _dataBaseProvider.GetAdvertRepository().GetAdvertsByCampId(id);
+
+            return View(AdvertsList);
+        }
+
 
         [Authorize]
         [HttpGet("/list-all/{id}")]
