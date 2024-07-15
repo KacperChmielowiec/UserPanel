@@ -117,5 +117,23 @@ namespace UserPanel.Models.Group
 
 
         }
+
+        public override GroupAdvertJoin GroupJoinAdvert(Guid id)
+        {
+
+            if (id == Guid.Empty) throw new ArgumentNullException("Empty Guid in GroupAdvertRelation");
+            var AdvertListId = _Session.GetJson<List<AdvertisementMock>>(SessionKeysReferences.advertKey).Where(m => m.id_groups.Contains(id)).Select(m => m.id).ToList();
+
+            if (AdvertListId.Count > 0)
+            {
+                var table = new GroupAdvertJoin();
+                table.id_group = id;
+                table.one_to_many = AdvertListId;
+                return table;
+            }
+
+            return null;
+
+        }
     }
 }
