@@ -19,20 +19,6 @@
                 <img src="@m.Src" />
             </div>
         }
-        @foreach (var m in Model.Formats)
-        {
-            <div class="grid-item">
-                <span class="font-semibold">Forrmat: @m.Size</span>
-                <img src="@m.Src" />
-            </div>
-        }
-        @foreach (var m in Model.Formats)
-        {
-            <div class="grid-item">
-                <span class="font-semibold">Forrmat: @m.Size</span>
-                <img src="@m.Src" />
-            </div>
-        }
         <div class="button-container w-full py-10">
             <a href="@(isReturn ? ReturnUrl : "/")" class="btn btn-flat white"><i class="icon-reply"></i> Wróć</a>
         </div>
