@@ -18,6 +18,8 @@ namespace UserPanel.References
         CAMP_DETAILS,
         [StringValue("Groups")]
         GROUPS,
+        [StringValue("Group Details")]
+        GROUP_DETAILS,
     }
 
     public enum DataType

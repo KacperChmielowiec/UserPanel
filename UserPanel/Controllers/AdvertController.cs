@@ -141,7 +141,50 @@ namespace UserPanel.Controllers
             return Redirect("/");
 
         }
+        [Authorize]
+        [HttpPost("/advertisement/detach/{id_group}/{id}")]
+        public IActionResult Detach(Guid id_group, Guid id, [FromQuery] string ReturnUrl = "")
+        {
+            if (id == Guid.Empty || id_group == Guid.Empty)
+            {
+                return BadRequest();
+            }
+            if (!PermissionActionManager<Guid>.CheckPermisionAccess(new Guid[] { id_group, id }))
+            {
+                return StatusCode(401);
+            }
 
+            _dataBaseProvider.GetAdvertRepository().DettachAdvertFromGroup(id,id_group);
+
+            if (ReturnUrl.Length > 0)
+            {
+                return Redirect(ReturnUrl);
+            }
+
+            return Redirect("/");
+
+        }
+
+        [Authorize]
+        [HttpGet("campaign/advertisement/preview/{id}")]
+        public IActionResult Preview(Guid id)
+        {
+            if (id == Guid.Empty)
+            {
+                return BadRequest();
+            }
+            if (!PermissionActionManager<Guid>.CheckPermisionAccess(new Guid[] { id }))
+            {
+                return StatusCode(401);
+            }
+
+            Advert advert = _dataBaseProvider.GetAdvertRepository().GetAdvertById(id);
+
+            if (advert == null) return NotFound();
+
+            return View(advert);
+
+        }
 
         [Authorize]
         [HttpGet("/list-all/{id}")]

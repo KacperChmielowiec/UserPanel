@@ -59,7 +59,7 @@ namespace UserPanel.Models
                 switch(node.Value.ElementType)
                 {
                     case ContextNodeType.Camp:
-                        path.Camp.Add(guid);
+                        path.Camp = guid;
                         break;
                     case ContextNodeType.Group:
                         path.Group.Add(guid);
@@ -167,7 +167,7 @@ namespace UserPanel.Models
 
     public class ContextPath<T>
     {
-        public List<T> Camp { get; set; } = new List<T>();
+        public  T Camp { get; set; }
         public List<T> Group { get; set; } = new List<T>();
         public T Advert { get; set; }
     }
@@ -175,8 +175,8 @@ namespace UserPanel.Models
     {
         public Dictionary<T, ContextNode<T>> MapContextRef { get; set; }
         public ContextElement<T> Value { get; set; }
-        public List<ContextElement<T>> Parents { get; set; }
-        public List<ContextElement<T>> Children { get; set; }
+        public List<ContextElement<T>> Parents { get; set; } = new List<ContextElement<T>>();
+        public List<ContextElement<T>> Children { get; set; } = new List<ContextElement<T>>();
 
         public ContextNode(ContextElement<T> value, ContextElement<T> parent, Dictionary<T, ContextNode<T>> _ref) {
             
@@ -195,6 +195,7 @@ namespace UserPanel.Models
             MapContextRef = _ref;
 
         }
+    
         public ContextNode(ContextElement<T> value, List<ContextElement<T>> parents, List<ContextElement<T>> children, Dictionary<T, ContextNode<T>> _ref)
         {
 
