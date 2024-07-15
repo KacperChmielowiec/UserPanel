@@ -16,7 +16,7 @@
   "SectionsAccess": {
     "SideBar": {
       "typeAccess": "Forbidden",
-      "Pages": [ "/register", "/login", "/advertisement/create-form", "/advertisement/update-form", "/edit-advertisements" ],
+      "Pages": [ "/register", "/login", "/advertisement/create-form", "/advertisement/update-form", "/edit-advertisements", "advertisement/preview/" ],
       "Auth": true,
       "Roles": [ "ADMIN", "USER" ]
     }

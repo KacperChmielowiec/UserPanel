@@ -69,7 +69,7 @@ namespace UserPanel.Models
             List<ContextElement<Guid>> groups = full_a.Groups.Select(c => new ContextElement<Guid>() { ElementType = ContextNodeType.Group, ID = c }).ToList();
 
 
-            return new ContextNode<Guid>(value, groups, MapContext);
+            return new ContextNode<Guid>(value: value, parents: groups,children: null, _ref: MapContext);
         }
     }
    

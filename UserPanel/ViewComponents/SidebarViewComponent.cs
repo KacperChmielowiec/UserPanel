@@ -5,6 +5,7 @@ using UserPanel.Models.components;
 using UserPanel.Models.Camp;
 using UserPanel.References;
 using Microsoft.Extensions.Primitives;
+using UserPanel.Models;
 namespace UserPanel.ViewComponents
 {
     [Authorize]
@@ -57,7 +58,14 @@ namespace UserPanel.ViewComponents
                 bool result = _strategy.Invoke(HttpContext, out Guid result_guid);
                 if(result)
                 {
-                    return result_guid;
+                    if( PermissionActionManager<Guid>.GetNodeType(result_guid) == ContextNodeType.Camp)
+                    {
+                        return result_guid;
+                    }
+                    else
+                    {
+                        return PermissionActionManager<Guid>.GetFullPath(result_guid).Camp;
+                    }
                 }
 
             }

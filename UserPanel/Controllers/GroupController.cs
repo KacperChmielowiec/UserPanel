@@ -17,7 +17,7 @@ namespace UserPanel.Controllers
         private IMapper _mapper;
         private CampaningManager _campaningManager;
         private IDataBaseProvider _dataBaseProvider;
-        public GroupController(GroupManager groupManager,CampaningManager campaningManager, IMapper mapper, IDataBaseProvider dataBaseProvider) 
+        public GroupController(GroupManager groupManager, CampaningManager campaningManager, IMapper mapper, IDataBaseProvider dataBaseProvider)
         {
             _groupManager = groupManager;
             _campaningManager = campaningManager;
@@ -25,32 +25,32 @@ namespace UserPanel.Controllers
             _dataBaseProvider = dataBaseProvider;
         }
         [Authorize]
-        [HttpGet("/group/details/{id}")]
+        [HttpGet("/campaign/group/details/{id}")]
         [EndpointName(EndpointNames.GroupDetails)]
         public IActionResult Index(Guid id)
         {
-            var group = _groupManager.GetGroupById(id,true);
+            var group = _groupManager.GetGroupById(id, true);
             if (group == null) return BadRequest();
             return View(group);
         }
         [Authorize]
         [HttpGet("campaign/groups")]
-        public IActionResult Groups([FromQuery(Name="camp_id")] Guid id)
+        public IActionResult Groups([FromQuery(Name = "camp_id")] Guid id)
         {
-            if(id == null || id == Guid.Empty) return NotFound();
+            if (id == null || id == Guid.Empty) return NotFound();
             var groups = _groupManager.GetGroupsByCampID(id);
             ViewData["camp_id"] = id;
             return View(groups);
         }
         [Authorize]
-        [HttpGet("create/{id}")]
+        [HttpGet("campaign/group/create/{id}")]
         public IActionResult Create(Guid id)
         {
             var campaning = _campaningManager.GetCampaningById(id);
-            return View(new CreateGroup() { id_camp = campaning.id, Utm_Source = campaning?.details?.Utm_Source ?? ""});
+            return View(new CreateGroup() { id_camp = campaning.id, Utm_Source = campaning?.details?.Utm_Source ?? "" });
         }
         [Authorize]
-        [HttpPost("create/{id}")]
+        [HttpPost("/create/{id}")]
         public IActionResult Create(CreateGroup model)
         {
             if (model.id_camp == null || model.id_camp == Guid.Empty) return BadRequest();
@@ -60,11 +60,11 @@ namespace UserPanel.Controllers
                 return View(model);
             }
 
-            GroupModel groupModel =  _mapper.Map<GroupModel>(model);
+            GroupModel groupModel = _mapper.Map<GroupModel>(model);
 
             _groupManager.CreateGroup(model.id_camp, groupModel);
 
-            return RedirectToAction("groups", new { camp_id = model.id_camp});   
+            return RedirectToAction("groups", new { camp_id = model.id_camp });
         }
         [HttpGet("edit/{id}")]
         public IActionResult Edit(Guid id)
@@ -74,24 +74,26 @@ namespace UserPanel.Controllers
         [HttpPost("edit")]
         public IActionResult Edit(EditGroup editGroup)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return View(editGroup);
             }
             var group = _mapper.Map<GroupModel>(editGroup);
             _groupManager.UpdateGroup(group);
-            return RedirectToAction("Index", new { id = editGroup.id });   
+            return RedirectToAction("Index", new { id = editGroup.id });
         }
-        [HttpGet("edit-advertisements/{groupId}")]
-        public IActionResult EditAdvertList(Guid groupId)
+        [HttpGet("campaign/group/edit-advertisements/{id}")]
+        public IActionResult EditAdvertList(Guid id)
         {
-            if(groupId == Guid.Empty) return BadRequest();
-            if (!PermissionActionManager<Guid>.CheckPermisionAccess(new Guid[] { groupId })) return StatusCode(401);
+            if (id == Guid.Empty) return BadRequest();
+            if (!PermissionActionManager<Guid>.CheckPermisionAccess(new Guid[] { id })) return StatusCode(401);
 
-            List<Advert> Adverts = _dataBaseProvider.GetAdvertRepository().GetAdvertGroupId(groupId);
-            GroupModel groupModel = _groupManager.GetGroupById(groupId);
+            Guid CampId = PermissionActionManager<Guid>.GetFullPath(id).Camp;
 
-            AdvertGroupListView ModelView = new AdvertGroupListView() { Id_Group = groupId, Name_Group = groupModel.name};
+            List<Advert> Adverts = _dataBaseProvider.GetAdvertRepository().GetAdvertsByCampId(CampId);
+            GroupModel groupModel = _groupManager.GetGroupById(id);
+
+            AdvertGroupListView ModelView = new AdvertGroupListView() { Id_Group = id, Name_Group = groupModel.name };
 
             ModelView.AdvertGroups = Adverts.Select(a => new AdvertGroupEdit()
             {
@@ -109,16 +111,20 @@ namespace UserPanel.Controllers
         }
 
         [HttpPost("edit-advertisements/sent")]
-        public IActionResult EditAdvertList([FromForm] AdvertGroupListView ModelView)
+        public IActionResult EditAdvertListPost([FromForm] AdvertGroupListView ModelView)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                foreach(var ad in ModelView.AdvertGroups)
-                {
-                    if (ad.IsAttached) continue;
-                }
+                var ids_attach = ModelView.AdvertGroups.Where(ad => ad.IsAttached).Select(ad => ad.Id).ToArray();
+                var ids_detach = ModelView.AdvertGroups.Where(ad => !ad.IsAttached).Select(ad => ad.Id).ToArray();
+                var id_group = ModelView.Id_Group;
+
+                if(ids_detach.Length > 0)
+                    _dataBaseProvider.GetAdvertRepository().ChangeAttachStateAdverts(ids_detach, id_group, false);
+                if(ids_attach.Length > 0)
+                    _dataBaseProvider.GetAdvertRepository().ChangeAttachStateAdverts(ids_attach, id_group, true); 
             }
-            return View(ModelView);
+            return RedirectToAction("Index", new { id = ModelView.Id_Group });
         }
     }
 }

@@ -6,7 +6,7 @@ namespace UserPanel.Models.Adverts
     {
         [Required]
         public Guid Id { get; set; }
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
         [Required]
         public bool IsAttached { get; set; }
 
@@ -16,7 +16,7 @@ namespace UserPanel.Models.Adverts
 
         public bool isActive { get; set; }
 
-        public List<string> Formats { get; set; }
+        public List<string>? Formats { get; set; }
 
     }
     public class AdvertGroupListView
