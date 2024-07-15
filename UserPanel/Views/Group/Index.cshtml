@@ -4,6 +4,7 @@
 *@
 @{
     var host = "http://localhost:57348/";
+    var currUrl = Context.Request.Path + Context.Request.QueryString;
 }
 <section id="details d-block">
 @functions {
@@ -194,12 +195,12 @@
                         <h1 class="font-semibold text-xl text-blueGray-700">Twoje reklamy:</h1>
                     </div>
                     <div class="pull-right">
-                        <a href="/group/create" class="btn btn-flat success"><i class="icon-edit"></i> Edytuj</a>
+                        <a href="/campaign/group/edit-advertisements/@Model.id" class="btn btn-flat success"><i class="icon-edit"></i> Edytuj</a>
                     </div>
                 </div>
             </div>
                 <div class="block w-full overflow-x-auto">
-                    <table class="items-center bg-transparent w-full border-collapse">
+                    <table class="items-center bg-transparent w-full border-collapse  mb-3">
                         <thead>
                             <tr>
                                 <th class="px-4 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-center">
@@ -219,7 +220,7 @@
                         <tbody class="text-center align-middle">
                             @foreach (var ad in Model.advertisementsList)
                             {
-                                <tr class="align-middle">
+                                <tr class="align-middle my-2">
                                     <td class="align-middle">@ad.Name</td>
                                     <td class="align-middle py-2">
                                         @foreach (var format in ad.Formats)
@@ -233,7 +234,9 @@
                                     </td>
                                     <td class="align-middle">
                                         <div class="d-flex items-center justify-center">
-                                            <a href="#" class="btn btn-flat white d-flex items-center"><i class="icon-search mr-2"></i> Usuń powiązanie</a>
+                                            <form asp-action="Detach" asp-controller="Advert" asp-route-id="@ad.Id" asp-route-id_group="@Model.id" asp-route-returnUrl="@currUrl">
+                                                <button type="submit" class="btn btn-flat white d-flex items-center"><i class="icon-search mr-2"></i> Usuń powiązanie</button>
+                                            </form>
                                         </div>
                                     </td>
                                 </tr>

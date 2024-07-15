@@ -58,7 +58,7 @@ namespace UserPanel.Models.Adverts
             var mockModel = _mapper.Map<AdvertisementMock>(entity);
             mockModel.id_groups = new Guid[] { idGroup };
             mockModel.id_user = UserManager.getUserId(_context);
-            mockModel.id_camp = PermissionActionManager<Guid>.GetFullPath(idGroup).Camp.First();
+            mockModel.id_camp = PermissionActionManager<Guid>.GetFullPath(idGroup).Camp;
 
             SessionModels.Add(mockModel);
             _session.SetJson(SessionKeysReferences.advertKey, SessionModels);
@@ -116,10 +116,19 @@ namespace UserPanel.Models.Adverts
             return;
         }
 
-        public override void DettachAdvertsFromGroup(Guid[] ids, Guid group)
+        public override void DettachAdvertFromGroup(Guid id, Guid id_group)
         {
-            if (ids.Length == 0 || group == Guid.Empty) return;
-            var SessionModelsGroup = _session.GetJson<List<AdvertisementMock>>(SessionKeysReferences.advertKey) ?? new List<AdvertisementMock>();
+            if (id == Guid.Empty || id_group == Guid.Empty) throw new ArgumentNullException("id or id_group is empty in DettachAdvertGroup method");
+            var SessionModelsList = _session.GetJson<List<AdvertisementMock>>(SessionKeysReferences.advertKey) ?? new List<AdvertisementMock>();
+            AdvertisementMock adMock = SessionModelsList.FirstOrDefault(m => m.id == id);
+            if (adMock != null)
+            {
+                adMock.id_groups = adMock.id_groups.Where(l => l != id_group).ToArray();
+                SessionModelsList.RemoveAll(m => m.id == id);
+                SessionModelsList.Add(adMock);
+                _session.SetJson(SessionKeysReferences.advertKey, SessionModelsList);
+            }
+            
         }
 
         public override void DeleteAdvertsById(Guid id)
@@ -133,6 +142,41 @@ namespace UserPanel.Models.Adverts
 
             _session.SetJson(SessionKeysReferences.advertKey, SessionModelsGroup);
 
+        }
+
+        public override void ChangeAttachStateAdverts(Guid[] ids, Guid id_group, bool attach)
+        {
+            if (ids.Length == 0 || id_group == Guid.Empty) throw new ArgumentNullException("id array or id_group is empty in DettachAdvertsGroup method");
+            var SessionModelsList = _session.GetJson<List<AdvertisementMock>>(SessionKeysReferences.advertKey) ?? new List<AdvertisementMock>();
+
+            List<AdvertisementMock> adMockList = SessionModelsList.Where(m => ids.Contains(m.id))?.ToList() ?? new List<AdvertisementMock>();
+
+            if (adMockList.Count > 0)
+            {
+                adMockList.ForEach((ad) =>
+                {
+                    if (attach)
+                    {
+                        ad.id_groups = ad.id_groups.Concat(new Guid[] { id_group }).ToArray();
+                    }
+                    else
+                    {
+                        ad.id_groups = ad.id_groups.Where(l => l != id_group).ToArray();
+                    }
+                    SessionModelsList.RemoveAll(m => m.id == ad.id);
+                    SessionModelsList.Add(ad);
+                    
+                });
+                _session.SetJson(SessionKeysReferences.advertKey, SessionModelsList);
+            }
+        }
+
+        public override List<Advert> GetAdvertsByCampId(Guid id)
+        {
+            if (id == Guid.Empty) throw new ArgumentNullException("Empty id in GetAdvertByCampId method");
+            var SessionModelList = _session.GetJson<List<AdvertisementMock>>(SessionKeysReferences.advertKey).Where(m => m.id_camp ==  id).ToList() ?? new List<AdvertisementMock>();
+            
+            return _mapper.Map<List<AdvertisementMock>,List<Advert>>(SessionModelList);
         }
     }
 }
