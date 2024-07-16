@@ -37,10 +37,16 @@ namespace UserPanel.Models.User
         public override void DeleteCampaning(Guid id)
         {
             var SessionCampList = _session.GetJson<List<CampaningMock>>(PathCamp) ?? new List<CampaningMock>();
-            SessionCampList.RemoveAll(model => model.id == id);
-            _session.SetJson(PathCamp, SessionCampList);
-
-            Subjects.dataActionSubject.notify(new Services.observable.DataActionMessage() { actionType = Types.DataActionType.REMOVE, dataType = DataType.Campaning, id = id });
+            int elements = SessionCampList.RemoveAll(model => model.id == id);
+            if (elements > 0)
+            {
+                _session.SetJson(PathCamp, SessionCampList);
+                Subjects.dataActionSubject.notify(new Services.observable.DataActionMessage() { actionType = Types.DataActionType.REMOVE, dataType = DataType.Campaning, id = id });
+            }
+            else
+            {
+                throw new KeyNotFoundException("W bazie danych nie znaleziono kampanii o takim Guid");
+            }
         }
 
         public override Campaning? GetCampaningById(Guid id)

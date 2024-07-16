@@ -2317,3 +2317,16 @@ div .prepend {
     width: 255px !important;
     text-align: center;
 }
+.alert.warning {
+    background-color: #f0ad4e;
+    color: #ffffff;
+}
+.alert.success {
+    color: #ffffff;
+    background-color: #5cb85c;
+}
+.alert {
+    padding: 15px 10px 15px 10px;
+    border-radius: 10px;
+    font-size: 18px;
+}

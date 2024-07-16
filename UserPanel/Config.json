@@ -56,6 +56,16 @@
     "RegisterMessages": {
       "PhoneExists": "User with given Phone number already exists",
       "EmailExists": "User with given Email already exists"
+    },
+    "Group": {
+      "err_remove": "Nie mogliśmy usunąc grupy reklam. Coś poszło nie tak",
+      "suc_remove": "Grupa reklam została pomyślnie usunięta",
+      "err_default": "Wystąpił nieznany bład w przetwarzaniu żądania"
+    },
+    "Campaign": {
+      "err_remove": "Nie mogliśmy usunąc kampanii. Coś poszło nie tak",
+      "suc_remove": "Kampania została pomyślnie usunięta",
+      "err_default": "Wystąpił nieznany bład w przetwarzaniu żądania"
     }
   }
 }

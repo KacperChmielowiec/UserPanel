@@ -41,5 +41,36 @@ namespace UserPanel.Helpers
         }
 
     }
+    public static class ViewDataHelper
+    {
+     
+        public static string ParseToString(this ViewDataDictionary viewData, string key, string defaultValue = "")
+        {
+            if (viewData == null)
+            {
+                throw new ArgumentNullException(nameof(viewData));
+            }
 
+            if (string.IsNullOrEmpty(key))
+            {
+                return "";
+            }
+
+            if (viewData.ContainsKey(key))
+            {
+                try
+                {
+                    var value = viewData[key];
+                    return value?.ToString() ?? defaultValue;
+                }
+                catch
+                {
+                    // Log exception if needed
+                    return defaultValue;
+                }
+            }
+
+            return defaultValue;
+        }
+    }
 }
