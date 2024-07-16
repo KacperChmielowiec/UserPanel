@@ -120,7 +120,6 @@
                             <div class="btn-group pull-right">
                             <form asp-action="switch" asp-controller="campaign" method="post">
                                 <input hidden value="@Model.id" name="id"/>
-                                <input hidden value="@Model.status" name="status" />
                                 <button type="submit" class="btn-flat @( Model.status ? "success" : "danger" )"><i class="icon-off mr-1"></i>@(Model.status ? "Wyłącz" : "Włącz")</button>
                             </form>
                             </div>
