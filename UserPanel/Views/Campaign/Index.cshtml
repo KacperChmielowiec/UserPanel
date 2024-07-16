@@ -14,6 +14,18 @@
    
     }
     <div class="header mx-4 my-7 d-block">
+        @if (ViewData.ContainsKey("error"))
+        {
+            <div class="alert warning mb-6 mt-10">
+                @ViewData.ParseToString("error")
+            </div>
+        }
+        else if (ViewData.ContainsKey("success"))
+        {
+            <div class="alert success mb-6 mt-10">
+                @ViewData.ParseToString("success")
+            </div>
+        }
         <div class="col-md-12">
             <div class="pull-left">
                 <h2>Podgląd kampanii</h2>

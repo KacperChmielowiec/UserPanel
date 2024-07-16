@@ -2,10 +2,22 @@
 @{
     ViewData["Title"] = "Groups";
     Layout = "_Layout";
-   
+    
 }
 <section class="py-1 bg-blueGray-50 table-campaning">
     <div class="w-full  mb-12 xl:mb-0 px-4 mx-auto">
+        @if (ViewData.ContainsKey("error"))
+        {
+            <div class="alert warning mb-6 mt-10">
+                @ViewData.ParseToString("error")
+            </div>
+        }
+        else if (ViewData.ContainsKey("success"))
+        {
+            <div class="alert success mb-6 mt-10">
+                @ViewData.ParseToString("success")
+            </div>
+        }
         <div class="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded ">
             <div class="rounded-t mb-0 px-4 py-3 border-0">
                 <div class="flex flex-wrap items-center">
@@ -19,11 +31,12 @@
             </div>
 
             <div class="block w-full overflow-x-auto">
+
                 <table class="items-center bg-transparent w-full border-collapse">
                     <thead>
                         <tr>
                             <th class="px-4 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-center">
-                                Kampania
+                                Grupa (nazwa)
                             </th>
                             <th class="px-4 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-center">
                                 <table class="flags-inner-table">
@@ -87,6 +100,12 @@
                                         </button>
                                     </div>
                                 </td>
+                            </tr>
+                        }
+                        @if(Model?.Count == 0 || Model == null)
+                        {
+                            <tr class="h-20">
+                                <td class="align-middle text-center" colspan="4"><span class="font-semibold">Brak grup reklam do wyświetlenia</span></td>
                             </tr>
                         }
                     </tbody>

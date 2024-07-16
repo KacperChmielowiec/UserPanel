@@ -1,12 +1,16 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using UserPanel.Attributes;
+using UserPanel.Helpers;
 using UserPanel.Models.Camp;
 using UserPanel.References;
 using UserPanel.Services;
+using UserPanel.Types;
 namespace UserPanel.Controllers
 {
     [Authorize]
+    [CampFilter]
     public class CampaignController : Controller
     {
         private readonly CampaningManager _campaningManager;
@@ -67,8 +71,15 @@ namespace UserPanel.Controllers
         [HttpPost("campaign/delete")]
         public IActionResult Delete([FromForm] Guid id)
         {
-            _campaningManager.DeleteCampaning(id);
-            return RedirectToAction("Campaigns");
+            try
+            {
+                _campaningManager.DeleteCampaning(id);
+                return RedirectToAction("Campaigns", new { success = ErrorForm.suc_remove });
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("Index", new { id = id, error = ErrorForm.err_remove });
+            }
         }
         [HttpGet("campaign/edit/{id}")]
         public IActionResult Edit(Guid id)
@@ -91,7 +102,7 @@ namespace UserPanel.Controllers
                 _campaningManager.WriteLogoCampaning(editCampaning.logo, id.ToString());
             }
             _campaningManager.UpdateCampaning(campaning);
-            return RedirectToAction("Index", new { id = id });
+            return RedirectToAction("Index", new { id = id, error = ErrorForm.err_remove.GetStringValue() });
         }
     }
 }

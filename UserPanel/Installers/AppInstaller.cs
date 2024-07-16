@@ -1,4 +1,4 @@
-﻿ using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using UserPanel.Interfaces;
 using UserPanel.Providers;
 using UserPanel.Services.database;
@@ -7,9 +7,12 @@ using UserPanel.Models.Config;
 using System.Security.Cryptography;
 using Microsoft.OpenApi.Models;
 using UserPanel.Models;
-using UserPanel.Services.observable;
 using UserPanel.References;
 using UserPanel.Helpers;
+using UserPanel.Models.Messages;
+using UserPanel.Filters;
+using Microsoft.CodeAnalysis.Options;
+using Microsoft.Extensions.Options;
 namespace UserPanel.Installers
 {
     public class AppInstaller : Installer
@@ -77,6 +80,15 @@ namespace UserPanel.Installers
             });
             builder.Services.Configure<EmailConfiguration>(builder.Configuration.GetSection("STMP_CONFIG"));
             builder.Services.Configure<EnviromentSettings>(builder.Configuration.GetSection("ENVIROMENT"));
+            builder.Services.Configure<GroupFormMessages>(builder.Configuration.GetSection("messages:Group"));
+            builder.Services.Configure<CampFormMessages>(builder.Configuration.GetSection("messages:Campaign"));
+
+
+            builder.Services.AddScoped<GroupFormMessages>( p => p.GetRequiredService<IOptions<GroupFormMessages>>().Value );
+            builder.Services.AddScoped<CampFormMessages>(p => p.GetRequiredService<IOptions<CampFormMessages>>().Value);
+
+            builder.Services.AddScoped<GroupMessageFilterAction>();
+            builder.Services.AddScoped<CampMessageFilterAction>();
         }
 
     }

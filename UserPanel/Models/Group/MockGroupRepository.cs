@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Elfie.Serialization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.IdentityModel.Tokens;
 using UserPanel.Helpers;
 using UserPanel.Interfaces;
@@ -134,6 +135,22 @@ namespace UserPanel.Models.Group
 
             return null;
 
+        }
+
+        public override void DeleteGroup(Guid id)
+        {
+            if (id == Guid.Empty) throw new ArgumentNullException("Empty Guid DeleteGroup method");
+            var GroupModelSession = _Session.GetJson<List<GroupModelMock>>(SessionKeysReferences.groupsKey).ToList();
+            int elements = GroupModelSession.RemoveAll(m => m.id == id);
+            if (elements > 0)
+            {
+                _Session.SetJson(SessionKeysReferences.groupsKey, GroupModelSession);
+            }
+            else
+            {
+                throw new KeyNotFoundException("Group doesn't exists in dataBase");
+            }
+           
         }
     }
 }

@@ -10,5 +10,6 @@ namespace UserPanel.Interfaces.Abstract
         public abstract T GetGroupById(Guid id);
         public abstract void CreateGroup(Guid id, T model);
         public abstract GroupAdvertJoin GroupJoinAdvert(Guid id);
+        public abstract void DeleteGroup(Guid id);
     }
 }

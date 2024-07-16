@@ -7,10 +7,15 @@ using UserPanel.Models.Adverts;
 using UserPanel.Models.Group;
 using UserPanel.References;
 using UserPanel.Services;
+using UserPanel.Types;
+using UserPanel.Filters;
+using UserPanel.Helpers;
+using UserPanel.Attributes;
 
 namespace UserPanel.Controllers
 {
     [Authorize]
+    [GroupFilter]
     public class GroupController : Controller
     {
         private GroupManager _groupManager;
@@ -71,8 +76,8 @@ namespace UserPanel.Controllers
         {
             return View(_mapper.Map<EditGroup>(_groupManager.GetGroupById(id)));
         }
-        [HttpPost("edit")]
-        public IActionResult Edit(EditGroup editGroup)
+        [HttpPost("campaign/group/edit/sent")]
+        public IActionResult EditPost(EditGroup editGroup)
         {
             if (!ModelState.IsValid)
             {
@@ -134,5 +139,27 @@ namespace UserPanel.Controllers
             }
             return RedirectToAction("Index", new { id = ModelView.Id_Group });
         }
+
+        [Authorize]
+        [HttpPost("campaign/group/delete")]
+        public IActionResult Delete([FromForm] Guid id)
+        {
+            if(id == Guid.Empty) return View();
+            if (!PermissionActionManager<Guid>.CheckPermisionAccess(new Guid[] { id })) return StatusCode(401);
+
+            try
+            {
+               _dataBaseProvider.GetGroupRepository().DeleteGroup(id);
+
+                Guid camp = PermissionActionManager<Guid>.GetFullPath(id).Camp;
+                return RedirectToAction("Groups", new { camp_id = camp, success = ErrorForm.suc_remove.GetStringValue() });
+
+            }
+            catch(Exception)
+            {
+                return RedirectToAction("Index", new { id = id, error = ErrorForm.err_remove.GetStringValue() });
+            }
+        }
+
     }
 }
