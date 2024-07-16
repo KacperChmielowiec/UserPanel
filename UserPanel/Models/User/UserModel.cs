@@ -14,6 +14,6 @@ namespace UserPanel.Models.User
         public string Company { get; set; }
         public string Address { get; set; }
         [JsonProperty("State")]
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = false;
     }
 }

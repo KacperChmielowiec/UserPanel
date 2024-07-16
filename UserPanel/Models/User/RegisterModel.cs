@@ -26,7 +26,7 @@ namespace UserPanel.Models.User
         public string PhoneNumber { get; set; }
 
         [Required]
-        [RegularExpression(@"^[\w]{4,14}$")]
+        [RegularExpression(@"^[\w]{4,14}$",ErrorMessage = "Name have to include between 4 to 14 chars (not allowed special chars)")]
         public string Name { get; set; }
 
         public string ReturnUrl { get; set; } = "/";
