@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UserPanel.Attributes;
-using UserPanel.Helpers;
 using UserPanel.Models.Camp;
 using UserPanel.References;
 using UserPanel.Services;
@@ -39,7 +38,7 @@ namespace UserPanel.Controllers
         }
         [Authorize]
         [HttpPost("campaign/switch")]
-        public IActionResult Switch([FromForm] bool state, [FromForm] Guid id)
+        public IActionResult Switch([FromForm] Guid id)
         {
 
             var list = _campaningManager
@@ -102,7 +101,7 @@ namespace UserPanel.Controllers
                 _campaningManager.WriteLogoCampaning(editCampaning.logo, id.ToString());
             }
             _campaningManager.UpdateCampaning(campaning);
-            return RedirectToAction("Index", new { id = id, error = ErrorForm.err_remove.GetStringValue() });
+            return RedirectToAction("Index", new { id = id });
         }
     }
 }

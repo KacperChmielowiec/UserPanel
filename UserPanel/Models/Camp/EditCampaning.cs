@@ -11,7 +11,7 @@ namespace UserPanel.Models.Camp
         [RegularExpression(@"^[A-Za-z0-9]{4,25}$", ErrorMessage = "Niepoprawny format")]
         public string name {  get; set; }
         [Required]
-        [RegularExpression(@"^(http://|https://)[A-Za-z0-9]{3,15}(.pl|.com])", ErrorMessage = "Niepoprawny format")]
+        [RegularExpression(@"^((http://|https://)|www.)[A-Za-z0-9]{3,15}(.pl|.com])", ErrorMessage = "Niepoprawny format")]
         public string website { get; set; }
         [Required]
         public bool status { get; set; }

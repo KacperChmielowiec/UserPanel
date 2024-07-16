@@ -13,7 +13,7 @@
                 <h1 class="text-4xl font-semibold">Pulpit</h1>
             </div>
             <div class="range-buttons">
-                <button onclick="handleFilterClick()" class="btn btn-flat gray"><i class="icon-filter"></i>filtruj</button>
+                <button onclick="handleFilterClick()" class="btn btn-flat gray"><i class="icon-filter"></i> filtruj</button>
                 <a asp-controller="Home" asp-action="index" asp-route-timerate="@rate1" value="7" onclick="handleFilterClickButton()"  class="btn glow btn-flat @(Model?.FilterParametr.rate ==  ButtonFilterRate.RATE_1 ? "success check" : "white")">7 dni</a>
                 <a asp-controller="Home" asp-action="index" asp-route-timerate="@rate2" value="14" onclick="handleFilterClickButton()" class="btn glow btn-flat @(Model?.FilterParametr.rate ==  ButtonFilterRate.RATE_2 ? "success check" : "white")">14 dni</a>
                 <a asp-controller="Home" asp-action="index" asp-route-timerate="@rate3" value="30" onclick="handleFilterClickButton()" class="btn glow btn-flat @(Model?.FilterParametr.rate ==  ButtonFilterRate.RATE_3 ? "success check" : "white")">30 dni</a>
@@ -34,7 +34,7 @@
                 <span data-id="select-01" class="absolute top-1/2 -translate-y-1/2 pl-2 placeholder-span">choose campaning</span>
                 <span class="input-group-addon h-[40px] d-block">
                     <button onclick="handleFilterSumbit()" class="btn-flat d-flex success">
-                        <i class="icon-filter"></i> Zobacz
+                        <i class="icon-filter mr-1"></i> Zobacz
                     </button>
                 </span>
             </div>
@@ -51,9 +51,6 @@
                 <div class="grow">
                     <div class="d-flex justify-items-center justify-center p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
                         <div id="visit" class="w-[450px] h-[250px] canvas"></div>
-                        <div class="w-[450px] h-[250px] justify-items-center justify-center no_data" style="display: none">
-                            <img src="/assets/empty_doc.svg" width="200" height="200" />
-                        </div>
                     </div>
                      <div class="absolute">
                         <p class="p-2 text-lg italic text-gray-500">Views statistic</p>
@@ -63,9 +60,6 @@
                 <div class="grow">
                     <div class="d-flex justify-items-center justify-center p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
                         <div id="clicks" class="w-[450px] h-[250px] canvas"></div>
-                        <div class="w-[450px] h-[250px] justify-items-center justify-center no_data" style="display: none">
-                            <img src="/assets/empty_doc.svg" width="200" height="200" />
-                        </div>
                     </div>
                      <div class="absolute">
                         <p class="p-2 text-lg italic text-gray-500">Clicks statistic</p>
@@ -75,9 +69,6 @@
                 <div class="grow">
                     <div class="d-flex justify-items-center justify-center p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
                         <div id="budget" class="w-[450px] h-[250px] canvas"></div>
-                        <div class="w-[450px] h-[250px] justify-items-center justify-center no_data" style="display: none">
-                            <img src="/assets/empty_doc.svg" width="200" height="200" />
-                        </div>
                     </div>
                      <div class="absolute">
                         <p class="p-2 text-lg italic text-gray-500">Budged statistic</p>
@@ -121,7 +112,8 @@
             selectedRate: "div.range-buttons a.check",
             visit: "div#visit",
             clicks: "div#clicks",
-            budget: "div#budget"
+            budget: "div#budget",
+            canvas: ".canvas"
         },
         data: {
             campaningsList: [],
@@ -137,7 +129,14 @@
     }
     const handleFilterSumbit = () => {
         loadSelected()
+        clearAllChart();
         loadCharts()
+    }
+    const clearAllChart = () => {
+        const canvas = [...document.querySelectorAll(contextHTML.markups.canvas)]
+        canvas.forEach((c) => {
+            c.innerHTML = "";
+        })
     }
     const loadCharts = async () => {
 
@@ -191,9 +190,12 @@
             return
         }
 
-        if (check_data_valid(data,"visit")) Utils.loadVisitChart(Utils.extractChartDataVisit(data, "visit"),contextHTML.markups.visit)
-        if (check_data_valid(data, "clicks")) Utils.loadClicksChart(Utils.extractChartDataClicks(data, "clicks"),contextHTML.markups.clicks)
-        if (check_data_valid(data, "budget")) Utils.loadBudgetChart(Utils.extractChartDataBudget(data, "budget"), contextHTML.markups.budget)
+        if (check_data_valid(data,"visit")) 
+            Utils.loadVisitChart(Utils.extractChartDataVisit(data, "visit"),contextHTML.markups.visit)
+        if (check_data_valid(data, "clicks")) 
+            Utils.loadClicksChart(Utils.extractChartDataClicks(data, "clicks"),contextHTML.markups.clicks)
+        if (check_data_valid(data, "budget")) 
+            Utils.loadBudgetChart(Utils.extractChartDataBudget(data, "budget"), contextHTML.markups.budget)
   
     }
     const loadSelected = () => {

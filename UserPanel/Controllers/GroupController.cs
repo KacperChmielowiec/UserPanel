@@ -161,5 +161,27 @@ namespace UserPanel.Controllers
             }
         }
 
+        [Authorize]
+        [HttpPost("campaign/group/switch")]
+        public IActionResult Switch([FromForm] Guid id)
+        {
+            var group = _groupManager.GetGroupById(id);
+
+            if (group == null) return StatusCode(404);
+
+            group.status = !group.status;
+
+            try
+            {
+                _groupManager.UpdateGroup(group);
+                return RedirectToAction("Index", new { id = id });
+
+            }
+            catch(Exception e)
+            {
+                return StatusCode(500);
+            }
+        }
+
     }
 }
