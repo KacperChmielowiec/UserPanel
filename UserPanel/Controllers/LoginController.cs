@@ -57,7 +57,7 @@ namespace UserPanel.Controllers
             if (userModel == null)
             {
                 ModelState.AddModelError("LoginError", notFoundMessage);
-                result = false;
+                return View(loginModel);
             }
             if (!_hasher.VerifyHashedPassword(userModel?.Password ?? "",loginModel.Password) && result)
             {
