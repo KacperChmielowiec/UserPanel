@@ -79,16 +79,16 @@
                         <header class="text-xl">UTM:</header>
                     </div>
                     <div class="form-group d-flex pb-4 flex-col gap-y-1">
-                        <span asp-validation-for="Utm_Medium" class="text-danger"></span>
-                        <input type="text" data-role="input" data-prepend="UTM_MEDIUM:" name="Utm_Medium" asp-for="Utm_Medium">
-                    </div>
-                    <div class="form-group d-flex pb-4 flex-col gap-y-1">
                         <span asp-validation-for="Utm_Source" class="text-danger"></span>
                         <input type="text" data-role="input" data-prepend="UTM_SOURCE:" name="Utm_Source" asp-for="Utm_Source">
                     </div>
                     <div class="form-group d-flex pb-4 flex-col gap-y-1">
+                        <span asp-validation-for="Utm_Medium" class="text-danger"></span>
+                        <input type="text" data-role="input" data-prepend="UTM_MEDIUM:" name="Utm_Medium" asp-for="Utm_Medium">
+                    </div>
+                    <div class="form-group d-flex pb-4 flex-col gap-y-1">
                         <span asp-validation-for="Utm_Camp" class="text-danger"></span>
-                        <input type="text" data-role="input" data-prepend="UTM_SOURCE:" name="Utm_Camp" asp-for="Utm_Camp">
+                        <input type="text" data-role="input" data-prepend="UTM_Camp:" name="Utm_Camp" asp-for="Utm_Camp">
                     </div>
                     <div class="rounded-t mb-0 py-6 border-b-1">
                         <div class="pull-right">

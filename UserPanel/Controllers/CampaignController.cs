@@ -25,7 +25,7 @@ namespace UserPanel.Controllers
         [EndpointName(EndpointNames.CampaningDetails)]
         public IActionResult Index(Guid id)
         {
-            _campaningManager.SetCampaningSession(id);
+            _campaningManager.SetCampaignSession(id);
             var camp = _campaningManager.GetCampanings().Where(camp => camp.id == id).FirstOrDefault();
             return View(camp);
         }
@@ -33,8 +33,8 @@ namespace UserPanel.Controllers
         [HttpGet("/campaigns/list")]
         public IActionResult Campaigns()
         {
-            var camp = _campaningManager.GetCampanings();
-            return View(camp);
+            var camps = _campaningManager.GetCampanings();
+            return View(camps);
         }
         [Authorize]
         [HttpPost("campaign/switch")]
@@ -63,9 +63,16 @@ namespace UserPanel.Controllers
             if (!ModelState.IsValid)
                 return View();
 
-            _campaningManager.CreateCampaning(form);
+            try
+            {
+                _campaningManager.CreateCampaning(form);
+                return RedirectToAction("Campaigns", new { success = ErrorForm.suc_create });
+            }
+            catch(Exception) {
+                return RedirectToAction("Campaigns", new { error = ErrorForm.err_create });
+            }
 
-            return RedirectToAction("Campaigns"); 
+            
         }
         [HttpPost("campaign/delete")]
         public IActionResult Delete([FromForm] Guid id)
@@ -73,6 +80,7 @@ namespace UserPanel.Controllers
             try
             {
                 _campaningManager.DeleteCampaning(id);
+                _campaningManager.RemoveCampaignSession(id);
                 return RedirectToAction("Campaigns", new { success = ErrorForm.suc_remove });
             }
             catch (Exception)

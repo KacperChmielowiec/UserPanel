@@ -12,5 +12,7 @@ namespace UserPanel.Models.Camp
         public DetailsCampaning? details { get; set; }
         public BudgetCampaning? budget { get; set; }
         public bool status { get; set; }
+
+        public List<string> feeds = new List<string>();
     }
 }

@@ -9,7 +9,7 @@
         return number.ToString("N" + decimals);
     }
 }
-<div class="header mx-4 my-7 d-block">
+<div class="header mx-4 mt-11 d-block">
     @if (ViewData.ContainsKey("error"))
     {
        <div class="alert warning mb-6 mt-10">
@@ -22,11 +22,11 @@
             @ViewData.ParseToString("success")
         </div>
     }
-    <div class="col-md-12">
-        <div class="pull-left">
+    <div class="d-flex justify-between mx-2">
+        <div class="">
             <h2>Podgląd Grupy</h2>
         </div>
-        <div class="pull-right d-flex items-center gap-x-2">
+        <div class="d-flex items-center gap-x-2">
             <a href="/campaign/group/edit/@Model.id" class="btn btn-flat success"><i class="icon-edit"></i> Edytuj</a>
              <form method="post" class="btn btn-flat danger" action="/campaign/group/delete">
                 <input hidden type="text" name="id" value="@Model.id" />
@@ -37,7 +37,7 @@
     </div>
 </div>
 
-<div class="mx-4 py-10">
+<div class="mx-4 py-5">
     <table class="table table-condensed">
         <tbody>
             <tr>

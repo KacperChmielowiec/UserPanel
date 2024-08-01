@@ -60,13 +60,15 @@
         {
           "id": "7c9e6679-2225-40de-944b-e07fc1f90ae7",
           "name": "UserCampaning2",
-          "FK_User": "2",
+          "FK_User": "1",
           "website": "wwww.tes2.pl",
+          "utm_source": "panel",
+          "utm_medium": "cpc",
           "details": {
             "country": "Poland",
             "currency": "PLN",
             "emailNotify": true,
-            "utm_sourcel": "panel",
+            "utm_source": "panel",
             "utm_medium": "cpc",
             "logo": "",
             "flags": {
@@ -171,9 +173,10 @@
           "name": "Mock_AD_1",
           "desc": "mock ads...",
           "template": "Static",
+          "created": "2023-07-27T15:30:00Z",
           "formats": [
             {
-              "url": "https://mock-panel.com",
+              "url": "https://mock.panel.com",
               "size": "300x300",
               "src": "/static/advertisement/3964cff5-320b-44ee-b50e-b9651ee28bb6/300x300/test.png"
             }
@@ -188,6 +191,7 @@
           "name": "Mock_AD_2",
           "desc": "mock ads...",
           "template": "Static",
+          "created": "2024-07-27T15:30:00Z",
           "formats": [
             {
               "url": "https://mock-panel.com",
@@ -564,6 +568,100 @@
             {
               "date": "05-07-2024",
               "value": 22
+            },
+            {
+              "date": "06-07-2024",
+              "value": 22
+            },
+            {
+              "date": "07-07-2024",
+              "value": 22
+            }
+          ]
+        },
+        {
+          "Id_Camp": "7c9e6679-2225-40de-944b-e07fc1f90ae7",
+          "Id_Group": "339e6679-7425-40de-944b-e07fc1f90ae7",
+          "Visit": [
+            {
+              "date": "01-07-2024",
+              "value": 233
+            },
+            {
+              "date": "02-07-2024",
+              "value": 266
+            },
+            {
+              "date": "03-07-2024",
+              "value": 223
+            },
+            {
+              "date": "04-07-2024",
+              "value": 213
+            },
+            {
+              "date": "05-07-2024",
+              "value": 177
+            },
+            {
+              "date": "06-07-2024",
+              "value": 333
+            },
+            {
+              "date": "07-07-2024",
+              "value": 444
+            }
+          ],
+          "Clicks": [
+            {
+              "date": "01-07-2024",
+              "value": 22
+            },
+            {
+              "date": "02-07-2024",
+              "value": 52
+            },
+            {
+              "date": "03-07-2024",
+              "value": 22
+            },
+            {
+              "date": "04-07-2024",
+              "value": 22
+            },
+            {
+              "date": "05-07-2024",
+              "value": 52
+            },
+            {
+              "date": "06-07-2024",
+              "value": 22
+            },
+            {
+              "date": "07-07-2024",
+              "value": 22
+            }
+          ],
+          "Budged": [
+            {
+              "date": "01-07-2024",
+              "value": 22
+            },
+            {
+              "date": "02-07-2024",
+              "value": 222
+            },
+            {
+              "date": "03-07-2024",
+              "value": 22
+            },
+            {
+              "date": "04-07-2024",
+              "value": 22
+            },
+            {
+              "date": "05-07-2024",
+              "value": 222
             },
             {
               "date": "06-07-2024",

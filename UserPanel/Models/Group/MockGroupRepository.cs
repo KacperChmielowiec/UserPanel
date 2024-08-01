@@ -3,6 +3,7 @@ using Elfie.Serialization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.IdentityModel.Tokens;
+using System.Reflection;
 using UserPanel.Helpers;
 using UserPanel.Interfaces;
 using UserPanel.Interfaces.Abstract;
@@ -113,9 +114,8 @@ namespace UserPanel.Models.Group
             SessionModels.Add(mockModel);
             mockModel.id_camp = id;
             mockModel.id_user = UserManager.getUserId(_contextAccessor);
-
             _Session.SetJson(SessionKeysReferences.groupsKey, SessionModels);
-
+            Subjects.dataActionSubject.notify(new DataActionMessage() { actionType = DataActionType.ADD, dataType = DataType.Group, id = model.id, Parent = id });
 
         }
 
@@ -145,6 +145,7 @@ namespace UserPanel.Models.Group
             if (elements > 0)
             {
                 _Session.SetJson(SessionKeysReferences.groupsKey, GroupModelSession);
+                Subjects.dataActionSubject.notify(new DataActionMessage() { actionType = DataActionType.REMOVE, dataType = DataType.Group, id = id, Parent = Guid.Empty });
             }
             else
             {

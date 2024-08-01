@@ -35,7 +35,7 @@ namespace UserPanel.Services
         
             return _provider.GetCampaningRepository().GetCampaningById(id);
         }
-        public void SetCampaningSession(Guid id)
+        public void SetCampaignSession(Guid id)
         {
             Campaning campaning = _provider
                 .GetCampaningRepository()
@@ -47,6 +47,13 @@ namespace UserPanel.Services
                 campaningsSession.Add(campaning);
 
             _session.SetJson(AppReferences.SessionCamp, campaningsSession);
+        }
+        public void RemoveCampaignSession(Guid id)
+        {
+            List<Campaning> campaignsSession = _session.GetJson<List<Campaning>>(AppReferences.SessionCamp) ?? new List<Campaning>();
+            campaignsSession.RemoveAll(item => item.id == id);
+            _session.SetJson(AppReferences.SessionCamp, campaignsSession);
+
         }
         public void UpdateCampaning(Campaning model)
         {
@@ -87,10 +94,10 @@ namespace UserPanel.Services
             campaning.details.Country = model.country;
             campaning.details.CampaningFlags = new CampaningFlags()
             {
-                Advert = CampaningFlagState.Inactive,
-                Display = CampaningFlagState.Inactive,
+                Advert = CampaningFlagState.Waiting,
+                Display = CampaningFlagState.Waiting,
                 Budget = CampaningFlagState.Inactive,
-                Lists = CampaningFlagState.Inactive,
+                Lists = CampaningFlagState.Waiting,
                 Products = CampaningFlagState.Inactive,
 
             };
@@ -113,7 +120,7 @@ namespace UserPanel.Services
         }
         public void WriteLogoCampaning(IFormFile formFile,string campDest)
         {
-            FormFileService formFileService = new FormFileService(formFile,AppReferences.BASE_APP_HOST);
+            FormFileService formFileService = new FormFileService(formFile);
             formFileService.WriteFile($"{CAMP_PATH}{FileServices.GetSafeFilename(campDest)}/");
         }
         public static string LoadLogoPath(Campaning campaning, HttpContext httpContext)

@@ -3,9 +3,11 @@ using UserPanel.Interfaces;
 using UserPanel.Interfaces.Abstract;
 using UserPanel.Models.Adverts;
 using UserPanel.Models.Camp;
+using UserPanel.Models.Product;
 using UserPanel.Models.Group;
 using UserPanel.Models.User;
 using UserPanel.References;
+using UserPanel.Models.Feed;
 namespace UserPanel.Providers
 {
     public class DataBaseProvider : IDataBaseProvider
@@ -76,11 +78,11 @@ namespace UserPanel.Providers
             }
         }
 
-        public AdvertRepository<Advert> GetAdvertRepository()
+        public AdvertRepositoryStatic GetAdvertStRepository()
         {
             if (_configuration[env_repo_type]?.ToLower() == AppReferences.CONFIG_MOCK)
             {
-                return new AdvertRepositoryMock(_session, _mapper, _contextAccessor);
+                return new AdvertRepositoryStatic(_session, _mapper, _contextAccessor);
             }
             else
             {
@@ -88,11 +90,60 @@ namespace UserPanel.Providers
             }
         }
 
+        public AdvertRepositoryDynamic GetAdvertDyRepository()
+        {
+            if (_configuration[env_repo_type]?.ToLower() == AppReferences.CONFIG_MOCK)
+            {
+                return new AdvertRepositoryDynamic(_session, _mapper, _contextAccessor);
+            }
+            else
+            {
+                throw new NotImplementedException("AdvertRepository repository is not implemented yet ( try mock type )");
+            }
+        }
+
+        public AdvertRepositoryFull GetAdvertRepository()
+        {
+            if (_configuration[env_repo_type]?.ToLower() == AppReferences.CONFIG_MOCK)
+            {
+                return new AdvertRepositoryFull(_session, _mapper, _contextAccessor);
+            }
+            else
+            {
+                throw new NotImplementedException("AdvertRepository repository is not implemented yet ( try mock type )");
+            }
+        }
+
+
         public FullContextRepository GetFullContextRepository()
         {
             if (_configuration[env_repo_type]?.ToLower() == AppReferences.CONFIG_MOCK)
             {
                 return new FullContextRepositoryMock(_session, _mapper);
+            }
+            else
+            {
+                throw new NotImplementedException("FullContextRepository repository is not implemented yet ( try mock type )");
+            }
+        }
+
+        public ProductRepository<Product> GetProductRepository()
+        {
+            if (_configuration[env_repo_type]?.ToLower() == AppReferences.CONFIG_MOCK)
+            {
+                return new ProductMockRepository(_session);
+            }
+            else
+            {
+                throw new NotImplementedException("FullContextRepository repository is not implemented yet ( try mock type )");
+            }
+        }
+
+        public FeedRepository<Feed> GetFeedRepository()
+        {
+            if (_configuration[env_repo_type]?.ToLower() == AppReferences.CONFIG_MOCK)
+            {
+                return new FeedRepositoryMock(_session);
             }
             else
             {

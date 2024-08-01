@@ -17,7 +17,7 @@
             </div>
 
             <div class="body mx-40">
-                <form class="ml-[50px] pb-10" href="/groups/create/@Model.id_camp" method="post" enctype="multipart/form-data">
+                <form class="ml-[50px] pb-10" asp-action="Create" asp-route-id="@Model.id_camp" method="post" enctype="multipart/form-data">
                     <input hidden asp-for="id_camp" value="@Model?.id_camp" name="id_camp"/>
                     <div class="py-6">
                         <header class="text-xl">Podstawowe parametry:</header>
@@ -34,7 +34,7 @@
                         <span asp-validation-for="Devices" class="text-danger"></span>
                         <select name="Devices" data-prepend="Wybierz urządzenie:" data-role="select" multiple asp-for="Devices">
                             <option selected value="Mobile">Mobile</option>
-                            <option selected value="Desktop">Mobile</option>
+                            <option selected value="Desktop">Desktop</option>
                         </select>
                     </div>
                     <div class="py-6">

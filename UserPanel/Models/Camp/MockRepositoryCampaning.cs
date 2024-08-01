@@ -1,11 +1,9 @@
 ﻿using AutoMapper;
 using System.Data;
-using UserPanel.Services;
 using UserPanel.Models.Camp;
 using UserPanel.Interfaces.Abstract;
 using UserPanel.Helpers;
 using UserPanel.References;
-using System.Collections.Generic;
 
 namespace UserPanel.Models.User
 {
@@ -19,7 +17,7 @@ namespace UserPanel.Models.User
             _session = session;
             _mapper = mapper;
         }
-            
+
         public override void CreateCampaning(Campaning model, int userId)
         {
             if (model == null) return;

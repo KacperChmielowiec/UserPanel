@@ -23,6 +23,8 @@ namespace UserPanel.Models
         public static void ClearContext()
         {
             InstanceContext.ClearContext();
+            Subjects.dataActionSubject.detach(_dataObserver);
+            Subjects.userActionSubject.detach(_userObserver);
             Inited = false; 
         }
         public static void AddNode(T node, T parent, ContextNodeType ElementType)
@@ -44,6 +46,26 @@ namespace UserPanel.Models
         public static void RemoveNode(T node)
         {
             InstanceContext.RemoveNode(node);
+        }
+
+        public static void DetachNode(T node, T ParentNode)
+        {
+            if (!Inited) throw new InvalidOperationException("Manager is not inited");
+            if (InstanceContext.MapContext.TryGetValue(ParentNode, out var Parent) && InstanceContext.MapContext.TryGetValue(node, out var Child))
+            {
+                Parent.DettachChildrenNode(node);
+                Child.DettachFromParentNode(ParentNode);
+                
+            }
+        }
+        public static void AttachNode(T node, T ParentNode)
+        {
+            if (!Inited) throw new InvalidOperationException("Manager is not inited");
+            if (InstanceContext.MapContext.TryGetValue(ParentNode, out var Parent) && InstanceContext.MapContext.TryGetValue(node, out var Child))
+            {
+                Parent.AttachNode(Child.Value);
+                Child.AttachParentNode(Parent.Value);
+            }
         }
         public static ContextPath<T> GetFullPath(T guid, ContextPath<T> path = null)
         {
@@ -107,6 +129,7 @@ namespace UserPanel.Models
                             prevNode = node;
                             continue;
                         }
+    
 
                         return false;
 
@@ -229,7 +252,26 @@ namespace UserPanel.Models
                 }
             }
         }
-    
+        public void DettachFromParentNode(T parent)
+        {
+            if (Value.ElementType == ContextNodeType.Camp) return;
+            foreach (var p in Parents)
+            {
+                if (p.ID.CompareTo(parent) != 0) continue;
+                if (MapContextRef.TryGetValue(p.ID, out ContextNode<T> node))
+                {
+                    node.DettachChildrenNode(Value.ID);
+                }
+            }
+        }
+        public void AttachNode(ContextElement<T> node)
+        {
+            Children.Add(node);
+        }
+        public void AttachParentNode(ContextElement<T> node)
+        {
+            Parents.Add(node);
+        }
     }
 
     public abstract class PermissionContext<T> where T : IComparable

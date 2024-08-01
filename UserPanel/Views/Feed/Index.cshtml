@@ -1,0 +1,18 @@
+﻿@model List<Product>
+@{
+}
+<div class="mt-20">
+    @foreach(var p in Model)
+    {
+        
+        <p>@p.Id</p>
+        <p>@p.Name</p>
+        <p>@p.Price</p>
+        <p>@p.Category</p>
+        <p>@p.Url</p>
+        <p>@p.ImageUrl</p>
+        <p>@p.InStock</p>
+        <br />
+        <br />
+    }
+</div>

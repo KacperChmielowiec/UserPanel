@@ -131,5 +131,95 @@ const tabUtils = (configuration) => {
         before.removeClass('active');
         $(this).addClass('active');
     });
+}
 
+
+const modalUtils = () => {
+
+    let currentOpen = ""
+
+    const modal = document.querySelector('.modal'),
+        title = document.querySelector(".modal-title"),
+        body = document.querySelector(".modal-body"),
+        closeButtons = document.querySelectorAll('.close-modal'),
+        openButtons = document.querySelectorAll('.open-modal'),
+        submitButtons = document.querySelectorAll('.submit-modal');
+
+    function openModal() {
+        modal.classList.add("transition");
+        modal.classList.add('visible')
+        setTimeout(() => modal.classList.remove("transition"), 350)
+    }
+
+    function closeModal() {
+        modal.classList.add("transition");
+        modal.classList.remove('visible')
+        currentOpen = "";
+        setTimeout(() => modal.classList.remove("transition"), 350)
+    }
+
+    openButtons.forEach((b, i) => {
+        let index = i + 1;
+        let formattedIndex = index < 10 ? `0${index}` : index;
+        b.dataset.id = `b-${ formattedIndex }-${ Math.floor(1000 + Math.random() * 9000) }`;
+    })
+
+    return {
+        closeModalButtons: closeButtons,
+        openModalButtons: openButtons,
+        open: openModal,
+        close: closeModal,
+        body: body,
+        setTemplate: (template) => {
+            if (template?.title && title) {
+                title.innerHTML = template.title
+            }
+            if (template?.body && body) {
+                body.innerHTML = template.body
+            }
+        },
+        setOpenModal: (id,callback) => {
+            openButtons?.forEach(b => {
+                if (b.dataset.id === id) {
+                    b.addEventListener("click", () => { currentOpen = b.dataset.id; callback() })
+                }
+            })
+        },
+        setSubmit: (id, callback) => {
+            submitButtons.forEach((b) => {
+                b.addEventListener("click", () => { if(currentOpen === id) callback(modal)  })
+            })
+        }
+    }
+}
+
+const modalTemplates = () => {
+    return {
+        createAd: {
+            title: "Wybierz format reklamy",
+            body: `<div style="width: 500px">
+                    <form class="" >
+                        <label  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Wybierz format:</label>
+                        <select name="template" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                            <option value="Static">Statyczna reklama</option>
+                            <option value="Dynamic">Dynamiczna reklama</option>
+                        </select>
+                    </form>
+                    </div>`
+        },
+        createFeed: {
+            title: "Dodaj Feed",
+            body: `<div style="width: 500px">
+                    <form class="">
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Wybierz format:</label>
+                        <select name="format" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                            <option value="Ceneo">Ceneo</option>
+                        </select>
+                        </br>
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Wprowadz Url:</label>
+                        <input name="url" type="text" id="helper-text" aria-describedby="helper-text-explanation" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="adres url">
+                    </form>
+                    </div>`
+        }
+    }
 }

@@ -8,5 +8,6 @@ namespace UserPanel.Attributes
         public CampFilterAttribute() : base(typeof(CampMessageFilterAction))
         {
         }
+
     }
 }

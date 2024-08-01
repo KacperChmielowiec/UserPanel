@@ -1,4 +1,4 @@
-﻿@model Advert
+﻿@model Advert<AdvertFormat>
 @{
     bool isReturn = Context.Request.Query.TryGetValue("ReturnUrl", out Microsoft.Extensions.Primitives.StringValues ReturnUrl);
 

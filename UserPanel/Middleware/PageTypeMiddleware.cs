@@ -23,7 +23,9 @@ namespace UserPanel.Middleware
             {"details", PageTypes.CAMP_DETAILS},
             {"groups", PageTypes.GROUPS},
             {"group:details", PageTypes.GROUP_DETAILS },
-            {"advertisements-list", PageTypes.ADVERT_LIST }
+            {"advertisements-list", PageTypes.ADVERT_LIST },
+            {"feed:list", PageTypes.FEEDS },
+            {"product:list", PageTypes.PRODUCTS},
         };
 
         public async Task Invoke(HttpContext context)

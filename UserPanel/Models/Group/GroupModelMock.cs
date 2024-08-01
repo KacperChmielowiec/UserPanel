@@ -14,7 +14,7 @@ namespace UserPanel.Models.Group
         public GroupDetails details { get; set; }
         public bool status { get; set; }
         [JsonProperty("advertisements")]
-        public Advert[] advertisementsList { get; set; }
+        public Advert<AdvertFormat>[] advertisementsList { get; set; }
         [JsonProperty("lists")]
         public GroupLists[] Lists { get; set; }
     }

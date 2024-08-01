@@ -11,8 +11,9 @@ using UserPanel.References;
 using UserPanel.Helpers;
 using UserPanel.Models.Messages;
 using UserPanel.Filters;
-using Microsoft.CodeAnalysis.Options;
 using Microsoft.Extensions.Options;
+using UserPanel.Models.Product;
+
 namespace UserPanel.Installers
 {
     public class AppInstaller : Installer
@@ -32,10 +33,12 @@ namespace UserPanel.Installers
             builder.Services.AddSingleton<IDataBaseProvider, DataBaseProvider>();
             builder.Services.AddSingleton<PermissionContext<Guid>>( p => new PermissionContextUserPanel());
             builder.Services.AddScoped<GroupManager, GroupManager>();
+            builder.Services.AddScoped<AdvertManager, AdvertManager>();
             builder.Services.AddScoped<UserManager, UserManager>();
             builder.Services.AddScoped<CampaningManager, CampaningManager>();
             builder.Services.AddScoped<SignInService>();
             builder.Services.AddScoped<PasswordHasher>();
+
             builder.Services.AddAuthentication(AppReferences.PERMISSION_SCHEME)
             .AddCookie(options =>
             {
@@ -70,6 +73,7 @@ namespace UserPanel.Installers
                 options.HashSize = 256;
 
             });
+
             builder.Services.Configure<List<EndpointMetaData>>(opt => builder.Configuration.GetSection("Endpoints").Bind(opt));
 
             builder.Services.AddDistributedMemoryCache();
@@ -78,17 +82,28 @@ namespace UserPanel.Installers
             {
 
             });
+
             builder.Services.Configure<EmailConfiguration>(builder.Configuration.GetSection("STMP_CONFIG"));
             builder.Services.Configure<EnviromentSettings>(builder.Configuration.GetSection("ENVIROMENT"));
             builder.Services.Configure<GroupFormMessages>(builder.Configuration.GetSection("messages:Group"));
             builder.Services.Configure<CampFormMessages>(builder.Configuration.GetSection("messages:Campaign"));
+            builder.Services.Configure<FeedFormMessage>(builder.Configuration.GetSection("messages:Feed"));
+            builder.Services.Configure<ProductMessage>(builder.Configuration.GetSection("messages:Product"));
+            builder.Services.Configure<AdvertMessages>(builder.Configuration.GetSection("messages:Advert"));
+            builder.Services.Configure<RenderModel>(builder.Configuration.GetSection("Render:default"));
 
-
-            builder.Services.AddScoped<GroupFormMessages>( p => p.GetRequiredService<IOptions<GroupFormMessages>>().Value );
-            builder.Services.AddScoped<CampFormMessages>(p => p.GetRequiredService<IOptions<CampFormMessages>>().Value);
+            builder.Services.AddScoped(p => p.GetRequiredService<IOptions<GroupFormMessages>>().Value);
+            builder.Services.AddScoped(p => p.GetRequiredService<IOptions<CampFormMessages>>().Value);
+            builder.Services.AddScoped(p => p.GetRequiredService<IOptions<FeedFormMessage>>().Value);
+            builder.Services.AddScoped(p => p.GetRequiredService<IOptions<ProductMessage>>().Value);
+            builder.Services.AddScoped(p => p.GetRequiredService<IOptions<AdvertMessages>>().Value);
 
             builder.Services.AddScoped<GroupMessageFilterAction>();
             builder.Services.AddScoped<CampMessageFilterAction>();
+            builder.Services.AddScoped<FeedMessageFilterAction>();
+            builder.Services.AddScoped<ProductMessageFilterAction>();
+            builder.Services.AddScoped<AdvertMessagesFilterAction>();
+            
         }
 
     }

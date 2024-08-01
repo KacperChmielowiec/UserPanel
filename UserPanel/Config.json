@@ -60,12 +60,51 @@
     "Group": {
       "err_remove": "Nie mogliśmy usunąc grupy reklam. Coś poszło nie tak",
       "suc_remove": "Grupa reklam została pomyślnie usunięta",
+      "suc_create": "Grupa reklam została pomyslnie utworzona",
+      "err_create": "Wystąpił problem podczas tworzenia grupy reklam",
       "err_default": "Wystąpił nieznany bład w przetwarzaniu żądania"
     },
     "Campaign": {
       "err_remove": "Nie mogliśmy usunąc kampanii. Coś poszło nie tak",
       "suc_remove": "Kampania została pomyślnie usunięta",
+      "suc_create": "Kampaia została pomyslnie utworzona",
+      "err_create": "Wystąpił problem podczas tworzenia kampanii",
       "err_default": "Wystąpił nieznany bład w przetwarzaniu żądania"
+    },
+    "Feed": {
+      "err_remove": "Nie mogliśmy usunąc Feedu. Coś poszło nie tak",
+      "suc_remove": "Feed został pomyślnie usunięta",
+      "suc_create": "Feed został pomyslnie dodany",
+      "err_create": "Wystąpił problem podczas przetwarzania feedu",
+      "err_default": "Wystąpił nieznany bład w przetwarzaniu żądania",
+      "err_parse": "Wystąpił problem podczas próby przetwarzania feedu",
+      "err_feed_url": "Podany URL nie mógł zostać pobrany lub zawiera niepoprawny format danych",
+      "err_validation": "Feed został pobrany, ale zawiera niepoprawne dane lub ich brak",
+      "suc_feed_refresh": "Feed został ponownie pobrany.",
+      "err_feed_refresh": "Feed nie mógł zostać ponownie pobrany"
+    },
+    "Product": {
+      "err_remove": "Nie mogliśmy usunąc listy produktów. Coś poszło nie tak",
+      "suc_remove": "Lista produktów została pomyślnie usunięta",
+      "suc_create": "",
+      "err_create": "",
+      "err_default": "Wystąpił nieznany bład w przetwarzaniu żądania"
+    },
+    "Advert": {
+      "err_remove": "Nie mogliśmy usunąc reaklmy z listy. Coś poszło nie tak",
+      "suc_remove": "Reklama została pomyślnie usunięta",
+      "suc_create": "Reklama została pomyślnie utworzona",
+      "err_create": "Reklama nie mogła zostaćutowrzona",
+      "err_default": "Wystąpił nieznany bład w przetwarzaniu żądania",
+      "suc_edit": "Reklama została zedytowana",
+      "err_edit": "Reklma nie mogła zostać zedytowana"
+    }
+  },
+  "Render": {
+    "default": {
+      "LogoSrc": "/static/campaning/default/logo.png",
+      "MainUrl": "/",
+      "size":  "300x300"
     }
   }
 }
