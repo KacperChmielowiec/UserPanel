@@ -5,6 +5,8 @@ namespace UserPanel.Models.Adverts
     public enum AD_TEMPLATE
     {
         [StringValue("Statyczna")]
-        Static
+        Static,
+        [StringValue("Dynamiczna")]
+        Dynamic
     }
 }

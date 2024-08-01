@@ -71,19 +71,40 @@ namespace UserPanel.Helpers
                 .ForPath(e => e.details.Utm_Medium, (conf) => conf.MapFrom((src) => src.Utm_Medium))
                 .ForPath(e => e.details.Utm_Camp, (conf) => conf.MapFrom((src) => src.Utm_Camp));
 
+            CreateMap<Advert<AdvertFormat>, AdvertisementMock>();
+            CreateMap<Advert<AdvertFormatDynamic>, AdvertisementMock>();
+            CreateMap<AdvertisementMock, Advert<AdvertFormat>>();
+            CreateMap<AdvertisementMock, Advert<AdvertFormatDynamic>>();
 
-            CreateMap<Advert, AdvertisementMock>();
-            CreateMap<AdvertisementMock, Advert>();
-            CreateMap<AdvertForm, Advert>();
-            CreateMap<AdvertFormatForm, AdvertFormat>();
-            CreateMap<Advert, AdvertForm>();
-            CreateMap<AdvertForm, Advert>();
+            CreateMap<AdvertForm<AdvertFormatForm>, Advert<AdvertFormat>>()
+                .IncludeAllDerived();
+            CreateMap<Advert<AdvertFormat>, AdvertForm<AdvertFormatForm>>()
+                .IncludeAllDerived();
+
+            CreateMap<AdvertForm<AdvertFormatFormStatic>, Advert<AdvertFormat>>();
+            CreateMap<AdvertForm<AdvertFormatFormDynamic>, Advert<AdvertFormat>>();
+
+            CreateMap<Advert<AdvertFormat>, AdvertForm<AdvertFormatFormStatic>>();
+            CreateMap<Advert<AdvertFormat>, AdvertForm<AdvertFormatFormDynamic>>();
+
             CreateMap<AdvertFormat, AdvertFormatForm>();
+            CreateMap<AdvertFormat,AdvertFormatFormStatic>();
+            CreateMap<AdvertFormat, AdvertFormatFormDynamic>();
+
             CreateMap<AdvertFormatForm, AdvertFormat>();
+            CreateMap<AdvertFormatFormStatic, AdvertFormat>();
+            CreateMap<AdvertFormatFormDynamic, AdvertFormat>();
+
+            CreateMap<AdvertFormatDynamic,AdvertFormat>();
+            CreateMap<AdvertFormat, AdvertFormatDynamic>();
+
+            CreateMap<AdvertFormatFormDynamic, AdvertFormatDynamic>()
+                .IncludeBase<AdvertFormatForm, AdvertFormat>();
+            CreateMap<AdvertForm<AdvertFormatFormDynamic>, Advert<AdvertFormatDynamic>>();
+
 
 
             CreateMap<Campaning, FullContextCampaning>();
-              
 
         }
     }

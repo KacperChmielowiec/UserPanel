@@ -26,10 +26,10 @@
                         <a class="@(c.id == Model.activeCamp && Model.PageSub1 == PageTypes.CAMP_DETAILS ? "active" : "")" href="/campaign/details/@c.id">Podgląd</a>
                     </li>
                     <li>
-                        <a data-href="#">Feedy</a>
+                        <a class="@(c.id == Model.activeCamp && Model.PageSub1 == PageTypes.FEEDS ? "active" : "")" asp-action="List" asp-controller="Feed" asp-route-id="@c.id">Feedy</a>
                     </li>
                     <li>
-                        <a data-href="#">Produkty</a>
+                        <a class="@(c.id == Model.activeCamp && Model.PageSub1 == PageTypes.PRODUCTS ? "active" : "")" asp-action="Index" asp-controller="Product" asp-route-id="@c.id">Produkty</a>
                     </li>
                     <li>
                         <a data-href="#">Kody</a>
@@ -66,8 +66,10 @@
     $("#dashboard-menu .dropdown-toggle").click(function (e) {
         e.preventDefault();
         var $item = $(this).parent();
-        $item.toggleClass("active");
-        if ($item.hasClass("active")) {
+        $("#dashboard-menu .dropdown-toggle").each((i, element) => $(element).parent().removeClass("active"))
+        $item.addClass("active")
+        $item.toggleClass("expand")
+        if ($item.hasClass("expand")) {
             $item.find(".submenu").slideDown("fast");
         } else {
             $item.find(".submenu").slideUp("fast");

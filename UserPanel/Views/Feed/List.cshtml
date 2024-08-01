@@ -1,0 +1,119 @@
+﻿@model FeedsListViewModel 
+@{
+
+}
+<section class="py-20">
+    <div class="mx-10 px-10 bg-zinc-100 pt-4 pb-4 shadow-lg">
+        @if (ViewData.ContainsKey("error"))
+        {
+            <div class="alert warning mb-6 mt-10">
+                @ViewData.ParseToString("error")
+            </div>
+        }
+        else if (ViewData.ContainsKey("success"))
+        {
+            <div class="alert success mb-6 mt-10">
+                @ViewData.ParseToString("success")
+            </div>
+        }
+        <div class="rounded-t mb-0 px-4 py-3 border-0">
+            <div class="flex flex-wrap items-center">
+                <div class="relative w-full px-4  max-w-full flex-grow flex-1">
+                    <header class="font-semibold text-xl">Feedy produktowe:</header>
+                </div>
+                <div class="pull-right">
+                    <a href="#" data-camp="@Model.id_camp" class="btn btn-flat success open-modal modal-create"><i class="icon-plus"></i> Dodaj</a>
+                </div>
+            </div>
+        </div>
+        <div class="block w-full overflow-x-auto pt-10">
+            <table class="items-center bg-transparent w-full border-collapse">
+                <thead>
+                    <tr>
+                        <th class="px-4 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-center">
+                             TYP
+                        </th>
+                        <th class="px-4 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-center">
+                             URL
+                        </th>
+                        <th class="px-4 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-center">
+                            Data Utorzenia
+                        </th>
+                        <th class="px-4 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-center">
+                            Ostatnie pobranie
+                        </th>
+                        <th class="px-4 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-center">
+                            Akcje
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="height:1px; padding:0px; background-color:black" colspan="6"></td>
+                    </tr>
+                    @foreach(var feed in Model.Feeds)
+                    {
+                        <tr>
+                            <td class="border-t-0 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4 text-center text-blueGray-700 ">
+                                <span>@feed.FeedType</span>
+                            </td>
+                            <td class="border-t-0 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4 text-center text-blueGray-700 ">
+                                <span>@feed.Url</span>
+                            </td>
+                            <td class="border-t-0 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4 text-center text-blueGray-700 ">
+                                <span>@feed.Created</span>
+                            </td>
+                            <td class="border-t-0 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4 text-center text-blueGray-700 ">
+                                <span>@feed.Updated</span>
+                            </td>
+                            <td class="border-t-0 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4 text-center text-blueGray-700 ">
+                                <div class="flex justify-center items-center gap-x-2">
+                                    <form asp-action="Refresh" asp-controller="Feed" asp-route-id="@feed.Id" asp-route-id_camp="@Model.id_camp">
+                                        <button type="submit" class="btn btn-flat success"><i class="fa fa-download"></i> Pobierz</button>
+                                    </form>
+                                    <form asp-action="Remove" asp-controller="Feed" asp-route-id="@feed.Id" asp-route-id_camp="@Model.id_camp">
+                                        <button type="submit" class="btn btn-flat danger"><i class="icon-trash"></i> Usuń</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    @if (Model.Feeds.Count == 0)
+                    {
+                        <tr class="h-20">
+                            <td class="align-middle text-center" colspan="4"><span class="font-semibold">Brak pozycji do wyświetlenia</span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+<script>
+
+    window.addEventListener("load", () => {
+        const modalCreate = document.querySelector(".modal-create")
+        window.modalUtilsInstance.setOpenModal(modalCreate.dataset.id, () => {
+            modalUtilsInstance.setTemplate({ title: modalTemplates().createFeed.title, body: modalTemplates().createFeed.body })
+            modalUtilsInstance.open();
+        })
+        window.modalUtilsInstance.setSubmit(modalCreate.dataset.id, (modal) => {
+            if (modal) {
+
+                let form = modal.querySelector("form")
+                if (form) {
+
+                    form.setAttribute("action", "/campaign/feed/add");
+                    let hiddenInput = document.createElement('input');
+                    form.setAttribute("method", "POST");
+                    hiddenInput.setAttribute("type", "hidden")
+                    hiddenInput.setAttribute('name', "id");
+                    hiddenInput.setAttribute('value', modalCreate.dataset.camp)
+                    form.appendChild(hiddenInput)
+                    form.submit();
+                }
+            }
+        })
+    })
+
+</script>

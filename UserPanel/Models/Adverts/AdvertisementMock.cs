@@ -10,6 +10,9 @@ namespace UserPanel.Models.Adverts
         public Guid[] id_groups { get; set; }
         public Guid id { get; set; }
         public string name { get; set; }
+
+        [JsonProperty("created")]
+        public DateTime Created { get; set; }
         public AD_TEMPLATE template { get; set; }
         public List<AdvertFormat> formats { get; set; }
         [JsonProperty("status")]

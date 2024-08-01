@@ -1,0 +1,88 @@
+﻿@model ProductListModelView
+@{
+    Layout = "_Layout";
+}
+<section class="py-20">
+<div class="mx-10 px-10 bg-zinc-100 pt-4 pb-4 shadow-lg">
+    @if (ViewData.ContainsKey("error"))
+    {
+        <div class="alert warning mb-6 mt-10">
+            @ViewData.ParseToString("error")
+        </div>
+    }
+    else if (ViewData.ContainsKey("success"))
+    {
+        <div class="alert success mb-6 mt-10">
+            @ViewData.ParseToString("success")
+        </div>
+    }
+    <div class="rounded-t mb-0 px-4 py-3 border-0">
+        <div class="flex flex-wrap items-center">
+            <div class="relative w-full px-4  max-w-full flex-grow flex-1">
+                <header class="font-semibold text-xl">Produkty:</header>
+            </div>
+            <div class="pull-right">
+                <form asp-action="Remove" asp-controller="Product" asp-route-id="@Model.id_camp">
+                    <button type="submit" class="btn btn-flat danger"><i class="icon-trash"></i> Usuń produkty</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="block w-full overflow-x-auto pt-10">
+        <table class="items-center bg-transparent w-full border-collapse">
+            <thead>
+                <tr>
+                    <th class="px-4 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-center">
+                        ID
+                    </th>
+                    <th class="px-4 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-center">
+                        NAZWA
+                    </th>
+                    <th class="px-4 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-center">
+                        KATEGORIA
+                    </th>
+                    <th class="px-4 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-center">
+                        CENA
+                    </th>
+                    <th class="px-4 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-center">
+                        OBRAZ
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="height:1px; padding:0px; background-color:black" colspan="6"></td>
+                </tr>
+                @foreach (var p in Model.Products)
+                {
+                    <tr>
+                        <td class="border-t-0 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4 text-center text-blueGray-700 ">
+                            <span>@p.Id</span>
+                        </td>
+                        <td class="border-t-0 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4 text-center text-blueGray-700 ">
+                            <span>@p.Name</span>
+                        </td>
+                        <td class="border-t-0 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4 text-center text-blueGray-700 ">
+                            <span>@p.Category</span>
+                        </td>
+                        <td class="border-t-0 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4 text-center text-blueGray-700 ">
+                            <span>@p.Price</span>
+                        </td>
+                        <td class="border-t-0 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4 text-center text-blueGray-700 ">
+                            <div class="d-flex justify-center items-center">
+                                <img  width="100" height="100" src="@p.ImageUrl"/>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                @if (Model.Products.Count == 0)
+                {
+                    <tr class="h-20">
+                        <td class="align-middle text-center" colspan="5"><span class="font-semibold">Brak pozycji do wyświetlenia</span></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+</section>

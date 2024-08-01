@@ -1,9 +1,10 @@
-﻿using UserPanel.Models.Adverts;
+﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+using UserPanel.Models.Adverts;
 
 namespace UserPanel.Interfaces.Abstract
 {
     public abstract class AdvertRepository<T>
-    {
+    { 
         public abstract T GetAdvertById(Guid id);
         public abstract List<T> GetAdvertGroupId(Guid id); 
         public abstract void CreateAdvert(T entity, Guid idGroup);

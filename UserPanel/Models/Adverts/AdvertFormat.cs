@@ -4,6 +4,8 @@ namespace UserPanel.Models.Adverts
 {
     public class AdvertFormat
     {
+        public Guid Id { get; set; }
+
         [JsonProperty("url")]
         public string Url { get; set; }
 

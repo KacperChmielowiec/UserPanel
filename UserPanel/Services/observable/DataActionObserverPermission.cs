@@ -1,7 +1,7 @@
 ﻿using UserPanel.Models;
 using UserPanel.Types;
-using UserPanel.Types;
 using UserPanel.References;
+using System.Diagnostics.Metrics;
 namespace UserPanel.Services.observable
 {
     public class DataActionObserverPermission : Observer<DataActionMessage>
@@ -13,6 +13,8 @@ namespace UserPanel.Services.observable
             Actions[DataActionType.ADD] = OnCreate;
             Actions[DataActionType.REMOVE] = OnDelete;
             Actions[DataActionType.UPDATE] = OnUpdate;
+            Actions[DataActionType.DETACH] = OnDetachAdvert;
+            Actions[DataActionType.ATTACH] = OnAttachAdvert;
         }
 
         public override void notify(DataActionMessage context)
@@ -21,11 +23,14 @@ namespace UserPanel.Services.observable
         }
         private void OnCreate(DataActionMessage context)
         {
-            switch(context.dataType) {
+            switch (context.dataType)
+            {
                 case DataType.Campaning:
                     OnCreateCamp(context); break;
                 case DataType.Advert:
                     OnCreateAd(context); break;
+                case DataType.Group:
+                    OnCreateGroup(context); break;
                 default:
                     break;
             }
@@ -35,7 +40,10 @@ namespace UserPanel.Services.observable
             switch (context.dataType)
             {
                 case DataType.Campaning:
-                    OnDeleteCamp(context); 
+                    OnDeleteCamp(context);
+                    break;
+                case DataType.Group:
+                    OnDeleteGroup(context);
                     break;
                 default:
                     break;
@@ -43,7 +51,7 @@ namespace UserPanel.Services.observable
         }
         private void OnUpdate(DataActionMessage context)
         {
-           
+
         }
         private void OnCreateCamp(DataActionMessage contex)
         {
@@ -56,6 +64,23 @@ namespace UserPanel.Services.observable
         private void OnDeleteCamp(DataActionMessage contex)
         {
             PermissionActionManager<Guid>.RemoveNode(contex.id);
+        }
+        private void OnCreateGroup(DataActionMessage contex)
+        {
+            PermissionActionManager<Guid>.AddNode(contex.id, contex.Parent, ContextNodeType.Group);
+        }
+        private void OnDeleteGroup(DataActionMessage contex)
+        {
+            PermissionActionManager<Guid>.RemoveNode(contex.id);
+
+        }
+        private void OnAttachAdvert(DataActionMessage contex)
+        {
+            PermissionActionManager<Guid>.AttachNode(contex.id, contex.Parent);
+        }
+        private void OnDetachAdvert(DataActionMessage context)
+        {
+            PermissionActionManager<Guid>.DetachNode(context.id, context.Parent);
         }
     }
 }

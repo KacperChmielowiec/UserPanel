@@ -3,7 +3,7 @@
 namespace UserPanel.Models.Adverts
 {
     
-    public class AdvertForm
+    public class AdvertForm<T>
     {
         public Guid Id { get; set; }
         [Required]
@@ -14,8 +14,11 @@ namespace UserPanel.Models.Adverts
         public string Description { get; set; }
         [Required]
         public bool IsActive { get; set; }
+
+        public DateTime Created { get; set; }
+
         public AD_TEMPLATE Template { get; set; }
         [Required]
-        public List<AdvertFormatForm> Formats { get; set; }
+        public List<T> Formats { get; set; } = new List<T>();
     }
 }

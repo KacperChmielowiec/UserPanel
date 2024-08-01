@@ -8,5 +8,7 @@
         public const string groupsKey = "groups";
         public const string advertKey = "adverteiments";
         public const string listsKey = "lists";
+        public const string prodKey = "products";
+        public const string feedKey = "feeds";
     }
 }

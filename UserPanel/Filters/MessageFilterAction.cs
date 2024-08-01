@@ -12,9 +12,16 @@ namespace UserPanel.Filters
     public class MessageFilterAction : Attribute, IActionFilter
     {
         FormMessages FormMessages { get; set; }
-        public MessageFilterAction(FormMessages messages) {
+        protected bool IsError { get; set; }
+        protected bool IsSucces {  get; set; }
+        protected bool IsInherited { get; set; }
+        protected Action<ActionExecutingContext> _OnActionExecuting { get; set; }
+        public MessageFilterAction(FormMessages messages, bool inherit = false)
+        {
 
             FormMessages = messages;
+            IsInherited = inherit;
+            _OnActionExecuting = OnActionExecuting;
         }
         public void OnActionExecuted(ActionExecutedContext context)
         {
@@ -28,9 +35,15 @@ namespace UserPanel.Filters
             {
                 if (context.Controller is Controller controller)
                 {
-                    controller.ViewData["error"] = Enum.TryParse(typeof(ErrorForm), error, out _) ?
-                        FormMessages.GetValue((ErrorForm)Enum.Parse(typeof(ErrorForm), error))
-                        : FormMessages.GetValue(ErrorForm.err_default);
+                    if (Enum.TryParse(typeof(ErrorForm), error, out object error_enum))
+                    {
+                        controller.ViewData["error"] = FormMessages.GetValue((ErrorForm)Enum.Parse(typeof(ErrorForm), error));
+                    }
+                    else if(IsInherited)
+                    {
+                        controller.ViewData["error"] = FormMessages.GetValue(ErrorForm.err_default);
+                    }
+                          
                 }
             }
             else if(context.HttpContext.Request.Query.TryGetValue("success", out StringValues success))
@@ -43,6 +56,11 @@ namespace UserPanel.Filters
                     }
                 }
             }
+            if(IsInherited)
+            {
+                _OnActionExecuting(context);
+            }
+          
         } 
     }
 }

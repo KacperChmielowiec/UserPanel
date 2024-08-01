@@ -1,0 +1,17 @@
+﻿@model RenderModel
+@{
+    Layout = null;
+}
+@if(Model.Size == FormatSize.size_300_300.GetStringValue())
+{
+
+    @await Html.PartialAsync("~/Views/Templates/dynamic/dynamic_300x300.cshtml", Model)
+ 
+}
+
+@if (Model.Size == FormatSize.size_300_600.GetStringValue())
+{
+    <ad-frame>
+        @await Html.PartialAsync("~/Views/Templates/dynamic/dynamic_300x600.cshtml", Model)
+    </ad-frame>
+}

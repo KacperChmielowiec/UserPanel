@@ -8,9 +8,9 @@ using UserPanel.Models.Group;
 using UserPanel.References;
 using UserPanel.Services;
 using UserPanel.Types;
-using UserPanel.Filters;
 using UserPanel.Helpers;
 using UserPanel.Attributes;
+
 
 namespace UserPanel.Controllers
 {
@@ -55,7 +55,7 @@ namespace UserPanel.Controllers
             return View(new CreateGroup() { id_camp = campaning.id, Utm_Source = campaning?.details?.Utm_Source ?? "" });
         }
         [Authorize]
-        [HttpPost("/create/{id}")]
+        [HttpPost("campaign/group/create/sent")]
         public IActionResult Create(CreateGroup model)
         {
             if (model.id_camp == null || model.id_camp == Guid.Empty) return BadRequest();
@@ -64,12 +64,16 @@ namespace UserPanel.Controllers
             {
                 return View(model);
             }
+            try
+            {
+                GroupModel groupModel = _mapper.Map<GroupModel>(model);
+                _groupManager.CreateGroup(model.id_camp, groupModel);
+                return RedirectToAction("groups", new { camp_id = model.id_camp, success = ErrorForm.suc_create });
 
-            GroupModel groupModel = _mapper.Map<GroupModel>(model);
-
-            _groupManager.CreateGroup(model.id_camp, groupModel);
-
-            return RedirectToAction("groups", new { camp_id = model.id_camp });
+            }
+            catch(Exception) {
+                return RedirectToAction("groups", new { camp_id = model.id_camp, error = ErrorForm.err_create });
+            }
         }
         [HttpGet("campaign/group/edit/{id}")]
         public IActionResult Edit(Guid id)
@@ -96,7 +100,7 @@ namespace UserPanel.Controllers
 
             Guid CampId = PermissionActionManager<Guid>.GetFullPath(id).Camp;
 
-            List<Advert> Adverts = _dataBaseProvider
+            List<Advert<AdvertFormat>> Adverts = _dataBaseProvider
                 .GetAdvertRepository()
                 .GetAdvertsByCampId(CampId);
 
@@ -149,9 +153,8 @@ namespace UserPanel.Controllers
 
             try
             {
-               _dataBaseProvider.GetGroupRepository().DeleteGroup(id);
-
                 Guid camp = PermissionActionManager<Guid>.GetFullPath(id).Camp;
+                _dataBaseProvider.GetGroupRepository().DeleteGroup(id);
                 return RedirectToAction("Groups", new { camp_id = camp, success = ErrorForm.suc_remove.GetStringValue() });
 
             }

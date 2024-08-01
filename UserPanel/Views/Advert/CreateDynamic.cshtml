@@ -1,0 +1,7 @@
+﻿@model AdvertForm<AdvertFormatFormDynamic>
+@{
+    Layout = "_Layout";
+    ViewData["Edit"] = false;
+}
+@await Html.PartialAsync("_FormDynamic", Model);
+

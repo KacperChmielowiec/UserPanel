@@ -4,20 +4,20 @@ using UserPanel.References;
 using UserPanel.Helpers;
 using UserPanel.Services;
 using UserPanel.Services.observable;
+using UserPanel.Types;
 namespace UserPanel.Models.Adverts
 {
-    public class AdvertRepositoryMock : AdvertRepository<Advert>
+    public class AdvertRepositoryMock : AdvertRepository<AdvertisementMock>
     {
         public ISession _session { get; set; }
         public IMapper _mapper { get; set; }
-
         public IHttpContextAccessor _context { get; set; }   
         public AdvertRepositoryMock(ISession session,IMapper mapper, IHttpContextAccessor contextAccessor) { 
             _session = session;
             _mapper = mapper;
             _context = contextAccessor;
         }
-        public override Advert GetAdvertById(Guid id)
+        public override AdvertisementMock GetAdvertById(Guid id)
         {
             var SessionModel = _session.GetJson<List<AdvertisementMock>>(SessionKeysReferences.advertKey)
                ?.Where(ad => ad.id == id)
@@ -25,65 +25,63 @@ namespace UserPanel.Models.Adverts
 
             if (SessionModel != null)
             {
-                return _mapper.Map<Advert>(SessionModel);
+                return SessionModel;
             }
 
             return null;
         }
 
-        public override List<Advert> GetAdvertGroupId(Guid id)
+        public override List<AdvertisementMock> GetAdvertGroupId(Guid id)
         {
             var SessionModelList = _session.GetJson<List<AdvertisementMock>>(SessionKeysReferences.advertKey);
                
 
             if (SessionModelList != null)
             {
-                var ads_real = new List<Advert>();
+                
                 var ads_mock = SessionModelList.Where(a => a.id_groups.Contains(id)).ToList();
               
-                foreach (var item in ads_mock)
-                {
-                    ads_real.Add(_mapper.Map<Advert>(item));
-                }
-                return ads_real;
+                return ads_mock;
             }
-            return new List<Advert>();
+            return new List<AdvertisementMock>();   
 
         }
 
-        public override void CreateAdvert(Advert entity, Guid idGroup)
+        public override void CreateAdvert(AdvertisementMock entity, Guid idGroup)
         {
-            if (entity.Id == Guid.Empty) throw new ArgumentNullException("Empty Id parametr of AdverModel in CreateAdvert Method");
+            if (entity.id == Guid.Empty) throw new ArgumentNullException("Empty Id parametr of AdverModel in CreateAdvert Method");
             var SessionModels = _session.GetJson<List<AdvertisementMock>>(SessionKeysReferences.advertKey) ?? new List<AdvertisementMock>();
-            var mockModel = _mapper.Map<AdvertisementMock>(entity);
+            var mockModel = entity;
             mockModel.id_groups = new Guid[] { idGroup };
             mockModel.id_user = UserManager.getUserId(_context);
             mockModel.id_camp = PermissionActionManager<Guid>.GetFullPath(idGroup).Camp;
 
             SessionModels.Add(mockModel);
             _session.SetJson(SessionKeysReferences.advertKey, SessionModels);
-            Subjects.dataActionSubject.notify(new DataActionMessage() { id = entity.Id,Parent = idGroup, actionType = Types.DataActionType.ADD, dataType = DataType.Advert });
+            Subjects.dataActionSubject.notify(new DataActionMessage() { id = entity.id ,Parent = idGroup, actionType = DataActionType.ADD, dataType = DataType.Advert });
         }
-        public override void UpdateAdvert(Advert model)
+        public override void UpdateAdvert(AdvertisementMock model)
         {
             if (model == null) return;
-            if (model.Id == Guid.Empty) throw new ArgumentNullException("Empty Guid for Advert model in UpdateAdvert method");
+            if (model.id == Guid.Empty) throw new ArgumentNullException("Empty Guid for Advert model in UpdateAdvert method");
 
             var SessionModelList = _session.GetJson<List<AdvertisementMock>>(SessionKeysReferences.advertKey).ToList() ?? new List<AdvertisementMock>();
-            var SesionModel = SessionModelList.Where(m => m.id == model.Id).FirstOrDefault();
+            var SessionModel = SessionModelList.Where(m => m.id == model.id).FirstOrDefault();
 
-            if (SesionModel == null )
+            if (SessionModel == null )
             {
                 return;
             }
 
-            SessionModelList.RemoveAll(m => m.id == model.Id);
+            SessionModelList.RemoveAll(m => m.id == model.id);
 
-            AdvertisementMock UpdateModel = _mapper.Map<AdvertisementMock>(model);
+            AdvertisementMock UpdateModel = model;
 
-            UpdateModel.id_camp = SesionModel.id_camp;
-            UpdateModel.id_groups = SesionModel.id_groups;
-            UpdateModel.id_user = SesionModel.id_user;
+            UpdateModel.id_camp = SessionModel.id_camp;
+            UpdateModel.id_groups = SessionModel.id_groups;
+            UpdateModel.id_user = SessionModel.id_user;
+            UpdateModel.Created = SessionModel.Created;
+
 
             SessionModelList.Add(UpdateModel);
 
@@ -92,28 +90,27 @@ namespace UserPanel.Models.Adverts
             //Subjects.dataActionSubject.notify(new DataActionMessage() { id = entity.Id, Parent = idGroup, actionType = Types.DataActionType.UPDATE, dataType = DataType.Advert });
 
         }
-        public override List<Advert> GetAdvertByUserId(int id)
+        public override List<AdvertisementMock> GetAdvertByUserId(int id)
         {
            
             var SessionModels = _session.GetJson<List<AdvertisementMock>>(SessionKeysReferences.advertKey) ?? new List<AdvertisementMock>();
 
             var FilteredModels = SessionModels.Where( model => model.id_user == id).ToList();
 
-            List<Advert> ParsedModels = new List<Advert>();
-
-            foreach(var model in FilteredModels)
-            {
-                ParsedModels.Add(_mapper.Map<Advert>(model));
-            }
-
-            return ParsedModels;
+            return FilteredModels;
         }
 
         public override void DeleteAdvertsById(Guid[] ids)
         {
             if (ids.Length == 0) return;
             var SessionModels = _session.GetJson<List<AdvertisementMock>>(SessionKeysReferences.advertKey) ?? new List<AdvertisementMock>();
-            return;
+            int elements = SessionModels.RemoveAll(m => ids.Contains(m.id));
+
+            if(elements == 0)
+            {
+                throw new KeyNotFoundException();
+            }
+
         }
 
         public override void DettachAdvertFromGroup(Guid id, Guid id_group)
@@ -165,18 +162,20 @@ namespace UserPanel.Models.Adverts
                     }
                     SessionModelsList.RemoveAll(m => m.id == ad.id);
                     SessionModelsList.Add(ad);
+                    Subjects.dataActionSubject.notify(new DataActionMessage() { actionType = attach ? DataActionType.ATTACH : DataActionType.DETACH, dataType = DataType.Advert, id = ad.id, Parent = id_group });
                     
                 });
                 _session.SetJson(SessionKeysReferences.advertKey, SessionModelsList);
+                
             }
         }
 
-        public override List<Advert> GetAdvertsByCampId(Guid id)
+        public override List<AdvertisementMock> GetAdvertsByCampId(Guid id)
         {
             if (id == Guid.Empty) throw new ArgumentNullException("Empty id in GetAdvertByCampId method");
             var SessionModelList = _session.GetJson<List<AdvertisementMock>>(SessionKeysReferences.advertKey).Where(m => m.id_camp ==  id).ToList() ?? new List<AdvertisementMock>();
-            
-            return _mapper.Map<List<AdvertisementMock>,List<Advert>>(SessionModelList);
+
+            return SessionModelList;
         }
 
         public override AdvertGroupJoin GetGroupRelation(Guid id)
@@ -194,6 +193,224 @@ namespace UserPanel.Models.Adverts
 
             return null;
             
+        }
+    }
+    public class AdvertRepositoryDynamic : AdvertRepositoryMock
+    {
+        public AdvertRepositoryDynamic(ISession session, IMapper mapper, IHttpContextAccessor contextAccessor) : base(session, mapper, contextAccessor)
+        {
+        }
+
+        public Advert<AdvertFormatDynamic> GetAdvertById(Guid id)
+        {
+            AdvertisementMock mock = base.GetAdvertById(id);
+            if(mock != null && mock?.template == AD_TEMPLATE.Dynamic)
+            {
+                return _mapper.Map<Advert<AdvertFormatDynamic>>(mock);
+            }
+            return null;
+        }
+
+        public List<Advert<AdvertFormatDynamic>> GetAdvertGroupId(Guid id)
+        {
+            List<AdvertisementMock> mock = base.GetAdvertGroupId(id)?.Where(m => m.template == AD_TEMPLATE.Dynamic).ToList() ?? new List<AdvertisementMock>();
+            if(mock.Any())
+            {
+                return _mapper.Map<List<Advert<AdvertFormatDynamic>>>(mock);  
+            }
+            return new List<Advert<AdvertFormatDynamic>>();
+        }
+
+        public List<Advert<AdvertFormatDynamic>> GetAdvertsByCampId(Guid id)
+        {
+            var mock = base.GetAdvertsByCampId(id)?.Where(m => m.template == AD_TEMPLATE.Dynamic) ?? new List<AdvertisementMock>();
+            if(mock.Any())
+            {
+                return _mapper.Map<List<Advert<AdvertFormatDynamic>>>(mock);
+            }
+            return new List<Advert<AdvertFormatDynamic>>();
+        }
+        public List<Advert<AdvertFormatDynamic>> GetAdvertByUserId(int id)
+        {
+            var mock = base.GetAdvertByUserId(id)?.Where(m => m.template != AD_TEMPLATE.Dynamic) ?? new List<AdvertisementMock>();
+            if(mock.Any())
+            {
+                return _mapper.Map<List<Advert<AdvertFormatDynamic>>>(mock);
+            }
+            return new List<Advert<AdvertFormatDynamic>>();    
+        }
+        public void CreateAdvert(Advert<AdvertFormatDynamic> advert, Guid idGroup)
+        {
+            base.CreateAdvert(_mapper.Map<AdvertisementMock>(advert), idGroup);
+        }
+
+        public void UpdateAdvert(Advert<AdvertFormatDynamic> advert)
+        {
+            base.UpdateAdvert(_mapper.Map<AdvertisementMock>(advert));
+        }
+
+        public void DeleteAdvertsById(Guid[] ids)
+        {
+            base.DeleteAdvertsById(ids);
+        }
+        public void DeleteAdvertsById(Guid id)
+        {
+            base.DeleteAdvertsById(id);
+        }
+
+        public void ChangeAttachStateAdverts(Guid[] ids, Guid id_group, bool attach)
+        {
+            base.ChangeAttachStateAdverts(ids, id_group, attach);
+        }
+        public AdvertGroupJoin GetGroupRelation(Guid id)
+        {
+            return base.GetGroupRelation(id);
+        }
+    }
+
+    public class AdvertRepositoryStatic : AdvertRepositoryMock
+    {
+        public AdvertRepositoryStatic(ISession session, IMapper mapper, IHttpContextAccessor contextAccessor) : base(session, mapper, contextAccessor)
+        {
+        }
+
+        public Advert<AdvertFormat> GetAdvertById(Guid id)
+        {
+            AdvertisementMock mock = base.GetAdvertById(id);
+            if (mock != null && mock?.template == AD_TEMPLATE.Static)
+            {
+                return _mapper.Map<Advert<AdvertFormat>>(mock);
+            }
+            return null;
+        }
+
+        public List<Advert<AdvertFormat>> GetAdvertGroupId(Guid id)
+        {
+            List<AdvertisementMock> mock = base.GetAdvertGroupId(id)?.Where(m => m.template == AD_TEMPLATE.Static).ToList() ?? new List<AdvertisementMock>();
+            if (mock.Any())
+            {
+                return _mapper.Map<List<Advert<AdvertFormat>>>(mock);
+            }
+            return new List<Advert<AdvertFormat>>();
+        }
+
+        public List<Advert<AdvertFormat>> GetAdvertsByCampId(Guid id)
+        {
+            var mock = base.GetAdvertsByCampId(id)?.Where(m => m.template == AD_TEMPLATE.Static) ?? new List<AdvertisementMock>();
+            if (mock.Any())
+            {
+                return _mapper.Map<List<Advert<AdvertFormat>>>(mock);
+            }
+            return new List<Advert<AdvertFormat>>();
+        }
+        public List<Advert<AdvertFormat>> GetAdvertByUserId(int id)
+        {
+            var mock = base.GetAdvertByUserId(id)?.Where(m => m.template != AD_TEMPLATE.Static) ?? new List<AdvertisementMock>();
+            if (mock.Any())
+            {
+                return _mapper.Map<List<Advert<AdvertFormat>>>(mock);
+            }
+            return new List<Advert<AdvertFormat>>();
+        }
+        public void CreateAdvert(Advert<AdvertFormat> advert, Guid idGroup)
+        {
+            base.CreateAdvert(_mapper.Map<AdvertisementMock>(advert), idGroup);
+        }
+
+        public void UpdateAdvert(Advert<AdvertFormat> advert)
+        {
+            base.UpdateAdvert(_mapper.Map<AdvertisementMock>(advert));
+        }
+
+        public void DeleteAdvertsById(Guid[] ids)
+        {
+            base.DeleteAdvertsById(ids);
+        }
+        public void DeleteAdvertsById(Guid id)
+        {
+            base.DeleteAdvertsById(id);
+        }
+
+        public void ChangeAttachStateAdverts(Guid[] ids, Guid id_group, bool attach)
+        {
+            base.ChangeAttachStateAdverts(ids, id_group, attach);
+        }
+        public AdvertGroupJoin GetGroupRelation(Guid id)
+        {
+            return base.GetGroupRelation(id);
+        }
+    }
+
+    public class AdvertRepositoryFull : AdvertRepositoryMock
+    {
+        public AdvertRepositoryFull(ISession session, IMapper mapper, IHttpContextAccessor contextAccessor) : base(session, mapper, contextAccessor)
+        {
+        }
+
+        public Advert<AdvertFormat> GetAdvertById(Guid id)
+        {
+            AdvertisementMock mock = base.GetAdvertById(id);
+            if (mock != null)
+            {
+                return _mapper.Map<Advert<AdvertFormat>>(mock);
+            }
+            return null;
+        }
+
+        public List<Advert<AdvertFormat>> GetAdvertGroupId(Guid id)
+        {
+            List<AdvertisementMock> mock = base.GetAdvertGroupId(id);
+            if (mock.Any())
+            {
+                return _mapper.Map<List<Advert<AdvertFormat>>>(mock);
+            }
+            return new List<Advert<AdvertFormat>>();
+        }
+
+        public List<Advert<AdvertFormat>> GetAdvertsByCampId(Guid id)
+        {
+            var mock = base.GetAdvertsByCampId(id);
+            if (mock.Any())
+            {
+                return _mapper.Map<List<Advert<AdvertFormat>>>(mock);
+            }
+            return new List<Advert<AdvertFormat>>();
+        }
+        public List<Advert<AdvertFormat>> GetAdvertByUserId(int id)
+        {
+            var mock = base.GetAdvertByUserId(id);
+            if (mock.Any())
+            {
+                return _mapper.Map<List<Advert<AdvertFormat>>>(mock);
+            }
+            return new List<Advert<AdvertFormat>>();
+        }
+        public void CreateAdvert(Advert<AdvertFormat> advert, Guid idGroup)
+        {
+            base.CreateAdvert(_mapper.Map<AdvertisementMock>(advert), idGroup);
+        }
+
+        public void UpdateAdvert(Advert<AdvertFormat> advert)
+        {
+            base.UpdateAdvert(_mapper.Map<AdvertisementMock>(advert));
+        }
+
+        public void DeleteAdvertsById(Guid[] ids)
+        {
+            base.DeleteAdvertsById(ids);
+        }
+        public void DeleteAdvertsById(Guid id)
+        {
+            base.DeleteAdvertsById(id);
+        }
+
+        public void ChangeAttachStateAdverts(Guid[] ids, Guid id_group, bool attach)
+        {
+            base.ChangeAttachStateAdverts(ids, id_group, attach);
+        }
+        public AdvertGroupJoin GetGroupRelation(Guid id)
+        {
+            return base.GetGroupRelation(id);
         }
     }
 }

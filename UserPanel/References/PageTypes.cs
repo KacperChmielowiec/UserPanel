@@ -22,6 +22,10 @@ namespace UserPanel.References
         GROUP_DETAILS,
         [StringValue("Adverts List")]
         ADVERT_LIST,
+        [StringValue("Feed List")]
+        FEEDS,
+        [StringValue("Product List")]
+        PRODUCTS,
     }
 
     public enum DataType

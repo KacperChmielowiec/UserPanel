@@ -1,38 +1,40 @@
-﻿@model AdvertForm
+﻿@model AdvertForm<AdvertFormatFormStatic>
 @{
-    bool isEdit = ViewData["Edit"] != null ? (bool)ViewData["Edit"] : false;
+    bool isEdit = ViewData.ContainsKey("Edit") ? (bool)ViewData["Edit"] : false;
 }
 @functions{
     public string PhotoEditSrc(int index)
     {
-        return $"background-image: url({Model.Formats[index].Src})";
+        if(Model?.Formats.Count >= index + 1)
+            return $"background-image: url({Model?.Formats[index]?.Src})";
+        return "";
     }
 }
 
 <div class="w-full flex items-center h-full advert-page">
         <div class="wrapper-ads-edit shadow-md mb-10">
-        <form class="w-full" asp-controller="Advert" asp-action="@(isEdit ? "Edit" : "Create")"  method="post" enctype="multipart/form-data">
+        <form class="w-full" asp-controller="Advert" asp-action="@(isEdit ? "EditStaticPost" : "CreateStaticPost")" method="post" enctype="multipart/form-data">
             <header class="header-section">
-                <h2 class="text-2xl font-semibold">Edycja reklamy</h2>
+                <h2 class="text-2xl font-semibold">@(isEdit ? "Edycja reklamy" : "Tworzenie reklamy")</h2>
             </header>
             <div class="form-section">
                  <div class="form-group">
                      <label class="w-full mr-8 text-right" for="">Szablon:</label>
-                     <div class="col-10"><p>standardowy</p></div>
+                    <div class="columns-10"><p>standardowy</p></div>
                  </div>
                 <div class="form-group">
                     <input hidden asp-for="id_camp" value="@Model.id_camp"/>
                     <input hidden asp-for="Id" value="@Model.Id" />
-                    <label class="w-full mr-8 text-right" for="">Nazwa: </label>
-                    <input asp-for="Name" class="col-10 appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4  leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Nazwa reklamy">
+                    <label class="mr-8 text-right" for="">Nazwa: </label>
+                    <input asp-for="Name" class="columns-10 appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4  leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Nazwa reklamy">
                 </div>
                 <div class="form-group">
-                    <label class="w-full mr-8 text-right" for="">Opis: </label>
-                    <textarea asp-for="Description" id="message" rows="4" class="col-10 block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Opis..."></textarea>
+                    <label class="mr-8 text-right" for="">Opis: </label>
+                    <textarea asp-for="Description" id="message" rows="4" class="columns-10 block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Opis..."></textarea>
                 </div>
                 <div class="form-group">
-                    <label class="w-full mr-8 text-right" for="">Status: </label>
-                    <select asp-for="IsActive" id="countries" class="col-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <label class="mr-8 text-right" for="">Status: </label>
+                    <select asp-for="IsActive" id="countries" class="columns-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                         <option value="true">Włącz</option>
                         <option value="false">Wyłącz</option>
                     </select>
@@ -45,6 +47,7 @@
                 <ul class="nav nav-tabs">
                     <li class=""><a href="#adt_GLOBAL">Wszystkie</a></li>
                     <li class=""><a href="#adt_LOCAL_e306fc59-c22b-40ab-8436-85e818552127">300x300</a></li>
+                    <li class=""><a href="#adt_LOCAL_e306fc59-c22b-40ab-8436-85e818552127">300x600</a></li>
                 </ul>
                 <div class="tab-cont">
                     <div class="tab-pane mt-10">
@@ -59,7 +62,9 @@
                             <input asp-for="Formats[0].Url" data-type="url" class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4  leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Nazwa reklamy">
                         </div>
                         <div class="form-group-content">
+                            <input hidden asp-for="Formats[0].Src"/>
                             <input hidden type="text" value="300x300" asp-for="Formats[0].Size" />
+                            <input hidden type="text" value="@(isEdit ? true : false)" asp-for="Formats[0].isEdit" />
                             <label class="mr-8 text-right" for="">Baner: </label>
                             <input asp-for="Formats[0].StaticImg" data-id="file_300x300" type="file" hidden />
                             <span data-id="file_300x300" onclick="openFile()" class="btn glow btn-flat success px-5"><i class="icon-upload mr-1"></i>Zmień</span>
@@ -68,6 +73,25 @@
                         <div class="preview">
                             <div class="preview-frame" style="width: 300px; height: 300px; @(isEdit  ? PhotoEditSrc(0) : "") ">
 
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane mt-10" data-id="file_300x600">
+                        <div class="form-group-content">
+                            <label class="mr-8 text-right" for="">URL: </label>
+                            <input asp-for="Formats[1].Url" data-type="url" class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4  leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Nazwa reklamy">
+                        </div>
+                        <div class="form-group-content">
+                            <input hidden asp-for="Formats[1].Src" />
+                            <input hidden type="text" value="300x600" asp-for="Formats[1].Size" />
+                            <input hidden type="text" value="@(isEdit ? true : false)" asp-for="Formats[1].isEdit" />
+                            <label class="mr-8 text-right" for="">Baner: </label>
+                            <input asp-for="Formats[1].StaticImg" data-id="file_300x600" type="file" hidden />
+                            <span data-id="file_300x600" onclick="openFile()" class="btn glow btn-flat success px-5"><i class="icon-upload mr-1"></i>Zmień</span>
+                            <span data-id="file_300x600" onclick="removeFile('file_300x600')" class="btn btn-flat danger px-5 ml-4"><i class="icon-trash mr-1"></i>Wyczyść</span>
+                        </div>
+                        <div class="preview">
+                            <div class="preview-frame" style="width: 300px; height: 600px; @(isEdit  ? PhotoEditSrc(1) : "") ">
                             </div>
                         </div>
                     </div>
@@ -86,7 +110,7 @@
     const mainUrlInput = document.querySelector("input#main_url")
     let upload;
     var _URL = window.URL || window.webkitURL;
-
+    const previousValues = {}
     tabUtils({ tabWrapper: ".format-section", tabItems: ".nav-tabs li", tabContents: ".tab-cont > .tab-pane" })
 
     const openFile = () => {
@@ -104,6 +128,10 @@
         urlInputsArray.forEach((i) => {
             i.value = event.target.value
         })
+    })
+
+    fileInputsArray.forEach((input) => {
+        previousValues[input.dataset.id] = input.value
     })
 
     fileInputsArray.forEach((input) => input.addEventListener("change", () => {
@@ -125,10 +153,11 @@
                     frame.style.backgroundImage = `url(${upload})`
                     frame.style.backgroundPosition = 'center';
                     frame.style.backgroundRepeat = 'no-repeat';
+                    input.previousValues[input.dataset.id] = input.value
 
                 }
                 else {
-
+                    input.value = previousValues[input.dataset.id]
                     alert(`Obrazek musi mieć rozmiar: ${width}x${height}`)
 
                 }
@@ -175,7 +204,7 @@
 
     .form-group label, .form-group-content label{
         font-weight: 600;
-        min-width: 50px;
+        min-width: 70px;
     }
     .preview{
         width: 100%;

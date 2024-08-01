@@ -2318,13 +2318,22 @@ div .prepend {
     text-align: center;
 }
 .alert.warning {
-    background-color: #f0ad4e;
-    color: #ffffff;
+    background-color: #f0ad4e !important;
+    color: #ffffff !important;
+}
+.alert.warning:hover {
+    background-color: #f0ad4e !important;
+    color: #ffffff !important;
 }
 .alert.success {
-    color: #ffffff;
-    background-color: #5cb85c;
+    color: #ffffff !important;
+    background-color: #5cb85c !important;
 }
+.alert.success:hover {
+    color: #ffffff !important;
+    background-color: #5cb85c !important;
+}
+
 .alert {
     padding: 15px 10px 15px 10px;
     border-radius: 10px;

@@ -2,27 +2,32 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
+using UserPanel.Attributes;
 using UserPanel.Helpers;
 using UserPanel.Interfaces;
 using UserPanel.Models;
 using UserPanel.Models.Adverts;
 using UserPanel.Services;
+using UserPanel.Types;
 
 namespace UserPanel.Controllers
 {
+    [AdvertFilter]
     public class AdvertController : Controller
     {
         private IMapper _mapper;
         private IDataBaseProvider _dataBaseProvider;
-        public AdvertController(IMapper mapper, IDataBaseProvider dataBaseProvider)
+        private AdvertManager _advertManager;
+        public AdvertController(IMapper mapper, IDataBaseProvider dataBaseProvider, AdvertManager advertManager)
         {
             _mapper = mapper;
             _dataBaseProvider = dataBaseProvider;
+            _advertManager = advertManager;
         }
 
         [Authorize]
-        [HttpGet("campaign/advertisement/create-form")]
-        public IActionResult Create([FromQuery] Guid id_camp)
+        [HttpGet("campaign/advertisement/create-form-static")]
+        public IActionResult CreateStatic([FromQuery] Guid id_camp)
         {
             
             if(id_camp == Guid.Empty)
@@ -34,19 +39,66 @@ namespace UserPanel.Controllers
                 return StatusCode(401);
             }
 
-            return View( new AdvertForm() { id_camp = id_camp } );
-        }
-        [Authorize]
-        [HttpPost("campaign/advertisement/create")]
-        public IActionResult CreatePost(AdvertForm advert)
-        {
-          
+            var advert = new AdvertForm<AdvertFormatFormStatic>() { id_camp = id_camp };
 
+            AdvertFormatHelper.SortAndFill(advert.Formats, 2);
+
+            return View(advert);
+        }
+
+        [Authorize]
+        [HttpGet("campaign/advertisement/create-form-dynamic")]
+        public IActionResult CreateDynamic([FromQuery] Guid id_camp)
+        {
+            if (id_camp == Guid.Empty)
+            {
+                return BadRequest();
+            }
+            if (!PermissionActionManager<Guid>.CheckPermisionAccess(new Guid[] { id_camp }))
+            {
+                return StatusCode(401);
+            }
+
+            var advert = new AdvertForm<AdvertFormatFormDynamic>() { id_camp = id_camp };
+            AdvertFormatHelper.SortAndFill(advert.Formats, 2);
+
+            return View(advert);
+        }
+
+
+        [Authorize]
+        [HttpPost("campaign/advertisement/create-template")]
+        public IActionResult Create( [FromForm] Guid id, [FromForm] string template )
+        {
+            AD_TEMPLATE template_enum;
+
+            if(Enum.TryParse(typeof(AD_TEMPLATE), template, out object result))
+            {
+                template_enum = (AD_TEMPLATE)result;
+                switch(template_enum)
+                {
+                    case AD_TEMPLATE.Static:
+                        return RedirectToAction("CreateStatic", new { id_camp = id } );
+                    case AD_TEMPLATE.Dynamic: 
+                        return RedirectToAction("CreateDynamic", new { id_camp = id } );
+                    default: break;
+                }
+            }
+
+            return RedirectToAction("List", new { id = id });
+        }
+
+        [Authorize]
+        [HttpPost("campaign/advertisement/static/create")]
+        public IActionResult CreateStaticPost(AdvertForm<AdvertFormatFormStatic> advert)
+        {
             if(ModelState.IsValid)
             {
 
-                Advert advertModel = _mapper.Map<Advert>(advert);
+                Advert<AdvertFormat> advertModel = _mapper.Map<Advert<AdvertFormat>>(advert);
                 advertModel.Id = Guid.NewGuid();
+                advertModel.Template = AD_TEMPLATE.Static;
+                advertModel.Created = DateTime.Now;
 
                 if (!PermissionActionManager<Guid>.CheckPermisionAccess(new Guid[] { advert.id_camp }))
                 {
@@ -56,28 +108,65 @@ namespace UserPanel.Controllers
 
                 foreach(var (format,i) in advert.Formats.Select((x,y) => (x, y)))
                 {
-                    string path = PathGenerate.GetAdvertPath(advertModel.Id, format.Size);
-                    var FormFileService = new FormFileService(format.StaticImg);
-                    bool result = FormFileService.WriteFile(path);
-                    if(!result)
-                    {
-                        return BadRequest("Cannot save the photo");
-                    }
+                    
+                    
+                    string path = _advertManager.UpdateAdvertImage(advertModel.Id, format.Size, format.StaticImg);
+                    advertModel.Formats[i].Src = path;
+                   
+                }
+                try
+                {
+                    _dataBaseProvider.GetAdvertRepository().CreateAdvert(advertModel, advert.id_camp);
 
-                    advertModel.Formats[i].Src = PathGenerate.ShrinkRoot(FormFileService.GettFullSavedPath());
-                    try
-                    {
-                        _dataBaseProvider.GetAdvertRepository().CreateAdvert(advertModel,advert.id_camp);
-
-                    }catch(Exception ex)
-                    {
-                        //TODO revert saved photo in specified directory.
-                    }
+                }
+                catch (Exception ex)
+                {
+                    return RedirectToAction("List", new { id = advert.id_camp, error = ErrorForm.err_create });
                 }
 
-                return Redirect("/");
+                return RedirectToAction("List", new { id = advert.id_camp , success = ErrorForm.suc_create});
             }
-            return RedirectToAction("Index");
+
+            return RedirectToAction("CreateStatic", advert);
+        }
+        [Authorize]
+        [HttpPost("campaign/advertisement/dynamic/create")]
+        public IActionResult CreateDynamicPost(AdvertForm<AdvertFormatFormDynamic> advert)
+        {
+            if (ModelState.IsValid)
+            {
+
+                Advert<AdvertFormatDynamic> advertModel = _mapper.Map<Advert<AdvertFormatDynamic>>(advert);
+
+                advertModel.Id = Guid.NewGuid();
+                advertModel.Template = AD_TEMPLATE.Dynamic;
+                advertModel.Created = DateTime.Now;
+
+                if (!PermissionActionManager<Guid>.CheckPermisionAccess(new Guid[] { advert.id_camp }))
+                {
+                    return StatusCode(401);
+                }
+
+
+                foreach (var (format, i) in advertModel.Formats.Select((x, y) => (x, y)))
+                {
+
+                    format.Id = Guid.NewGuid();
+                    advertModel.Formats[i].Src = $"/campaign/advert/render?ad={advertModel.Id}&ad_f={format.Id}";
+                    
+                }
+                try
+                {
+                    _dataBaseProvider.GetAdvertDyRepository().CreateAdvert(advertModel, advert.id_camp);
+
+                }
+                catch (Exception ex)
+                {
+                    return RedirectToAction("List", new { id = advert.id_camp, error = ErrorForm.err_create });
+                }
+                return RedirectToAction("List", new { id = advert.id_camp, success = ErrorForm.suc_create });
+            }
+            return RedirectToAction("CreateStatic", advert);
         }
         [Authorize]
         [HttpGet("/advertisement/update-form/{id}")]
@@ -92,53 +181,94 @@ namespace UserPanel.Controllers
                 return StatusCode(401);
             }
 
-            Advert Curr_Ad = _dataBaseProvider.GetAdvertRepository().GetAdvertById(id);
+            Advert<AdvertFormat> Curr_Ad = _dataBaseProvider.GetAdvertRepository().GetAdvertById(id);
 
             if (Curr_Ad == null)
             {
                 return NotFound();
             }
-            
-            AdvertForm Curr_Ad_Form = _mapper.Map<AdvertForm>(Curr_Ad);
-            Curr_Ad_Form.id_camp = PermissionActionManager<Guid>.GetFullPath(id).Camp;
 
-            return View(Curr_Ad_Form);
-        }
-        [Authorize]
-        [HttpPost("/advertisement/update-form/sent")]
-        public IActionResult EditPost(AdvertForm form)
-        {
-            if(ModelState.IsValid)
+            if (Curr_Ad.Template == AD_TEMPLATE.Static)
             {
-                _dataBaseProvider.GetAdvertRepository().UpdateAdvert(_mapper.Map<Advert>(form));
-                return Redirect("/");
-            }
+                AdvertForm<AdvertFormatFormStatic> Curr_Ad_Form = _mapper.Map<AdvertForm<AdvertFormatFormStatic>>(Curr_Ad);
 
-            ViewData["Edit"] = true;
-            return View();
+                Curr_Ad_Form.id_camp = PermissionActionManager<Guid>.GetFullPath(id).Camp;
+
+                AdvertFormatHelper.SortAndFill(Curr_Ad_Form.Formats, 2);
+
+                return View("EditStatic",Curr_Ad_Form);
+            }
+            else
+            {
+                AdvertForm<AdvertFormatFormDynamic> Curr_Ad_Form = _mapper.Map<AdvertForm<AdvertFormatFormDynamic>>(Curr_Ad);
+
+                Curr_Ad_Form.id_camp = PermissionActionManager<Guid>.GetFullPath(id).Camp;
+
+                AdvertFormatHelper.SortAndFill(Curr_Ad_Form.Formats, 2);
+
+                return View("EditDynamic", Curr_Ad_Form);
+            }
+        }
+
+        [Authorize]
+        [HttpPost("/advertisement/update-form/static/sent")]
+        public IActionResult EditStaticPost(AdvertForm<AdvertFormatFormStatic> form)
+        { 
+            if (ModelState.IsValid)
+            {
+
+                foreach (var (format, i) in form.Formats.Select((x, y) => (x, y)))
+                {
+                    if(format.StaticImg != null)
+                    {
+                        string path = _advertManager.UpdateAdvertImage(form.Id, format.Size, format.StaticImg);
+                        format.Src = path;
+                    }
+                }
+
+                _dataBaseProvider.GetAdvertRepository().UpdateAdvert(_mapper.Map<Advert<AdvertFormat>>(form));
+
+                return RedirectToAction("List", new { id = form.id_camp, success = ErrorForm.suc_edit });
+            }
+            return View("EditStatic",form);
+        }
+
+        [Authorize]
+        [HttpPost("/advertisement/update-form/dynamic/sent")]
+        public IActionResult EditDynamicPost(AdvertForm<AdvertFormatFormDynamic> form)
+        {
+            if (ModelState.IsValid)
+            {
+                _dataBaseProvider.GetAdvertDyRepository().UpdateAdvert(_mapper.Map<Advert<AdvertFormatDynamic>>(form));
+                return RedirectToAction("List", new { id = form.id_camp, success = ErrorForm.suc_edit });
+            }
+            return View("EditStatic", form);
         }
 
         [Authorize]
         [HttpPost("/advertisement/remove/{id}")]
-        public IActionResult Delete(Guid id, [FromQuery] string ReturnUrl = "")
+        public IActionResult Remove(Guid id, [FromQuery] Guid camp_id)
         {
             if(id == Guid.Empty)
             {
                 return BadRequest();
             }
+
             if(!PermissionActionManager<Guid>.CheckPermisionAccess(new Guid[] { id }))
             {
                 return StatusCode(401);
             }
 
-            _dataBaseProvider.GetAdvertRepository().DeleteAdvertsById(id);
-
-            if(ReturnUrl.Length > 0)
+            try
             {
-                return Redirect(ReturnUrl);
+                _dataBaseProvider.GetAdvertRepository().DeleteAdvertsById(id);
+
+            }catch(Exception) { 
+                
+                return RedirectToAction("List", new {id = camp_id, error = ErrorForm.err_remove});
             }
 
-            return Redirect("/");
+            return RedirectToAction("List", new { id = camp_id, success = ErrorForm.suc_remove });
 
         }
         [Authorize]
@@ -178,9 +308,31 @@ namespace UserPanel.Controllers
                 return StatusCode(401);
             }
 
-            Advert advert = _dataBaseProvider.GetAdvertRepository().GetAdvertById(id);
+            Advert<AdvertFormat> advert = _dataBaseProvider.GetAdvertRepository().GetAdvertById(id);
 
-            if (advert == null) return NotFound();
+            if (advert == null || advert.Template == AD_TEMPLATE.Dynamic) return NotFound();
+
+            return View(advert);
+
+        }
+
+        [Authorize]
+        [HttpGet("campaign/advertisement/preview-dynamic/{id}")]
+        public IActionResult PreviewDynamic(Guid id)
+        {
+            if (id == Guid.Empty)
+            {
+                return BadRequest();
+            }
+
+            if (!PermissionActionManager<Guid>.CheckPermisionAccess(new Guid[] { id }))
+            {
+                return StatusCode(401);
+            }
+
+            Advert<AdvertFormatDynamic> advert = _dataBaseProvider.GetAdvertDyRepository().GetAdvertById(id);
+
+            if (advert == null || advert.Template == AD_TEMPLATE.Static) return NotFound();
 
             return View(advert);
 
@@ -199,10 +351,41 @@ namespace UserPanel.Controllers
                 return StatusCode(401);
             }
             
-            List<Advert> AdvertsList = _dataBaseProvider.GetAdvertRepository().GetAdvertsByCampId(id);
+            List<Advert<AdvertFormat>> AdvertsList = _dataBaseProvider.GetAdvertRepository().GetAdvertsByCampId(id);
+
+            AdvertsList.Sort((a, b) => a.Created.CompareTo(b.Created));
 
             return View(AdvertsList);
         }
+
+
+
+        [Authorize]
+        [HttpPost("/advertisements/switch/{id}")]
+        public IActionResult Switch(Guid id)
+        {
+            if (!PermissionActionManager<Guid>.CheckPermisionAccess(new Guid[] { id }))
+            {
+                return StatusCode(401);
+            }
+
+            Guid CampId = PermissionActionManager<Guid>.GetFullPath(id).Camp;
+
+            try
+            {
+              var Advert =  _dataBaseProvider.GetAdvertRepository().GetAdvertById(id);
+              Advert.IsActive = !Advert.IsActive;
+              _dataBaseProvider.GetAdvertRepository().UpdateAdvert(Advert);
+
+            }catch (Exception) {
+
+                return RedirectToAction("List", new { id = CampId, error = ErrorForm.err_edit });
+
+            }
+
+            return RedirectToAction("List", new { id = CampId });
+        }
+
 
 
         [Authorize]
@@ -211,6 +394,8 @@ namespace UserPanel.Controllers
         {
             return JsonSerializer.Serialize(_dataBaseProvider.GetAdvertRepository().GetAdvertByUserId(id));
         }
+
+
 
     }
 }

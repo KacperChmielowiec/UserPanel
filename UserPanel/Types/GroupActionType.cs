@@ -4,6 +4,8 @@
     {
         ADD,
         REMOVE,
-        UPDATE
+        UPDATE,
+        DETACH,
+        ATTACH
     }
 }

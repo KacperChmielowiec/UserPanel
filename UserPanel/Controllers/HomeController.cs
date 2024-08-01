@@ -16,12 +16,13 @@ namespace UserPanel.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IConfiguration _configuration;
         private readonly CampaningManager _campaningManager;
-        public HomeController(ILogger<HomeController> logger,IConfiguration configuration, CampaningManager campaningManager)
+        public HomeController(ILogger<HomeController> logger,IConfiguration configuration, CampaningManager campaningManager, IWebHostEnvironment env)
         {
             _logger = logger;
             _configuration = configuration;
             _campaningManager = campaningManager;
             var p = PermissionActionManager<Guid>.InstanceContext;
+            var e = env;
 
         }
         [EndpointName(EndpointNames.DashboardHomeGet)]
@@ -48,5 +49,7 @@ namespace UserPanel.Controllers
         {
             return code;
         }
+
+        
     }
 }
