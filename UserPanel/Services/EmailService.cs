@@ -45,7 +45,7 @@ namespace UserPanel.Services
 
             }catch (Exception ex)
             {
-
+                throw;
             }
             finally
             {

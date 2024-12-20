@@ -15,5 +15,20 @@ namespace UserPanel.Services
             }
             return Convert.ToBase64String(hashBytes);
         }
+
+        public static byte[] GenerateRandomBytes(int length)
+        {
+            byte[] randomBytes = new byte[length];
+
+            // Wypełnia tablicę losowymi bajtami
+            using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(randomBytes);
+            }
+
+            return randomBytes;
+        }
+
+        
     }
 }

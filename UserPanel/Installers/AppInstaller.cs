@@ -13,6 +13,8 @@ using UserPanel.Models.Messages;
 using UserPanel.Filters;
 using Microsoft.Extensions.Options;
 using UserPanel.Models.Product;
+using Microsoft.EntityFrameworkCore;
+using FluentValidation.AspNetCore;
 
 namespace UserPanel.Installers
 {
@@ -22,10 +24,13 @@ namespace UserPanel.Installers
 
         public override void Install(WebApplicationBuilder builder)
         {
+            builder.Services.AddDbContext<AppDbContext>(options =>
+             options.UseSqlServer(builder.Configuration.GetConnectionString("panel")));
             // Add services to the container.
             builder.Services.AddSwaggerGen(c =>{c.SwaggerDoc("v1", new OpenApiInfo { Title = "AddingStuffAndCheckingI", Version = "v1" });});
             builder.Services.AddScoped<EmailService, EmailService>();
             builder.Services.AddControllersWithViews();
+           
             builder.Services.AddSession();
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             builder.Services.AddHttpContextAccessor();
@@ -38,23 +43,21 @@ namespace UserPanel.Installers
             builder.Services.AddScoped<CampaningManager, CampaningManager>();
             builder.Services.AddScoped<SignInService>();
             builder.Services.AddScoped<PasswordHasher>();
-
             builder.Services.AddAuthentication(AppReferences.PERMISSION_SCHEME)
             .AddCookie(options =>
             {
                 options.Cookie.Name = "User";
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
                 options.LoginPath = "/Login";
-                options.AccessDeniedPath = "/Forbidden";
+                options.AccessDeniedPath = "/Login";
             })
             .AddScheme<CookieAuthenticationOptions, PermissionAuthHandler>(AppReferences.PERMISSION_SCHEME, (options) => {
                 options.Cookie.Name = "User";
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
                 options.LoginPath = "/Login";
-                options.AccessDeniedPath = "/Forbidden";
+                options.AccessDeniedPath = "/Login";
                 options.Events.OnSigningOut  = PermissionUtils.OnSignOutValidate;
             });
-           
             builder.Services.AddAuthorization(options =>
             {
                 options.AddPolicy("basic", options =>
@@ -62,18 +65,26 @@ namespace UserPanel.Installers
                     options.AddAuthenticationSchemes(AppReferences.PERMISSION_SCHEME)
                     .RequireAuthenticatedUser();
                 });
+                options.AddPolicy("admin", options =>
+                {
+                    options.AddAuthenticationSchemes(AppReferences.PERMISSION_SCHEME)
+                    .RequireRole(UserRole.ADMIN.GetStringValue());
+                });
             });
             builder.Configuration.AddJsonFile("Config.json");
+
+            builder.Services.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ResetUserPasswordValidatorEmail>());
+            builder.Services.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ResetUserPasswordValidatorDashboard>());
 
             builder.Services.Configure<PasswordHashOptions>(options =>
             {
                 options.passwordHasherAlgorithms = HashAlgorithmName.SHA1;
                 options.SaltSize = 16;
                 options.Iterations = 8192;
-                options.HashSize = 256;
+                options.HashSize = 128;
 
             });
-
+           
             builder.Services.Configure<List<EndpointMetaData>>(opt => builder.Configuration.GetSection("Endpoints").Bind(opt));
 
             builder.Services.AddDistributedMemoryCache();

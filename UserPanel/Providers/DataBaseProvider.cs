@@ -17,6 +17,7 @@ namespace UserPanel.Providers
         private IHttpContextAccessor _contextAccessor;
         ISession _session;
         DataBase _database;
+        Lazy<AppDbContext> _appDbContext;
 
         public static string env_repo_type = AppReferences.EnvRepositoryType;
         public DataBaseProvider(
@@ -31,17 +32,11 @@ namespace UserPanel.Providers
             _contextAccessor = accessor;
             _session = _contextAccessor?.HttpContext?.Session;
             _database = dataBase;
+         
         }
         public UserRepository<UserModel> GetUserRepository()
         {
-            if (_configuration[env_repo_type]?.ToLower() == AppReferences.CONFIG_MOCK)
-            {
-                return new UserRepositoryMock(_session);
-            }
-            else
-            {                                                                                                                                                                                                       
-                return new UserRepositorySql(_database, _mapper);
-            }
+            return new UserRepositoryORM(_contextAccessor.HttpContext.RequestServices.GetRequiredService<AppDbContext>());
         }
         public CampaningRepository<Campaning> GetCampaningRepository()
         {

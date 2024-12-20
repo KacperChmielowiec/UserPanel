@@ -1,6 +1,8 @@
+using Microsoft.EntityFrameworkCore;
 using UserPanel.Helpers;
 using UserPanel.Installers;
 using UserPanel.Middleware;
+using UserPanel.Providers;
 using UserPanel.References;
 using UserPanel.Services;
 
@@ -8,8 +10,11 @@ using UserPanel.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.InstallServices();
+builder.Logging.AddProvider(new EfLoggerProvider(builder.Services.BuildServiceProvider().GetRequiredService<AppDbContext>()));
+builder.Services.AddScoped<ConfigService, ConfigService>();
 ConfigurationHelper.Initialize(builder.Configuration);
 ConfigManager.LoadConfig();
+
 
 var app = builder.Build();
 
@@ -39,6 +44,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<PageTypeMiddleware>();
+app.UseMiddleware<InactivityTimeoutMiddleware>();
 app.MapControllerRoute(
     name: "home",
     pattern: "{Dashboard:regex(^(?i)dashboard$)}",
@@ -51,5 +57,5 @@ app.MapControllerRoute(
 
 
 app.UseStatusCodePagesWithRedirects("/Code/{0}");
-
+app.EnsurePopulate();
 app.Run();

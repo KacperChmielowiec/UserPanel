@@ -26,6 +26,13 @@ namespace UserPanel.References
         FEEDS,
         [StringValue("Product List")]
         PRODUCTS,
+        [StringValue("Dasboard")]
+        DASHBOARD,
+        [StringValue("Dasboard")]
+        DASHBOARD_CREATE_USER,
+        [StringValue("Dasboard Settings")]
+        DASHBOARD_SETTINGS,
+
     }
 
     public enum DataType

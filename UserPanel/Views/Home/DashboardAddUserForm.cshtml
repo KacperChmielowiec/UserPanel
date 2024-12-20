@@ -1,0 +1,103 @@
+﻿@model CreateUser
+@{
+
+    Layout = "_DLayout";
+
+    var currentUrl = Context.Request.Path + Context.Request.QueryString;
+    List<UserRole> roles = new List<UserRole>() { UserRole.ADMIN, UserRole.USER };
+    TempData.TryGetValue("token",out object token);
+}
+
+<section class="py-1 bg-blueGray-50 table-campaning ">
+    <div class="w-full  mb-12 xl:mb-0 px-4 mx-auto mt-8">
+        @if (ViewData.ModelState.ContainsKey("ErrorCreate"))
+        {
+            @foreach (var error in ViewData.ModelState["ErrorCreate"].Errors)
+            {
+                <div class="alert warning mb-6 mt-10">
+                    @error.ErrorMessage
+                </div>
+            }
+        }
+        <section class="relative flex flex-col min-w-0  break-words w-full mb-6 bg-zinc-100 pt-8 pb-4 shadow-lg rounded ">
+            <div class="rounded-t mb-0 px-4 py-3 border-b-1">
+                <div class="flex flex-wrap items-center">
+                    <div class="relative w-full px-4 py-4 max-w-full flex-grow flex-1">
+                        <h1 class="font-semibold text-xl text-blueGray-700">Add User</h1>
+                    </div>
+                </div>
+            </div>
+
+            <div class="body mx-40">
+                <form class="ml-[50px] pb-10" asp-action="CreateUserPost" asp-controller="Home" method="post" enctype="multipart/form-data">
+                    <div class="py-6">
+                        <header class="text-xl">User:</header>
+                    </div>
+                    <div class="form-group pb-4 d-flex flex-col gap-y-1">
+                        <div>
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                            <label asp-for="Email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">User email</label>
+                            <input asp-for="Email" type="text" name="email" id="email" class="bg-gray-50 @Html.AddClassIfPropertyInError("error-form","border-field",(x) => x.Email) text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@company.com">
+                        </div>
+                    </div>
+                    <div class="form-group pb-4 d-flex flex-col gap-y-1">
+                        <div>
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                            <label asp-for="Name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">User Name</label>
+                            <input asp-for="Name" type="text" name="Name" id="name" class="bg-gray-50 @Html.AddClassIfPropertyInError("error-form","border-field",(x) => x.Email) text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="User name">
+                        </div>
+                    </div>
+                    <div class="form-group d-flex pb-4 flex-col gap-y-1">
+                        <div>
+                            <span asp-validation-for="Phone" class="text-danger"></span>
+                            <label asp-for="Phone"  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">User Phone</label>
+                            <input asp-for="Phone" type="text" name="Phone" id="phone" class="bg-gray-50 @Html.AddClassIfPropertyInError("error-form","border-field",(x) => x.Email) text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@company.com">
+                        </div>
+                    </div>
+                    <div class="form-group d-flex pb-4 flex-col gap-y-1">
+                        <div>
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                            <label asp-for="Password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">User Password</label>
+                            <input asp-for="Password" type="password" name="Password" id="pass" class="bg-gray-50 @Html.AddClassIfPropertyInError("error-form","border-field",(x) => x.Email) text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        </div>
+                    </div>
+                    <div class="form-group d-flex pb-4 flex-col gap-y-1">
+                        <div>
+                            <a class="btn btn-flat white" asp-action="GenerateOneTimeToken" asp-controller="Home" asp-route-returnUrl="@currentUrl">Get on-time token</a>
+                            @if(token != null)
+                            {
+                                <span>@token</span>
+                            }
+                        </div>
+                        <input hidden asp-for="Token" name="Token" type="text" value="@token" />
+                        <div class="form-group d-flex pb-4 flex-col gap-y-1">
+                            <span asp-validation-for="IsActive" class="text-danger"></span>
+                            <input type="checkbox" data-caption="Active user account:" data-role="checkbox" name="IsToken" asp-for="IsToken" data-style="2">
+                        </div>
+                    </div>
+                    <div class="form-group d-flex flex-col pb-4">
+                        <label asp-for="Role" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">User's role</label>
+                        <select name="role" data-prepend="Wybierz role:" data-role="select">
+                            @foreach (Enum role in roles)
+                            {
+                                <option value="@role">@role.GetStringValue()</option>
+                            }
+                        </select>
+                        <span asp-validation-for="IsActive" class="text-danger"></span>
+                    </div>
+                    <div class="form-group d-flex pb-4 flex-col gap-y-1">
+                        <span asp-validation-for="IsActive" class="text-danger"></span>
+                        <input type="checkbox" data-caption="Active user account:" data-role="checkbox" name="IsActive" asp-for="IsActive" data-style="2">
+                    </div>
+                    <div class="rounded-t mb-0 py-6 border-b-1">
+                        <div class="pull-right">
+                            <a href="/admin/dashboard" class="btn btn-flat white"><i class="icon-reply"></i> Wróć</a>
+                            <button type="submit" class="btn btn-flat success"><i class="icon-plus"></i> Utwórz</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+    </div>
+</section>

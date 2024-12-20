@@ -40,6 +40,11 @@ namespace UserPanel.Helpers
             return ComponentsAccessor.GetInstance().isVisible(htmlHelper.ViewContext.HttpContext, components);
         }
 
+        public static IHtmlContent ToggleClassByState(this IHtmlHelper helper, bool state, string active, string inactive)
+        {
+            return state ? new HtmlString(active) : new HtmlString(inactive);
+        }
+
     }
     public static class ViewDataHelper
     {

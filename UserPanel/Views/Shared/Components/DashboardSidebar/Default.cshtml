@@ -1,0 +1,51 @@
+﻿@model SidebarModel?
+@{
+    ViewData["Title"] = "_sidebar";
+    var Page = Model.pageTypes;
+    var PageDeep = Model.pageTypes.Count();
+    var x = 2;
+}
+<div id="sidebar-nav">
+    <ul id="dashboard-menu" class="pt-16">
+        @if(User.IsInRole(UserRole.ADMIN.GetStringValue()))
+        {
+            <li class="@(Page.Contains(PageTypes.DASHBOARD) && PageDeep == 1 ? "active" : "")">
+                <div class="pointer">
+                    <div class="arrow"></div>
+                    <div class="arrow_border"></div>
+                </div>
+                <a href="/admin/dashboard"><i class="icon-th-large"></i><span>Dashboard(Admin)</span></a>
+            </li>
+            <li class="@(Page.Contains(PageTypes.DASHBOARD_SETTINGS) ? "active" : "" )">
+                <a href="/admin/dashboard/settings"><span>Settings</span></a>
+            </li>
+        }
+        @if (User.IsInRole(UserRole.USER.GetStringValue()))
+        {
+            <li class="@(Page.Contains(PageTypes.DASHBOARD) && PageDeep == 1 ? "active" : "")">
+                <div class="pointer">
+                    <div class="arrow"></div>
+                    <div class="arrow_border"></div>
+                </div>
+                <a href="/user/dashboard"><i class="icon-th-large"></i><span>Dashboard(User)</span></a>
+            </li>
+        }
+    </ul>
+</div>
+
+<script>
+
+    $("#dashboard-menu .dropdown-toggle").click(function (e) {
+        e.preventDefault();
+        var $item = $(this).parent();
+        $("#dashboard-menu .dropdown-toggle").each((i, element) => $(element).parent().removeClass("active"))
+        $item.addClass("active")
+        $item.toggleClass("expand")
+        if ($item.hasClass("expand")) {
+            $item.find(".submenu").slideDown("fast");
+        } else {
+            $item.find(".submenu").slideUp("fast");
+        }
+    });
+
+</script>

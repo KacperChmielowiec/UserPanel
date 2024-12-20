@@ -18,7 +18,7 @@
       "typeAccess": "Forbidden",
       "Pages": [ "/register", "/login", "/advertisement/create-form", "/advertisement/update-form", "/edit-advertisements", "advertisement/preview/" ],
       "Auth": true,
-      "Roles": [ "ADMIN", "USER" ]
+      "Roles": [ "Admin", "User" ]
     }
   },
   "Endpoints": [
@@ -51,7 +51,7 @@
     "loginMessages": {
       "InvalidPassword": "Incorrect password.",
       "NotFound": "User has not been found.",
-      "NotActive": "User is not verified by email"
+      "NotActive": "User is blocked"
     },
     "RegisterMessages": {
       "PhoneExists": "User with given Phone number already exists",

@@ -1,0 +1,160 @@
+﻿@using UserPanel.References;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - UserPanel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="~/css/Login.css" />
+    <link rel="stylesheet" href="~/css//TableList.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/UserPanel.styles.css" asp-append-version="true" />
+    <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="~/js/morris.js-0.5.1/morris.css" />
+    <link rel="stylesheet" href="https://cdn.metroui.org.ua/current/metro.css">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/morris.js-0.5.1/morris.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/metro/4.5.7/metro.min.js" integrity="sha512-zObyD9GQUNSpnwfFgQVWv0jmLxfjhtSqEi2c6Steqzmsx8RZdKTlAJHPHH8EVFXT9QH2KT/v6nuzIMwBLVSaNg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="~/js/fetch.js"></script>
+    <script src="~/js/Utils.js"></script>
+</head>
+<body>
+    @await Component.InvokeAsync(AppReferences.ViewComponentsNames.Nav)
+    <div class="w-100 h-100 min-h-screen">
+        <main role="main" class="d-flex min-h-screen">
+            @if (Html.isVisible(AppReferences.ViewComponentsNames.DasboardSidebar))
+            {
+                <div>
+                    @await Component.InvokeAsync(AppReferences.ViewComponentsNames.DasboardSidebar);
+                </div>
+            }
+            <div class="w-100 mt-6">
+                @RenderBody()
+            </div>
+        </main>
+        <div class="modal">
+            <span class="modal-backdrop"></span>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title"></h2><button class="close-modal"><i class="fa fa-times" style="color:#484848"></i></button>
+                </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button class="submit-modal">Ok</button
+                </div>
+            </div>
+        </div>
+        <script>
+
+            window.modalUtilsInstance = modalUtils();
+
+            modalUtilsInstance.closeModalButtons.forEach((b) => {
+                b.addEventListener("click", e => {
+                    modalUtilsInstance.setTemplate({ title: "", body: "" })
+                    modalUtilsInstance.close()
+                })
+            })
+
+        </script>
+    </div>
+    <footer class="border-top footer text-muted bg-white">
+        <div class="container">
+            &copy; 2024 - UserPanel - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+</body>
+<style>
+
+    .modal {
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        padding: 2rem;
+        z-index: 20000;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        visibility: hidden;
+        opacity: 0;
+        display: flex;
+    }
+    modal.transition
+    {
+        transition: all 0.3s ease;
+    }
+
+    .modal.visible {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .modal.visible .modal-content {
+        top: 25%;
+    }
+
+    .modal-backdrop {
+        background-color: rgba(0,0,0, 0.7);
+        height: 100%;
+        width: 100%;
+        position: fixed;
+    }
+
+    .modal-content {
+        background: #fff;
+        border-radius: 5px;
+        max-width: 600px;
+        position: fixed;
+        top: -100%;
+        transition: all 0.6s ease;
+        z-index: 1000;
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #ccc;
+        padding: 1.5rem;
+    }
+
+    .close-modal, .submit-modal {
+        font-size: 20px;
+        padding: 0;
+        margin: 0;
+        height: 30px;
+        width: 30px;
+        text-align: center;
+    }
+
+    .close-modal:hover, .submit-modal:hover {
+        color: #000;
+    }
+
+    .modal-body {
+        padding: 1.5rem;
+        min-width: 300px;
+    }
+
+    .modal-footer {
+        border-top: 1px solid #ccc;
+        padding: 20px 30px;
+        text-align: right;
+        margin: 0 5px;
+    }
+
+    h2 button {
+        width: 20px;
+        height: 20px;
+        font-size: 30px;
+    }
+</style>
+</style>
+</html>

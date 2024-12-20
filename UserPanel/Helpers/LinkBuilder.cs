@@ -25,5 +25,15 @@
 
             return callbackLink;
         }
+
+        public string GenerateResetPasswordLink(string token, string key, string id)
+        {
+            var callbackLink = _generator.GetUriByAction(_context,
+                action: "ResetUpdate",
+                controller: "Login",
+                values: new { key = key, uid = id, token = token });
+
+            return callbackLink;
+        }
     }
 }

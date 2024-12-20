@@ -1,0 +1,95 @@
+﻿@model List<UserModel>
+@{
+    Layout = "_DLayout";
+}
+<div>
+    <section class="py-20">
+        <div class="mx-10 px-10 bg-zinc-100 pt-4 pb-4 shadow-lg">
+            @if (TempData.ContainsKey("error"))
+            {
+                <div class="alert warning mb-6 mt-10">
+                    @ViewData["error"]
+                </div>
+            }
+            else if (TempData.ContainsKey("success"))
+            {
+                <div class="alert success mb-6 mt-10">
+                    @TempData["success"];
+                </div>
+            }
+            <div class="rounded-t mb-0 px-4 py-3 border-0">
+                <div class="flex flex-wrap items-center">
+                    <div class="relative w-full px-4  max-w-full flex-grow flex-1">
+                        <header class="font-semibold text-xl">Users:</header>
+                    </div>
+                    <div class="pull-right">
+                        <a href="/admin/dashboard/create-user"  class="btn btn-flat success open-modal modal-create"><i class="icon-plus"></i> Dodaj</a>
+                    </div>
+                    <div class="pull-right mx-4">
+                        <a asp-action="ExportLogs" asp-controller="Home" class="btn btn-flat success open-modal modal-create"><i class="icon-plus"></i> Export logs</a>
+                    </div>
+                </div>
+            </div>
+            <div class="block w-full overflow-x-auto pt-10">
+                <table class="items-center bg-transparent w-full border-collapse">
+                    <thead>
+                        <tr>
+                            <th class="px-4 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-center">
+                                ID
+                            </th>
+                            <th class="px-4 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-center">
+                                Name
+                            </th>
+                            <th class="px-4 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-center">
+                                Email
+                            </th>
+                            <th class="px-4 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-center">
+                                State
+                            </th>
+                            <th class="px-4 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-center">
+                                Action
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="height:1px; padding:0px; background-color:black" colspan="6"></td>
+                        </tr>
+                        @foreach (var user in Model)
+                        {
+                            <tr>
+                                <td class="border-t-0 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4 text-center text-blueGray-700 ">
+                                    <span>@user.Id</span>
+                                </td>
+                                <td class="border-t-0 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4 text-center text-blueGray-700 ">
+                                    <span>@user.Name</span>
+                                </td>
+                                <td class="border-t-0 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4 text-center text-blueGray-700 ">
+                                    <span>@user.Email</span>
+                                </td>
+                                <td class="border-t-0 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4 text-center text-blueGray-700 ">
+                                    <span>@(user.IsActive ? "Active" : "Inactive" )</span>
+                                </td>
+                                <td class="border-t-0 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4 text-center text-blueGray-700 ">
+                                    <div class="flex justify-center items-center gap-x-2">
+                                        <div class="pull-left">
+                                            <a asp-action="EditUser" asp-controller="Home" asp-route-id="@user.Id" class="btn btn-flat success open-modal modal-create">Edytuj</a>
+                                        </div>
+                                        <form asp-action="UpdateState" asp-controller="Home" asp-route-id="@user.Id">
+                                            <button type="submit" class="btn btn-flat @Html.ToggleClassByState(user.IsActive,"danger", "success")">
+                                                @Html.ToggleClassByState(user.IsActive, "Switch off", "Switch on")
+                                            </button>
+                                        </form>
+                                        <form asp-action="RemoveUser" asp-controller="Home" asp-route-id="@user.Id">
+                                            <button type="submit" class="btn btn-flat danger"><i class="icon-trash"></i> Usuń</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</div>

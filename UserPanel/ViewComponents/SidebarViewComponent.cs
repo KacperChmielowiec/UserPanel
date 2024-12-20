@@ -84,24 +84,9 @@ namespace UserPanel.ViewComponents
 
             SidebarModel sidebarModel = new SidebarModel() { campaningList = list };
 
-            if (HttpContext.Items.ContainsKey(AppReferences.CurrPageType))
+            if (HttpContext.Items.TryGetValue(AppReferences.CurrPageType, out var pageTypeItem) && pageTypeItem is IEnumerable<PageTypes> pageTypes)
             {
-                if (HttpContext.Items[AppReferences.CurrPageType] is PageTypes[] type)
-                {
-                    var PageType = (PageTypes[])HttpContext.Items[AppReferences.CurrPageType];
-                    foreach (var (pageType,i) in PageType.Select((x,y) => (x,y)))
-                    {
-                        if(i == 0)
-                        {
-                            sidebarModel.PageMain = pageType;
-
-                        }
-                        if(i == 1)
-                        {
-                            sidebarModel.PageSub1 = pageType;
-                        }
-                    }
-                }
+                sidebarModel.pageTypes = pageTypes.ToList();
             }
 
             sidebarModel.activeCamp = TryFetchIDFromRequest();

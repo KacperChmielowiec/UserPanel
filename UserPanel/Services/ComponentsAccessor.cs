@@ -27,31 +27,43 @@ namespace UserPanel.Services
        public bool isVisible(HttpContext context, string components)
        {
            bool visible = true;
-           ComponentsDescriptor descriptor = ConfigurationHelper.config.GetSection($"SectionsAccess:{components}").Get<ComponentsDescriptor>();
-           if(descriptor == null) { return false; }
+           if (ConfigurationHelper.config == null) return false;
+
+           var section = ConfigurationHelper.config.GetSection($"SectionsAccess:{components}");
+           if(section == null || !section.Exists()) return true;
+
+           ComponentsDescriptor descriptor = section.Get<ComponentsDescriptor>(); 
+
+           if(descriptor == null) { return true; }
+
            if (context == null) return false;
 
            descriptor.name = components;
-           if (descriptor.Auth)
-           { 
-                visible = context
-                    .User
-                    .Identity
-                    .IsAuthenticated 
-                     && Enumerable.Range(0, descriptor.Roles.Length)
-                    .Select(x => context.User.IsInRole(Enum.GetName(typeof(UserRole), descriptor.Roles[x])))
-                    .FirstOrDefault(x => x == true) ? true : false;
 
-           }
+           if (descriptor.Auth)
+           {
+                visible = context.User?.Identity?.IsAuthenticated ?? false;
+                if (!visible) return false;
+
+                if (context.User == null) return false;
+
+                visible = Enumerable.Range(0, descriptor.Roles.Length)
+                    .Select(x => context.User.IsInRole(descriptor.Roles[x].GetStringValue()))
+                    .FirstOrDefault(x => x == true) ? true : false;
+                
+                if (!visible) return false;
+            }
+
            if(descriptor.TypeAccess == AppReferences.TypeAccessForbidden)
            {
-                visible = !descriptor.Pages.Any(page => context.Request.Path.Value.Contains(page)) && visible;
+                visible = !descriptor.Pages.Any(page => context.Request.Path.Value.Contains(page));
                 
            }
            else
            {
-                visible = descriptor.Pages.Any(page => context.Request.Path.Value.Contains(page)) && visible;
+                visible = descriptor.Pages.Any(page => context.Request.Path.Value.Contains(page));
            }
+
            return visible;
        }
 

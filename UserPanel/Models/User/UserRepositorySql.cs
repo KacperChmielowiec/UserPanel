@@ -2,6 +2,8 @@
 using System.Data;
 using UserPanel.Interfaces;
 using UserPanel.Interfaces.Abstract;
+using UserPanel.Models.Logs;
+using UserPanel.Models.Password;
 namespace UserPanel.Models.User
 {
     public class UserRepositorySql : UserRepository<UserModel>
@@ -48,6 +50,53 @@ namespace UserPanel.Models.User
         }
 
         public override void UpdateModel(UserModel model)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void DeleteUser(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override List<PasswordHistory> GetPasswordsHistory(int id, int count = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void AddPasswordToHistory(int id, string password)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override List<PasswordRules> GetUserPasswordRules()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override PasswordRules GetPasswordRule(PasswordConstraintType type)
+        {
+            throw new NotImplementedException();
+        }
+  
+   
+
+        public override void UpdateUserState(int userId, UserState state, bool remove = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void UpdateUserStates(int userId, UserState[] state, bool remove = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void UpdatePasswordRule(PasswordConstraintType constraintType, PasswordRules rule)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override List<LogUserEntry> GetAllUserLogs()
         {
             throw new NotImplementedException();
         }

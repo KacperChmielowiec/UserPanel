@@ -11,16 +11,22 @@ namespace UserPanel.Middleware
             next = nextDelgate;
         }
 
-        private PageTypes[] breadcrumbsbreadcrumbs;
+        private List<PageTypes> breadcrumbsbreadcrumbs;
 
         private Dictionary<string, PageTypes> MapPageType = new Dictionary<string, PageTypes>()
         {
             {"", PageTypes.HOME },
             {"/", PageTypes.HOME },
+            {"admin:dashboard", PageTypes.DASHBOARD },
+            {"user:dashboard", PageTypes.DASHBOARD },
+            {"admin:dashboard:create-user", PageTypes.DASHBOARD_CREATE_USER },
+            {"admin:dashboard:settings", PageTypes.DASHBOARD_SETTINGS },
             {"home", PageTypes.HOME },
             {"campaigns", PageTypes.CAMPS },
-            {"list", PageTypes.LIST_CAMPS },
-            {"details", PageTypes.CAMP_DETAILS},
+            {"campaigns:list", PageTypes.LIST_CAMPS },
+            {"campaign", PageTypes.CAMP},
+            {"campaign:product:list", PageTypes.PRODUCTS},
+            {"campaign:details", PageTypes.CAMP_DETAILS},
             {"groups", PageTypes.GROUPS},
             {"group:details", PageTypes.GROUP_DETAILS },
             {"advertisements-list", PageTypes.ADVERT_LIST },
@@ -33,23 +39,33 @@ namespace UserPanel.Middleware
             string[] path = context.Request.Path.Value.Split("/").Skip(1).ToArray();
 
             path = path.Where(p => !string.IsNullOrWhiteSpace(p) && !Guid.TryParse(p, out _)).ToArray();
-
-            if(path.Length > 2)
+          
+            breadcrumbsbreadcrumbs = new List<PageTypes>();
+            for(int i = 0; i < path.Length; i++)
             {
-                breadcrumbsbreadcrumbs = new PageTypes[2];
-                breadcrumbsbreadcrumbs[0] = MapPageType.ContainsKey(path[0].ToLower()) ? MapPageType[path[0].ToLower()] : PageTypes.OTHER;
-                breadcrumbsbreadcrumbs[1] = MapPageType.ContainsKey($"{path[1].ToLower()}:{path[2].ToLower()}") ? MapPageType[$"{path[1].ToLower()}:{path[2].ToLower()}"] : PageTypes.OTHER;
-            }
-            else
-            {
-                breadcrumbsbreadcrumbs = new PageTypes[path.Length];
-                foreach (var (p,i) in path.Select((x,y) => (x, y)))
+                
+                if (MapPageType.ContainsKey(path[i].ToLower()))
                 {
-                    breadcrumbsbreadcrumbs[i] = MapPageType.ContainsKey(p.ToLower()) ? MapPageType[p.ToLower()] : PageTypes.OTHER;
+                    breadcrumbsbreadcrumbs.Add(MapPageType[path[i].ToLower()]);
+
                 }
+                else
+                {
+                    string index = String.Join(":", path.Take(i + 1)).ToLower();
+                    if (MapPageType.ContainsKey(index))
+                    {
+                        breadcrumbsbreadcrumbs.Add(MapPageType[index]);
+                    }
+                }
+                
+            }
+            
+
+            if(breadcrumbsbreadcrumbs.Count == 0) { 
+                breadcrumbsbreadcrumbs.Add(PageTypes.HOME);
             }
 
-            context.Items[AppReferences.CurrPageType] = breadcrumbsbreadcrumbs;
+            context.Items[AppReferences.CurrPageType] = breadcrumbsbreadcrumbs.ToArray();
 
             await next(context);
 

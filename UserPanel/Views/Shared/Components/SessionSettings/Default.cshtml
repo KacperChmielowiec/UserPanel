@@ -1,0 +1,35 @@
+﻿@model SessionSettingsModel
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<section class="relative flex flex-col min-w-0  break-words w-full mb-6 bg-zinc-100 pt-8 pb-4 shadow-lg rounded ">
+    <div class="rounded-t mb-0 px-4 py-3 border-b-1">
+        <div class="flex flex-wrap items-center">
+            <div class="relative w-full px-4 py-4 max-w-full flex-grow flex-1">
+                <h1 class="font-semibold text-xl text-blueGray-700">Change MaxTimeInActive User</h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="body mx-40">
+        <form class="ml-[50px] pb-10" asp-action="UpdateMaxTimeInActiveUser" asp-controller="Home">
+            <div class="py-6">
+                <header class="text-xl">Form: </header>
+            </div>
+            <div class="form-group pb-4 d-flex flex-col gap-y-1">
+                <div>
+                    <span asp-validation-for="MaxTimeSession" class="text-danger"></span>
+                    <label asp-for="MaxTimeSession" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Set TIme</label>
+                    <input asp-for="MaxTimeSession" type="text" data-role="spinner">
+                </div>
+            </div>
+            <div class="rounded-t mb-0 py-6 border-b-1">
+                <div class="pull-right">
+                    <button type="submit" class="btn btn-flat success"><i class="icon-plus"></i> Change</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>

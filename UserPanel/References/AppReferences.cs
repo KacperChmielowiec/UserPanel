@@ -44,6 +44,7 @@ namespace UserPanel.References
         { 
             public static string Sidebar = "Sidebar";
             public static string Nav = "navigation";
+            public static string DasboardSidebar = "DashboardSidebar";
         }
         public static string CurrPageType = "PageType";
         public static string QueryCamp = "camp_id";

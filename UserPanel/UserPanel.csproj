@@ -7,17 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Models\Nowy folder1\**" />
-    <Content Remove="Models\Nowy folder1\**" />
-    <EmbeddedResource Remove="Models\Nowy folder1\**" />
-    <None Remove="Models\Nowy folder1\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Remove="Configs\app.json" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="C:\Users\kacpe\Desktop\userpanel\UserPanel\UserPanel\Providers\.editorconfig" />
     <None Include="Configs\app.json" />
     <None Include="wwwroot\js\morris.js-0.5.1\.gitignore" />
     <None Include="wwwroot\js\morris.js-0.5.1\.travis.yml" />
@@ -58,7 +52,15 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+    <PackageReference Include="FluentValidation" Version="11.10.0" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.20" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.20" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.20">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.12" />
     <PackageReference Include="NETCore.MailKit" Version="2.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
@@ -69,7 +71,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Models\Nowy folder\" />
     <Folder Include="wwwroot\Nowy folder\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\Users\kacpe\Desktop\userpanel\UserPanel\UserPanel\Providers\.editorconfig" />
   </ItemGroup>
 
 </Project>

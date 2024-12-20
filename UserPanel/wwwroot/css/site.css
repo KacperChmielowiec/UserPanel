@@ -2339,3 +2339,7 @@ div .prepend {
     border-radius: 10px;
     font-size: 18px;
 }
+
+.white-check-bg .checkbox .check{
+    background-color: #ffffff;
+} 

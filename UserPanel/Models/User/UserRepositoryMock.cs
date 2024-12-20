@@ -4,6 +4,8 @@ using UserPanel.Services.observable;
 using UserPanel.Interfaces.Abstract;
 using UserPanel.References;
 using UserPanel.Helpers;
+using UserPanel.Models.Password;
+using UserPanel.Models.Logs;
 namespace UserPanel.Models.User
 {
     public class UserRepositoryMock : UserRepository<UserModel>
@@ -63,6 +65,51 @@ namespace UserPanel.Models.User
             
             _session.SetJson(UserPath, UserList);
             Subjects.userActionSubject.notify(new UserActionMessage() { id = model.Id, actionType = Types.UserActionType.Update });
+        }
+
+        public override void DeleteUser(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override List<PasswordHistory> GetPasswordsHistory(int id, int count = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void AddPasswordToHistory(int id, string password)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override List<PasswordRules> GetUserPasswordRules()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override PasswordRules GetPasswordRule(PasswordConstraintType type)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void UpdateUserState(int userId, UserState state, bool remove = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void UpdateUserStates(int userId, UserState[] state, bool remove = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void UpdatePasswordRule(PasswordConstraintType constraintType, PasswordRules rule)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override List<LogUserEntry> GetAllUserLogs()
+        {
+            throw new NotImplementedException();
         }
     }
 }
