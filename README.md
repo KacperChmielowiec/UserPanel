@@ -1,5 +1,4 @@
-Projekt do ustawiania kampanii reklamowych dla użytkowników, krórzy odwiedzili twoją strone internetową. UserPanel definiuje dodawanie kreacji, kodów do zbierania danych ze strony oraz ustawienia stawek i list użytkowników.
-
+A project for setting up advertising campaigns for users who visited your website. UserPanel defines adding creations, codes for collecting data from the website, and setting rates and user lists.
 
 # .NET Release Notes
 
